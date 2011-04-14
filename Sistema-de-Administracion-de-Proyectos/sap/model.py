@@ -48,10 +48,10 @@ usuario_table = Table( 'usuario', metadata,
 estado_proyecto_table = Table('estado_proyecto', metadata,
 		Column('id_estado_proyecto', INTEGER, primary_key = True),
 		Column ('descripcion', VARCHAR(200), nullable=False),
-		Column ('observacion', VARCHAR(100)
+		Column ('observacion', VARCHAR(100))
 )
 
-proyecto_table = ('proyecto', meadata, 
+proyecto_table = Table('proyecto', metadata, 
 		Column('id_proyecto', INTEGER, primary_key = True),
 		Column('id_usuario_lider', INTEGER, ForeignKey('usuario.id_usuario')),
 		Column('id_estado_proyecto', INTEGER, ForeignKey('estado_proyecto.id_estado_proyecto')),
@@ -80,7 +80,7 @@ class Proyecto(object):
 # http://www.sqlalchemy.org/docs/05/mappers.html
 
 # mapper(YourDataClass, your_table)
-mapper(Permiso, permiso_table)
+mapper (Permiso, permiso_table)
 
 mapper (Usuario, usuario_table)
 
