@@ -28,13 +28,13 @@ __author__ = "mbaez"
 # )
 
 permiso_table = Table( 'permiso', metadata,
-		Column('id_permiso', INTEGER, primary_key = True),
+		Column ('id_permiso', INTEGER, primary_key = True),
 		Column ('nombre', VARCHAR(50), nullable=False),
 		Column ('descripcion', VARCHAR(100))
 )
 
 usuario_table = Table( 'usuario', metadata,
-		Column('id_usuario', INTEGER, primary_key = True),
+		Column ('id_usuario', INTEGER, primary_key = True),
 		Column ('username', VARCHAR(50), nullable=False),
 		Column ('nombre', VARCHAR(50), nullable=False),
 		Column ('apellido', VARCHAR(50), nullable=False),
@@ -46,19 +46,53 @@ usuario_table = Table( 'usuario', metadata,
 )
 
 estado_proyecto_table = Table('estado_proyecto', metadata,
-		Column('id_estado_proyecto', INTEGER, primary_key = True),
+		Column ('id_estado_proyecto', INTEGER, primary_key = True),
 		Column ('descripcion', VARCHAR(200), nullable=False),
 		Column ('observacion', VARCHAR(100))
 )
 
 proyecto_table = Table('proyecto', metadata, 
-		Column('id_proyecto', INTEGER, primary_key = True),
-		Column('id_usuario_lider', INTEGER, ForeignKey('usuario.id_usuario')),
-		Column('id_estado_proyecto', INTEGER, ForeignKey('estado_proyecto.id_estado_proyecto')),
-		Column('nombre', VARCHAR(50), nullable=False),
-		Column('nro_fases', INTEGER, nullable =False),
+		Column ('id_proyecto', INTEGER, primary_key = True),
+		Column ('id_usuario_lider', INTEGER, ForeignKey('usuario.id_usuario')),
+		Column ('id_estado_proyecto', INTEGER, ForeignKey('estado_proyecto.id_estado_proyecto')),
+		Column ('nombre', VARCHAR(50), nullable=False),
+		Column ('nro_fases', INTEGER, nullable =False),
 		Column ('descripcion', VARCHAR(200))
 )
+
+fase_table = Table( 'fase', metadata,
+		Column ('id_fase', INTEGER, primary_key = True),
+		Column ('id_proyecto', INTEGER, ForeignKey('proyecto.id_proyecto'), nullable = False),
+		Column ('nombre', VARCHAR(50), nullable = False),
+		Column ('descripcion', VARCHAR(200))
+)
+
+rol_table = Table('rol', metadata,
+		Column ('id_rol', INTEGER, primary_key = True),
+		Column ('nombre', VARCHAR(50), nullable = False),
+		Column ('descripcion', VARCHAR(200))
+)
+
+rol_proyecto_table = Table ('rol_proyecto', metadata,
+		Column ('id_rol', INTEGER,  ForeignKey('rol.id_rol'), primary_key = True),
+		Column ('id_proyecto', INTEGER, ForeignKey('proyecto.id_proyecto'), primary_key = True)
+)
+
+rol_permiso_table = Table( 'rol_permiso', metadata,
+		Column ('id_permiso', INTEGER, ForeignKey('permiso.id_permiso'), primary_key = True),
+		Column ('id_rol', INTEGER, ForeignKey('rol.id_rol'), primary_key = True)
+)
+
+rol_usuario_table = Table( 'rol_usuario', metadata,
+		Column ('id_usuario', INTEGER, ForeignKey ('usuario.id_usuario'), primary_key = True),
+		Column ('id_rol', INTEGER, ForeignKey('rol.id_rol'), primary_key = True)
+)
+
+rol_fase_table = Table( 'rol_fase', metadata,
+		Column ('id_fase', INTEGER, ForeignKey ('fase.id_fase'), primary_key = True),
+		Column ('id_rol', INTEGER,  ForeignKey('rol.id_rol'), primary_key = True),
+)
+
 # your model classes
 # http://www.sqlalchemy.org/docs/05/ormtutorial.html#define-a-python-class-to-be-mapped
 
@@ -76,6 +110,22 @@ class Estado_Proyecto(object):
 
 class Proyecto(object):
 	pass
+
+class Rol(object):
+	pass
+
+class Rol_Proyecto(object):
+	pass
+
+class Rol_Usuario(object):
+	pass
+
+class Fase (object):
+	pass
+
+class Rol_Fase(object):
+	pass
+
 # set up mappers between your data tables and classes
 # http://www.sqlalchemy.org/docs/05/mappers.html
 
@@ -87,6 +137,16 @@ mapper (Usuario, usuario_table)
 mapper (Estado_Proyecto, estado_proyecto_table)
 
 mapper (Proyecto, proyecto_table)
+
+mapper (Rol, rol_table)
+
+mapper (Rol_Proyecto, rol_proyecto_table)
+
+mapper (Rol_Usuario, rol_usuario_table)
+
+mapper (Fase, fase_table)
+
+mapper (Rol_Fase, rol_fase_table)
 
 # functions for populating the database
 def bootstrap_model(clean=False):
