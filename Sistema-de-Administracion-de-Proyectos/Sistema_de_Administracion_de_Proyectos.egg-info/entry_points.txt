@@ -1,0 +1,4 @@
+[console_scripts]
+bootstrap-sap = sap.command:bootstrap
+start-sap = sap.command:start
+

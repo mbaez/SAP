@@ -1,0 +1,6 @@
+include start-sap.py
+include *.cfg
+include sap/config/*.cfg
+recursive-include sap/templates *.html
+recursive-include sap/templates *.kid
+recursive-include sap/static *
