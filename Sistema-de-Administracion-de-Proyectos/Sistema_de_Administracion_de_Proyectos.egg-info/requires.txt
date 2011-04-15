@@ -1,3 +1,0 @@
-TurboGears >= 1.1.1
-WebTest
-SQLAlchemy>=0.4.3
