@@ -154,7 +154,7 @@ relacion_item_table = Table( 'relacion_item', metadata,
 
 recurso_table = Table( 'recurso', metadata,
 		Column ('id_recurso', INTEGER, primary_key = True),
-		#Column ('adjunto', BLOB, nullable = True),
+		Column ('adjunto', BYTEA, nullable = True),
 		Column ('observacion', VARCHAR(100))
 )
 
@@ -176,7 +176,7 @@ class Permiso(object):
 class Usuario(object):
 	pass
 
-class Estado_Proyecto(object):
+class EstadoProyecto(object):
 	pass
 
 class Proyecto(object):
@@ -185,43 +185,43 @@ class Proyecto(object):
 class Rol(object):
 	pass
 
-class Rol_Proyecto(object):
+class RolProyecto(object):
 	pass
 
-class Rol_Usuario(object):
+class RolUsuario(object):
 	pass
 
 class Fase (object):
 	pass
 
-class Rol_Fase(object):
+class RolFase(object):
 	pass
 
-class Estado_Linea_Base (object):
+class EstadoLineaBase (object):
 	pass
 
-class Linea_Base(object):
+class LineaBase(object):
 	pass
 
-class Tipo_Item (object):
+class TipoItem (object):
 	pass
 
-class Atributo_Tipo_Item(object) :
+class AtributoTipoItem(object) :
 	pass
 
-class Estado_Item(object):
+class EstadoItem(object):
 	pass
 
 class Item(object):
 	pass
 
-class Linea_Base_Item(object):
+class LineaBaseItem(object):
 	pass
 
-class Relacion_Parentesco(object):
+class RelacionParentesco(object):
 	pass
 
-class Relacion_Item(object):
+class RelacionItem(object):
 	pass
 
 # set up mappers between your data tables and classes
@@ -232,37 +232,37 @@ mapper (Permiso, permiso_table)
 
 mapper (Usuario, usuario_table)
 
-mapper (Estado_Proyecto, estado_proyecto_table)
+mapper (EstadoProyecto, estado_proyecto_table)
 
 mapper (Proyecto, proyecto_table)
 
 mapper (Rol, rol_table)
 
-mapper (Rol_Proyecto, rol_proyecto_table)
+mapper (RolProyecto, rol_proyecto_table)
 
-mapper (Rol_Usuario, rol_usuario_table)
+mapper (RolUsuario, rol_usuario_table)
 
 mapper (Fase, fase_table)
 
-mapper (Rol_Fase, rol_fase_table)
+mapper (RolFase, rol_fase_table)
 
-mapper (Estado_Linea_Base, estado_linea_base_table)
+mapper (EstadoLineaBase, estado_linea_base_table)
 
-mapper (Linea_Base, linea_base_table)
+mapper (LineaBase, linea_base_table)
 
-mapper (Tipo_Item, tipo_item_table)
+mapper (TipoItem, tipo_item_table)
 
-mapper (Atributo_Tipo_Item, atributo_tipo_item_table)
+mapper (AtributoTipoItem, atributo_tipo_item_table)
 
-mapper (Estado_Item, estado_item_table)
+mapper (EstadoItem, estado_item_table)
 
 mapper (Item, item_table)
 
-mapper (Linea_Base_Item, linea_base_item_table)
+mapper (LineaBaseItem, linea_base_item_table)
 
-mapper (Relacion_Parentesco, relacion_parentesco_table)
+mapper (RelacionParentesco, relacion_parentesco_table)
 
-mapper (Relacion_Item, relacion_item_table)
+mapper (RelacionItem, relacion_item_table)
 
 # functions for populating the database
 def bootstrap_model(clean=False):
