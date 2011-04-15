@@ -93,6 +93,77 @@ rol_fase_table = Table( 'rol_fase', metadata,
 		Column ('id_rol', INTEGER,  ForeignKey('rol.id_rol'), primary_key = True),
 )
 
+estado_linea_base_table = Table('estado_linea_base', metadata,
+		Column ('id_estado_linea_base',INTEGER, primary_key = True),
+		Column ('nombre', VARCHAR(50), nullable = False)
+)
+
+linea_base_table = Table('linea_base', metadata,
+		Column ('id_linea_base', INTEGER, primary_key = True),
+		Column ('id_estado_lineabase',INTEGER, ForeignKey('estado_linea_base.id_estado_linea_base')),
+		Column ('id_fase', INTEGER, ForeignKey ('fase.id_fase'))
+)
+
+tipo_item_table =  Table ('tipo_item', metadata,
+		Column ('id_tipo_item', INTEGER, primary_key = True),
+		Column ('id_fase', INTEGER, ForeignKey ('fase.id_fase')),
+		Column ('nombre', VARCHAR(50), nullable = False),
+		Column ('descripcion', VARCHAR(200))
+)
+
+atributo_tipo_item_table = Table ( 'atributo_tipo_item', metadata,
+		Column ('id_atributo_tipo_item', INTEGER, primary_key = True),
+		Column ('id_tipo_item', INTEGER, ForeignKey ('tipo_item.id_tipo_item'), nullable = False),
+		Column ('nombre', VARCHAR(50), nullable = False),
+		Column ('tipo_atributo', VARCHAR(10))
+)
+
+estado_item_table = Table('estado_item', metadata,
+		Column ('id_estado_item', INTEGER, primary_key = True),
+		Column ('nombre', VARCHAR(50), nullable = False)
+)
+
+item_table = Table( 'item', metadata,
+		Column ('id_item', INTEGER, primary_key = True),
+		Column ('id_estado_item', INTEGER, ForeignKey('estado_item.id_estado_item'), nullable = False),
+		Column ('id_tipo_item', INTEGER, ForeignKey ('tipo_item.id_tipo_item'), nullable = False),
+		Column ('id_fase', INTEGER, ForeignKey('fase.id_fase'), nullable = False),
+		Column ('version', INTEGER, nullable = False),
+		Column ('prioridad', INTEGER, nullable = False),
+		Column ('complejidad', INTEGER, nullable = False),
+		Column ('descripcion', VARCHAR(200)),
+		Column ('observacion', VARCHAR(100))
+)
+
+linea_base_item_table = Table( 'linea_base_item', metadata,
+		Column ('id_item', INTEGER, ForeignKey('item.id_item'), primary_key = True),
+		Column ('id_linea_base', INTEGER, ForeignKey('linea_base.id_linea_base'), primary_key = True)
+)
+
+relacion_parentesco_table = Table('relacion_parentesco', metadata,
+		Column ('id_relacion_parentesco', INTEGER, primary_key = True),
+		Column ('nombre', VARCHAR(50), nullable = False),
+		Column ('descripcion', VARCHAR(200)),
+)
+
+relacion_item_table = Table( 'relacion_item', metadata,
+		Column ('id_item_actual', INTEGER, ForeignKey ('item.id_item'), primary_key = True),
+		Column ('id_item_relacionado', INTEGER, ForeignKey ('item.id_item'), primary_key = True),
+		Column ('id_relacion_parentesco', INTEGER, ForeignKey('relacion_parentesco.id_relacion_parentesco'), nullable = False)
+)
+
+recurso_table = Table( 'recurso', metadata,
+		Column ('id_recurso', INTEGER, primary_key = True),
+		#Column ('adjunto', BLOB, nullable = True),
+		Column ('observacion', VARCHAR(100))
+)
+
+item_detalle_table = Table ('item_table', metadata,
+		Column ('id_detalle', INTEGER, primary_key = True),
+		Column ('id_item', INTEGER, ForeignKey('item.id_item')),
+		Column ('id_recurso', INTEGER, ForeignKey('recurso.id_recurso'))
+)
+
 # your model classes
 # http://www.sqlalchemy.org/docs/05/ormtutorial.html#define-a-python-class-to-be-mapped
 
@@ -126,6 +197,33 @@ class Fase (object):
 class Rol_Fase(object):
 	pass
 
+class Estado_Linea_Base (object):
+	pass
+
+class Linea_Base(object):
+	pass
+
+class Tipo_Item (object):
+	pass
+
+class Atributo_Tipo_Item(object) :
+	pass
+
+class Estado_Item(object):
+	pass
+
+class Item(object):
+	pass
+
+class Linea_Base_Item(object):
+	pass
+
+class Relacion_Parentesco(object):
+	pass
+
+class Relacion_Item(object):
+	pass
+
 # set up mappers between your data tables and classes
 # http://www.sqlalchemy.org/docs/05/mappers.html
 
@@ -147,6 +245,24 @@ mapper (Rol_Usuario, rol_usuario_table)
 mapper (Fase, fase_table)
 
 mapper (Rol_Fase, rol_fase_table)
+
+mapper (Estado_Linea_Base, estado_linea_base_table)
+
+mapper (Linea_Base, linea_base_table)
+
+mapper (Tipo_Item, tipo_item_table)
+
+mapper (Atributo_Tipo_Item, atributo_tipo_item_table)
+
+mapper (Estado_Item, estado_item_table)
+
+mapper (Item, item_table)
+
+mapper (Linea_Base_Item, linea_base_item_table)
+
+mapper (Relacion_Parentesco, relacion_parentesco_table)
+
+mapper (Relacion_Item, relacion_item_table)
 
 # functions for populating the database
 def bootstrap_model(clean=False):
