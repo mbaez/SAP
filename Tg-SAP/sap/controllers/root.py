@@ -70,7 +70,7 @@ class RootController(BaseController):
             flash(_('Wrong credentials'), 'warning')
         return dict(page='login', login_counter=str(login_counter),
                     came_from=came_from)
-    
+
     @expose()
     def post_login(self, came_from=url('/')):
         """

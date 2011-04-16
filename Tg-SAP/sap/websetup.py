@@ -25,10 +25,10 @@ def setup_app(command, conf, vars):
     model.metadata.create_all(bind=engine)
 
     manager = model.User()
-    manager.user_name = u'manager'
-    manager.display_name = u'Example manager'
-    manager.email_address = u'manager@somedomain.com'
-    manager.password = u'managepass'
+    manager.user_name = u'admin'
+    manager.display_name = u'Administrador'
+    manager.email_address = u'admin@somedomain.com'
+    manager.password = u'admin'
 
     model.DBSession.add(manager)
 

@@ -12,7 +12,7 @@ from sqlalchemy.dialects.postgresql import *
 
 from sap.model import DeclarativeBase, metadata, DBSession
 
-__all__ = ['Permiso']
+__all__ = ['Permiso', 'Usuario', 'Proyecto', 'Fase', 'Rol','LineaBase', 'TipoItem', 'Item']
 
 
 class Permiso(DeclarativeBase):
@@ -21,11 +21,13 @@ class Permiso(DeclarativeBase):
 	"""
 	__tablename__ = 'permiso'
 	
-	id = Column ('id_permiso', INTEGER, primary_key=True)
+	id_permiso = Column ('id_permiso', INTEGER, primary_key=True)
 	
 	nombre = Column ('nombre', VARCHAR(50), nullable=False)
 	
 	descripcion = Column ('descripcion', VARCHAR(100))
+	def __str__(self):
+		return '"%s" (%d)' % (self.id_permiso, self.nombre)
 
 
 class Usuario(DeclarativeBase):
@@ -34,7 +36,7 @@ class Usuario(DeclarativeBase):
 	"""
 	__tablename__ = 'usuario'
 	
-	id = Column ('id_usuario', INTEGER, primary_key=True)
+	id_usuario = Column ('id_usuario', INTEGER, primary_key=True)
 	
 	username = Column ('username', VARCHAR(50), nullable=False)
 	
@@ -54,6 +56,7 @@ class Usuario(DeclarativeBase):
 
 
 
+
 class EstadoProyecto(DeclarativeBase):
 
 	__tablename__ = 'estado_proyecto'
@@ -69,7 +72,7 @@ class Proyecto(DeclarativeBase):
 	
 	__tablename__ = 'proyecto'
 	
-	id = Column ('id_proyecto', INTEGER, primary_key=True)
+	id_proyecto = Column ('id_proyecto', INTEGER, primary_key=True)
 	
 	lider = Column ('id_usuario_lider', INTEGER, 
 					ForeignKey('usuario.id_usuario'))
@@ -88,7 +91,7 @@ class Fase(DeclarativeBase):
 	
 	__tablename__ = 'fase'
 	
-	id = Column ('id_fase', INTEGER, primary_key=True)
+	id_fase = Column ('id_fase', INTEGER, primary_key=True)
 	
 	proyecto = Column ('id_proyecto', INTEGER, 
 						ForeignKey('proyecto.id_proyecto'), 
@@ -103,7 +106,7 @@ class Rol(DeclarativeBase):
 	
 	__tablename__ = 'rol'
 	
-	id = Column ('id_rol', INTEGER, primary_key=True)
+	id_rol = Column ('id_rol', INTEGER, primary_key=True)
 	
 	nombre = Column ('nombre', VARCHAR(50), nullable=False)
 	
@@ -167,7 +170,7 @@ class LineaBase (DeclarativeBase):
 	
 	__tablename__ = 'linea_base'
 	
-	id = Column ('id_linea_base', INTEGER, primary_key=True)
+	id_linea_base = Column ('id_linea_base', INTEGER, primary_key=True)
 	
 	estado = Column ('id_estado_lineabase',INTEGER, 
 				ForeignKey('estado_linea_base.id_estado_linea_base'))
@@ -179,7 +182,7 @@ class TipoItem(DeclarativeBase) :
 	
 	__tablename__ = 'tipo_item'
 	
-	id = Column ('id_tipo_item', INTEGER, primary_key=True)
+	id_tipo_item = Column ('id_tipo_item', INTEGER, primary_key=True)
 	
 	fase = Column ('id_fase', INTEGER, ForeignKey ('fase.id_fase'))
 	
@@ -217,7 +220,7 @@ class Item(DeclarativeBase):
 	
 	__tablename__ = 'item'
 	
-	id = Column ('id_item', INTEGER, primary_key = True)
+	id_item = Column ('id_item', INTEGER, primary_key = True)
 	
 	estado = Column ('id_estado_item', INTEGER,
 						ForeignKey('estado_item.id_estado_item'),
