@@ -44,8 +44,6 @@ class Usuario(DeclarativeBase):
 	
 	apellido = Column ('apellido', VARCHAR(50), nullable=False)
 	
-	nro_documento = Column ('nro_documento', VARCHAR(20), nullable=False)
-	
 	contrasenha = Column ('contrasenha', VARCHAR(100), nullable=False)
 	
 	mail = Column ('mail', VARCHAR(100))
@@ -53,6 +51,10 @@ class Usuario(DeclarativeBase):
 	observacion = Column ('observacion', VARCHAR(200))
 	
 	estado = Column ('estado', VARCHAR(10))
+	
+	def __str__(self):
+		return '%s %s %s %s %s' % (self.id_usuario, self.username, 
+				self.nombre, self.apellido, self.mail)
 
 
 
