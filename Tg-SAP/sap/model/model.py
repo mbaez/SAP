@@ -5,7 +5,7 @@ Contien los modelos de las tablas correspondientes al proyecto SAP
 """
 
 from sqlalchemy import *
-from sqlalchemy.orm import mapper, relation
+from sqlalchemy.orm import mapper, relation, relationship
 from sqlalchemy import Table, ForeignKey, Column
 from sqlalchemy.types import Integer, Unicode
 from sqlalchemy.dialects.postgresql import *
@@ -36,7 +36,8 @@ class Usuario(DeclarativeBase):
 	"""
 	__tablename__ = 'usuario'
 	
-	id_usuario = Column ('id_usuario', INTEGER, primary_key=True)
+	id_usuario = Column ('id_usuario', INTEGER, autoincrement=True,
+							primary_key=True)
 	
 	username = Column ('username', VARCHAR(50), nullable=False)
 	
@@ -58,12 +59,12 @@ class Usuario(DeclarativeBase):
 
 
 
-
 class EstadoProyecto(DeclarativeBase):
 
 	__tablename__ = 'estado_proyecto'
 	
-	id = Column ('id_estado_proyecto', INTEGER, primary_key=True)
+	id = Column ('id_estado_proyecto', INTEGER, autoincrement=True,
+					primary_key=True)
 	
 	descripcion = Column ('descripcion', VARCHAR(200), nullable=False)
 	
@@ -74,13 +75,22 @@ class Proyecto(DeclarativeBase):
 	
 	__tablename__ = 'proyecto'
 	
-	id_proyecto = Column ('id_proyecto', INTEGER, primary_key=True)
+	id_proyecto = Column ('id_proyecto', INTEGER, autoincrement=True,
+							primary_key=True)
 	
-	lider = Column ('id_usuario_lider', INTEGER, 
+	lider_id = Column ('id_usuario_lider', INTEGER, 
 					ForeignKey('usuario.id_usuario'))
+	"""
+	Se relaciona con una instnacia de una clase Usuario
+	"""
+	lider = relation ('Usuario', backref='proyectos')
 	
-	estado = Column ('id_estado_proyecto', INTEGER, 
+	estado_id = Column ('id_estado_proyecto', INTEGER, 
 					ForeignKey('estado_proyecto.id_estado_proyecto'))
+	"""
+	Se relaciona con una instnacia de una clase EstadoProyecto
+	"""
+	estado = relation ('EstadoProyecto', backref='proyectos')
 	
 	nombre = Column ('nombre', VARCHAR(50), nullable=False)
 	
@@ -93,7 +103,8 @@ class Fase(DeclarativeBase):
 	
 	__tablename__ = 'fase'
 	
-	id_fase = Column ('id_fase', INTEGER, primary_key=True)
+	id_fase = Column ('id_fase', INTEGER, autoincrement=True,
+						primary_key=True)
 	
 	proyecto = Column ('id_proyecto', INTEGER, 
 						ForeignKey('proyecto.id_proyecto'), 
@@ -108,7 +119,8 @@ class Rol(DeclarativeBase):
 	
 	__tablename__ = 'rol'
 	
-	id_rol = Column ('id_rol', INTEGER, primary_key=True)
+	id_rol = Column ('id_rol', INTEGER, autoincrement=True, 
+						primary_key=True)
 	
 	nombre = Column ('nombre', VARCHAR(50), nullable=False)
 	
@@ -163,7 +175,8 @@ class EstadoLineaBase(DeclarativeBase):
 	
 	__tablename__ = 'estado_linea_base'
 	
-	id = Column ('id_estado_linea_base',INTEGER, primary_key=True)
+	id = Column ('id_estado_linea_base',INTEGER, autoincrement=True, 
+					primary_key=True)
 	
 	nombre = Column ('nombre', VARCHAR(50), nullable=False)
 
@@ -172,7 +185,8 @@ class LineaBase (DeclarativeBase):
 	
 	__tablename__ = 'linea_base'
 	
-	id_linea_base = Column ('id_linea_base', INTEGER, primary_key=True)
+	id_linea_base = Column ('id_linea_base', INTEGER, autoincrement=True, 
+								primary_key=True)
 	
 	estado = Column ('id_estado_lineabase',INTEGER, 
 				ForeignKey('estado_linea_base.id_estado_linea_base'))
@@ -184,7 +198,8 @@ class TipoItem(DeclarativeBase) :
 	
 	__tablename__ = 'tipo_item'
 	
-	id_tipo_item = Column ('id_tipo_item', INTEGER, primary_key=True)
+	id_tipo_item = Column ('id_tipo_item', INTEGER, autoincrement=True,
+							primary_key=True)
 	
 	fase = Column ('id_fase', INTEGER, ForeignKey ('fase.id_fase'))
 	
@@ -197,7 +212,8 @@ class AtributoTipoItem(DeclarativeBase):
 	
 	__tablename__ = 'atributo_tipo_item'
 	
-	id = Column ('id_atributo_tipo_item', INTEGER, primary_key=True)
+	id = Column ('id_atributo_tipo_item', INTEGER, autoincrement=True, 
+					primary_key=True)
 	
 	tipo_item = Column ('id_tipo_item', INTEGER, 
 						ForeignKey ('tipo_item.id_tipo_item'),
@@ -213,7 +229,8 @@ class EstadoItem(DeclarativeBase):
 	
 	__tablename__ = 'estado_item'
 	
-	id = Column ('id_estado_item', INTEGER, primary_key=True)
+	id = Column ('id_estado_item', INTEGER, autoincrement=True, 
+					primary_key=True)
 	
 	nombre = Column ('nombre', VARCHAR(50), nullable=False)
 
@@ -222,7 +239,8 @@ class Item(DeclarativeBase):
 	
 	__tablename__ = 'item'
 	
-	id_item = Column ('id_item', INTEGER, primary_key = True)
+	id_item = Column ('id_item', INTEGER, autoincrement=True,
+						primary_key = True)
 	
 	estado = Column ('id_estado_item', INTEGER,
 						ForeignKey('estado_item.id_estado_item'),
@@ -263,7 +281,7 @@ class RelacionParentesco(DeclarativeBase):
 	__tablename__ = 'relacion_parentesco'
 	
 	relacion_parentesco = Column ('id_relacion_parentesco', INTEGER, 
-								primary_key=True)
+								autoincrement=True, primary_key=True)
 	
 	nombre = Column ('nombre', VARCHAR(50), nullable=False)
 	
@@ -290,7 +308,8 @@ class Recurso(DeclarativeBase):
 	
 	__tablename__ = 'recurso'
 
-	id= Column ('id_recurso', INTEGER, primary_key = True)
+	id= Column ('id_recurso', INTEGER, autoincrement=True, 
+				primary_key = True)
 
 	adjunto = Column ('adjunto', BYTEA, nullable = False)
 
