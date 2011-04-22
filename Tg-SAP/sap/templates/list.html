@@ -14,16 +14,26 @@
 <body>
 
 <h1>${page}</h1>
-<ol>
-  <li py:for="element in array" py:content="element"></li>
-</ol>
-<script type="text/javascript" charset="utf-8" >
-function redir (__url) { 
-	return py:tg.url(__url);
-}
-
-</script>
-<p><a href="/new_${modelname}">Nuevo</a></p>
+<table>
+	<thead>
+	<!--Muestra el nombre de las columnas -->
+	<py:for each="items in headers">
+		<tr>
+			<th py:for="item in items" py:content="item"></th>
+		</tr>
+		
+	</py:for>
+	</thead>
+	<!--Muestra las filas-->
+	<tbody>
+	<py:for each="items in array">
+		<tr>
+			<td py:for="item in items" py:content="item"></td>
+		</tr>
+	</py:for>
+	</tbody>
+</table>
+<p><a href="/${modelname}/new">Nuevo</a></p>
 
 </body>
 </html>

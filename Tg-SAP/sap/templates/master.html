@@ -34,7 +34,7 @@
         </li>
         <!--Solo el usuario que tiene permisos de manage puede ver el link -->
         <li py:if="tg.predicates.has_permission('manage')" id="admin" class="loginlogout">
-			<a href="${tg.url('/list_usuarios')}">Usuarios</a>
+			<a href='/usuario/list'>Usuarios</a>
 		</li>
     </span>
   </ul>

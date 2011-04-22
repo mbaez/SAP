@@ -54,7 +54,7 @@ class Usuario(DeclarativeBase):
 	estado = Column ('estado', VARCHAR(10))
 	
 	def __str__(self):
-		return '%s %s %s %s %s' % (self.id_usuario, self.username, 
+		return '%s,%s,%s,%s,%s' % (self.id_usuario, self.username, 
 				self.nombre, self.apellido, self.mail)
 
 

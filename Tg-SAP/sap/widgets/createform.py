@@ -1,7 +1,7 @@
 """Create Form"""
 
 from tw.api import WidgetsList
-from tw.forms import TableForm, CalendarDatePicker, SingleSelectField, TextField, TextArea
+from tw.forms import TableForm, SingleSelectField, TextField, TextArea
 
 class UsuarioForm(TableForm):
 
@@ -9,7 +9,7 @@ class UsuarioForm(TableForm):
 		username = TextField()
 		nombre = TextField()
 		apellido = TextField()
-		contrasenha = TextField(label_text='Contrasenha')
+		contrasenha = TextField()
 		mail = TextField()
 		estado = TextField()
 		descripcion = TextArea()
@@ -21,10 +21,8 @@ class ProyectoForm(TableForm):
 		estado = TextField()
 		nro_fases = TextField(label_text='Numero de Fases')
 		descripcion = TextArea()
-			
-create_usuario_form = UsuarioForm("create_usuario_form", action='create_usuario')
-
-create_proyecto_form = ProyectoForm("create_proyecto_form", action='create_proyecto')
 
 
+create_usuario_form = UsuarioForm("create_usuario_form", action='create')
 
+create_proyecto_form = ProyectoForm("create_proyecto_form", action='create')

@@ -4,7 +4,12 @@ html {
 	margin: 0;
 	padding: 0;
 }
-
+table{
+	text-align: center;
+	border: 1px;
+	border-color:#000000;
+	border-spacing: 10px 10px;
+}
 body {
 	text-align: left;
 	width: 960px;
@@ -18,13 +23,13 @@ a {
 	color: #286571;
 }
 
-#header {
+header {
 	height: 132px;
 	margin: 10px 10px 0 10px;
 	background: url('../images/headerbg.png') top left no-repeat;
 }
 
-#header h1 {
+header h1 {
 	padding: 0;
 	margin: 0;
 	padding-top: 30px;
@@ -34,7 +39,7 @@ a {
 	font-size: 36px;
 }
 
-#header h1 .subtitle {
+header h1 .subtitle {
 	font-size: 60%;
 	position: absolute;
 	left: 240px;
@@ -245,7 +250,7 @@ form.loginfields input#submit
 }
 
 /* Other and footer */
-#footer {
+footer {
 	background: #fff;
 	padding: 10px;
 	color:#888888;
