@@ -12,6 +12,7 @@ from sap.model import DBSession, metadata
 from sap.controllers.error import ErrorController
 from sap.controllers.secure import SecureController
 from sap.controllers.usuario import UsuarioContoller
+from sap.controllers.proyecto import ProyectoController
 
 __all__ = ['RootController']
 
@@ -40,7 +41,12 @@ class RootController(BaseController):
 	usuario/
 	"""
 	usuario = UsuarioContoller()
-
+	
+	"""
+	Controlador para proyecto
+	"""
+	proyecto = ProyectoController()
+	
 	@expose('sap.templates.index')
 	def index(self):
 		"""Handle the front-page."""
