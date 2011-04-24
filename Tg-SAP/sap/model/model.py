@@ -12,7 +12,7 @@ from sqlalchemy.dialects.postgresql import *
 
 from sap.model import DeclarativeBase, metadata, DBSession
 
-__all__ = ['Permiso', 'Usuario', 'Proyecto', 'Fase', 'Rol','LineaBase', 'TipoItem', 'Item']
+__all__ = ['Permiso', 'Usuario', 'Proyecto','EstadoProyecto', 'Fase', 'Rol','LineaBase', 'TipoItem', 'Item']
 
 
 class Permiso(DeclarativeBase):
@@ -63,7 +63,7 @@ class EstadoProyecto(DeclarativeBase):
 
 	__tablename__ = 'estado_proyecto'
 	
-	id = Column ('id_estado_proyecto', INTEGER, autoincrement=True,
+	id_estado_proyecto = Column ('id_estado_proyecto', INTEGER, autoincrement=True,
 					primary_key=True)
 	
 	descripcion = Column ('descripcion', VARCHAR(200), nullable=False)

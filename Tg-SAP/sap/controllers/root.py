@@ -13,6 +13,7 @@ from sap.controllers.error import ErrorController
 from sap.controllers.secure import SecureController
 from sap.controllers.usuario import UsuarioContoller
 from sap.controllers.proyecto import ProyectoController
+from sap.controllers.rol import RolController
 
 __all__ = ['RootController']
 
@@ -43,9 +44,10 @@ class RootController(BaseController):
 	usuario = UsuarioContoller()
 	
 	"""
-	Controlador para proyecto
+	Controladores para proyecto y roles
 	"""
 	proyecto = ProyectoController()
+	rol = RolController()
 	
 	@expose('sap.templates.index')
 	def index(self):

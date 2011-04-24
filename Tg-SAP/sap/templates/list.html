@@ -13,27 +13,10 @@
 
 <body>
 
-<h1>${page}</h1>
-<table>
-	<thead>
-	<!--Muestra el nombre de las columnas -->
-	<py:for each="items in headers">
-		<tr>
-			<th py:for="item in items" py:content="item"></th>
-		</tr>
-		
-	</py:for>
-	</thead>
-	<!--Muestra las filas-->
-	<tbody>
-	<py:for each="items in array">
-		<tr>
-			<td py:for="item in items" py:content="item"></td>
-		</tr>
-	</py:for>
-	</tbody>
-</table>
-<p><a href="/${modelname}/new">Nuevo</a></p>
-
+<div style="float:left width: 80%">
+	<h1 style="margin-top:1px;">Listado de ${modelname}</h1>
+	${tmpl_context.widget(value=value)}
+</div>
+<p><a href="new/">Nuevo</a></p>
 </body>
 </html>

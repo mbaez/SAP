@@ -12,72 +12,71 @@ Import the usuario widget
 """
 from tg import tmpl_context
 from sap.widgets.createform import *
+from sap.widgets.listform import *
+from sap.widgets.editform import *
 
 from sap.model import *
 from tg import tmpl_context, redirect, validate
 
-class ProyectoController(BaseController):
-	"""
-	prueba de abm y de visibilidad de datos en el template master.html
-	anhadi py:if="tg.predicates.has_permission('manage')" para que solo
-	muestre el link a los usuarios que posean el permiso 'manage'
-	ademas los metodos de new_usuario, create_usuario y list_usuario estan
-	anotados con @require(predicates.has_permission('manage')) esto es para que 
-	no se pueda acceder a al formulario atravez de la url.
-	"""
+from tg.controllers import RestController
+
+class ProyectoController(RestController):
+
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('manage'))
-	def new (self, **kw):
-		"""
-		Despliega en pantalla el widget ProyectoForm que se encuentra
-		en la carpeta widget
-		"""
-		tmpl_context.form = create_proyecto_form
+	def new(self, **kw):
+		tmpl_context.widget = new_proyecto_form
+		return dict(value=kw, modelname='Proyecto')
 		
-		return dict(modelname='Proyecto',
-			genre_options=DBSession.query(Proyecto.id_proyecto),
-			page='Nuevo Proyecto')
-
-
-	@validate(create_proyecto_form, error_handler=new)
-	@expose('sap.templates.new')
-	@require(predicates.has_permission('manage'))
-	def create(self, **kw):
-		"""
-		El formulario envia los argumentos del formulario 
-		a este metodo en la variable kw y estos seteados a una variable
-		del tipo Proyecto.
-		"""
-		proyecto = Proyecto()
-		proyecto.nombre = kw['nombre']
-		proyecto.lider_id = kw['lider_id']
-		proyecto.estado = kw['estado']
-		proyecto.nro_fases = kw['nro_fases']
-		proyecto.descripcion = kw['descripcion']
-		#guarda el usuario registrado en el formulario
+	@validate(new_proyecto_form, error_handler=new)
+	@expose()
+	def post(self, modelname, **kw):
+		del kw['sprox_id']
+		kw['lider'] = DBSession.query(Usuario).get(kw['lider'])
+		kw['estado'] = DBSession.query(EstadoProyecto).get(kw['estado'])
+		proyecto = Proyecto(**kw)
 		DBSession.add(proyecto)
-		#emite un mensaje y redirecciona a la pagina de listado
-		flash("El Proyecto ha sido creado correctamente.")
-		redirect("list")
-		
+		flash("El proyecto ha sido creado correctamente.")
+		redirect("/proyecto/list")
+	
+	@expose('sap.templates.edit')
+	@require(predicates.has_permission('manage'))
+	def edit(self, id,**kw):
+		proyecto =  DBSession.query(Proyecto).get(id)
+		tmpl_context.widget = proyecto_edit_form
+		kw['id_proyecto'] = proyecto.id_proyecto
+		kw['nombre'] = proyecto.nombre
+		kw['lider'] = DBSession.query(Usuario).all() # get(proyecto.lider_id)
+		kw['estado'] = DBSession.query(EstadoProyecto).all() #get( proyecto.estado)
+		kw['lider_id'] = proyecto.lider_id
+		kw['estado_id'] = proyecto.estado_id
+		kw['nro_fases'] = proyecto.nro_fases
+		kw['descripcion'] = proyecto.descripcion
+		return dict(value=kw, modelname='Proyecto')
+	
+	@validate(proyecto_edit_form, error_handler=edit)
+	@expose()
+	def put(self, _method, **kw):
+		del kw['sprox_id']
+		kw['lider'] = DBSession.query(Usuario).get(kw['lider'])
+		kw['estado'] = DBSession.query(EstadoProyecto).get(kw['estado'])
+		proyecto = Proyecto(**kw)
+		DBSession.merge(proyecto)
+		flash("El proyecto ha sido modificado correctamente.")
+		redirect("/proyecto/list")
+	
 
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('manage'))
 	def list(self, **kw):
 		"""Lista todos los proyectos de la base de datos"""
-		list = DBSession.query(Proyecto)
-		items = [] 
-		head = []
-		'''
-		Se anhade el nombre de las columnas
-		'''
-		head.append(['ID', 'Nombre'] )
-					
-		'''
-		Se formatea la entidad como una matriz para ser visualizada en la tabla
-		'''
-		for item in list:
-			items.append([item.id_proyecto, item.nombre])
-		
-		return dict(array=items, headers=head, modelname='proyecto',
-					page='Lista de Proyectos')
+		tmpl_context.widget = proyecto_table
+		value = proyecto_filter.get_value()
+		return dict(modelname='Proyectos',value=value)
+	
+	@expose()
+	def post_delete(self, id_proyecto, **kw):
+		DBSession.delete(DBSession.query(Proyecto).get(id_proyecto))
+		flash("El proyecto ha sido "+ id_proyecto +" eliminado correctamente.")
+		redirect("/proyecto/list")
+	

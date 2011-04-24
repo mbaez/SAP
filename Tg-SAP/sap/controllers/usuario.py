@@ -8,15 +8,19 @@ from sap.model import DBSession, metadata
 
 
 """
-Import the usuario widget
+Import create and tablefilter widget
 """
 from tg import tmpl_context
 from sap.widgets.createform import *
+from sap.widgets.listform import *
+from sap.widgets.editform import *
 
 from sap.model import *
 from tg import tmpl_context, redirect, validate
 
-class UsuarioContoller(BaseController):
+from tg.controllers import RestController
+
+class UsuarioContoller(RestController):
 	"""
 	prueba de abm y de visibilidad de datos en el template master.html
 	anhadi py:if="tg.predicates.has_permission('manage')" para que solo
@@ -27,63 +31,55 @@ class UsuarioContoller(BaseController):
 	"""
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('manage'))
-	def new (self, **kw):
-		"""
-		Despliega en pantalla el widget UsuarioForm que se encuentra
-		en la carpeta widget
-		"""
-		tmpl_context.form = create_usuario_form
+	def new(self, **kw):
+		tmpl_context.widget = new_usuario_form
+		return dict(value=kw, modelname='Usuario')
 		
-		return dict(modelname='Usuario',
-			genre_options=DBSession.query(Usuario.id_usuario),
-			page='Nuevo Usuario')
-
-
-	@validate(create_usuario_form, error_handler=new)
-	@expose('sap.templates.new')
-	@require(predicates.has_permission('manage'))
-	def create(self, **kw):
-		"""
-		El formulario envia los argumentos del formulario 
-		a este metodo en la variable kw y estos seteados a una variable
-		del tipo Usuario.
-		"""
-		usuario = Usuario()
-		usuario.username = kw['username']
-		usuario.nombre = kw['nombre']
-		usuario.apellido = kw['apellido']
-		usuario.contrasenha = kw['contrasenha']
-		usuario.mail = kw['mail']
-		usuario.observacion = kw['descripcion']
-		usuario.estado = kw['estado']
-		#guarda el usuario registrado en el formulario
+	@validate(new_usuario_form, error_handler=new)
+	@expose()
+	def post(self, modelname, **kw):
+		del kw['sprox_id']
+		usuario = Usuario(**kw)
 		DBSession.add(usuario)
-		#emite un mensaje y redirecciona a la pagina de listado
 		flash("El usuario ha sido creado correctamente.")
-		redirect("list")
-		
+		redirect("/usuario/list")
+	
+	@expose('sap.templates.edit')
+	@require(predicates.has_permission('manage'))
+	def edit(self, id,**kw):
+		usuario =  DBSession.query(Usuario).get(id)
+		tmpl_context.widget = usuario_edit_form
+		kw['id_usuario'] = usuario.id_usuario
+		kw['username'] = usuario.username
+		kw['nombre'] = usuario.nombre
+		kw['apellido'] = usuario.apellido
+		kw['contrasenha'] = usuario.contrasenha
+		kw['mail'] = usuario.mail
+		kw['observacion'] = usuario.observacion
+		kw['estado'] = usuario.estado
+		return dict(value=kw, modelname='Usuario')
+	
+	@validate(usuario_edit_form, error_handler=edit)
+	@expose()
+	def put(self, _method, **kw):
+		del kw['sprox_id']
+		usuario = Usuario(**kw)
+		DBSession.merge(usuario)
+		flash("El usuario "+usuario.__str__()+"ha sido modificado correctamente.")
+		redirect("/usuario/list")
+	
 
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('manage'))
 	def list(self, **kw):
 		"""Lista todos los usuarios de la base de datos"""
-		list = DBSession.query(Usuario)
-		items = [] 
-		head = []
-		'''
-		Se anhade el nombre de las columnas
-		'''
-		head.append(['ID', 'Username', 'Nombre','Apellido', 'Contrasenha',
-					'Mail','Observacion','Estado'] )
-					
-		'''
-		Se formatea la entidad como una matriz para ser visualizada en la tabla
-		'''
-		for item in list:
-			items.append([item.id_usuario, item.username, item.nombre,
-							item.apellido, item.contrasenha, item.mail,
-							item.observacion, item.estado]
-						)
-		
-		return dict(array=items, headers=head, modelname='usuario',
-					page='Lista de Usuarios')
+		tmpl_context.widget = usuario_table
+		value = usuario_filler.get_value()
+		return dict(modelname='Usuarios',value=value)
+	
+	@expose()
+	def post_delete(self, id_usuario, **kw):
+		DBSession.delete(DBSession.query(Usuario).get(id_usuario))
+		flash("El usuario ha sido "+ id_usuario +" eliminado correctamente.")
+		redirect("/usuario/list")
+

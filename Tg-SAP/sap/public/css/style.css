@@ -4,12 +4,7 @@ html {
 	margin: 0;
 	padding: 0;
 }
-table{
-	text-align: center;
-	border: 1px;
-	border-color:#000000;
-	border-spacing: 10px 10px;
-}
+
 body {
 	text-align: left;
 	width: 960px;
