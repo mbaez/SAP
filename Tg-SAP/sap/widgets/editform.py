@@ -3,6 +3,7 @@ from sap.model import *
 
 from sprox.formbase import EditableForm
 from sprox.fillerbase import EditFormFiller
+from tw.forms import PasswordField
 
 class UsuarioEditFiller(EditFormFiller):
 	__model__ = Usuario
@@ -12,6 +13,7 @@ usuario_edit_filler = UsuarioEditFiller(DBSession)
 class UsuarioEditForm(EditableForm):
 	__model__ = Usuario
 	__omit_fields__ = ['proyectos']
+	contrasenha = PasswordField
 	
 
 usuario_edit_form = UsuarioEditForm(DBSession)

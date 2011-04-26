@@ -15,11 +15,15 @@ class NewUsuarioForm(AddRecordForm):
 class NewProyectoForm(AddRecordForm):
 	__model__ = Proyecto
 	__omit_fields__ = ['id_proyecto','lider_id','estado_id']
-	#__require_fields__ = ['username','nombre','apellido','contrasenha']
 
 class NewRolForm(AddRecordForm):
 	__model__ = Rol
 	__omit_fields__ = ['id_rol']
+
+class NewEstadoProyectoForm(AddRecordForm):
+	__model__ = EstadoProyecto
+	__omit_fields__ = ['id_estado_proyecto']
+	__require_fields__ = ['nombre','descripcion']
 
 new_usuario_form = NewUsuarioForm(DBSession)
 new_proyecto_form = NewProyectoForm(DBSession)

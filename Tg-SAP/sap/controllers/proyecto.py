@@ -37,7 +37,7 @@ class ProyectoController(RestController):
 		proyecto = Proyecto(**kw)
 		DBSession.add(proyecto)
 		flash("El proyecto ha sido creado correctamente.")
-		redirect("/proyecto/list")
+		redirect("/administracion/proyecto/list")
 	
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('manage'))
@@ -58,12 +58,15 @@ class ProyectoController(RestController):
 	@expose()
 	def put(self, _method, **kw):
 		del kw['sprox_id']
-		kw['lider'] = DBSession.query(Usuario).get(kw['lider'])
-		kw['estado'] = DBSession.query(EstadoProyecto).get(kw['estado'])
+		del kw['lider']
+		del kw['estado']
+		#kw['lider'] = DBSession.query(Usuario).get(int(kw['lider']))
+		#kw['estado'] = DBSession.query(EstadoProyecto).get(int(kw['estado']))
+		#proyecto = Proyecto();
 		proyecto = Proyecto(**kw)
 		DBSession.merge(proyecto)
-		flash("El proyecto ha sido modificado correctamente.")
-		redirect("/proyecto/list")
+		flash("El proyecto ha sido '" + proyecto.nombre+ "' modificado correctamente.")
+		redirect("/administracion/proyecto/list")
 	
 
 	@expose('sap.templates.list')
@@ -71,12 +74,12 @@ class ProyectoController(RestController):
 	def list(self, **kw):
 		"""Lista todos los proyectos de la base de datos"""
 		tmpl_context.widget = proyecto_table
-		value = proyecto_filter.get_value()
+		value = proyecto_filler.get_value()
 		return dict(modelname='Proyectos',value=value)
 	
 	@expose()
 	def post_delete(self, id_proyecto, **kw):
 		DBSession.delete(DBSession.query(Proyecto).get(id_proyecto))
 		flash("El proyecto ha sido "+ id_proyecto +" eliminado correctamente.")
-		redirect("/proyecto/list")
+		redirect("/administracion/proyecto/list")
 	

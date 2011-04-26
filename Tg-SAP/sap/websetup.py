@@ -39,6 +39,12 @@ def setup_app(command, conf, vars):
     group.users.append(manager)
 
     model.DBSession.add(group)
+    
+    activo = model.EstadoProyecto()
+    activo.nombre = u'Activo'
+    activo.descripcion = u'Estado que indica que un proyecto esta activo'
+    
+    model.DBSession.add(activo)
 
     permission = model.Permission()
     permission.permission_name = u'manage'

@@ -12,7 +12,7 @@ from sqlalchemy.dialects.postgresql import *
 
 from sap.model import DeclarativeBase, metadata, DBSession
 
-__all__ = ['Permiso', 'Usuario', 'Proyecto','EstadoProyecto', 'Fase', 'Rol','LineaBase', 'TipoItem', 'Item']
+#__all__ = ['Permiso', 'Usuario', 'Proyecto','EstadoProyecto', 'Fase', 'Rol','LineaBase', 'TipoItem', 'Item']
 
 
 class Permiso(DeclarativeBase):
@@ -39,7 +39,7 @@ class Usuario(DeclarativeBase):
 	id_usuario = Column ('id_usuario', INTEGER, autoincrement=True,
 							primary_key=True)
 	
-	username = Column ('username', VARCHAR(50), nullable=False)
+	username = Column ('username', VARCHAR(50), unique=True, nullable=False)
 	
 	nombre = Column ('nombre', VARCHAR(50), nullable=False)
 	
@@ -63,12 +63,17 @@ class EstadoProyecto(DeclarativeBase):
 
 	__tablename__ = 'estado_proyecto'
 	
-	id_estado_proyecto = Column ('id_estado_proyecto', INTEGER, autoincrement=True,
-					primary_key=True)
+	id_estado_proyecto = Column ('id_estado_proyecto', INTEGER, 
+								  autoincrement=True, primary_key=True)
 	
-	descripcion = Column ('descripcion', VARCHAR(200), nullable=False)
+	nombre = Column ('nombre', VARCHAR(50), unique=True, nullable=False)
 	
-	observacion = Column ('observacion', VARCHAR(100))
+	descripcion = Column ('descripcion', VARCHAR(200))
+	
+	def __str__(self):
+		return '%s,%s,%s' % (self.id_estado_proyecto, self.nombre,
+				self.descripcion)
+
 
 
 class Proyecto(DeclarativeBase):
@@ -97,6 +102,9 @@ class Proyecto(DeclarativeBase):
 	nro_fases = Column ('nro_fases', INTEGER, nullable=False)
 	
 	descripcion = Column ('descripcion', VARCHAR(200))
+	
+	def __str__(self):
+		return ' %s %s %s' % (self.nombre, self.nro_fases, self.descripcion)
 
 
 class Fase(DeclarativeBase):

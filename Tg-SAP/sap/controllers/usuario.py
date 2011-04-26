@@ -42,7 +42,7 @@ class UsuarioContoller(RestController):
 		usuario = Usuario(**kw)
 		DBSession.add(usuario)
 		flash("El usuario ha sido creado correctamente.")
-		redirect("/usuario/list")
+		redirect("/administracion/usuario/list")
 	
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('manage'))
@@ -66,7 +66,7 @@ class UsuarioContoller(RestController):
 		usuario = Usuario(**kw)
 		DBSession.merge(usuario)
 		flash("El usuario "+usuario.__str__()+"ha sido modificado correctamente.")
-		redirect("/usuario/list")
+		redirect("/administracion/usuario/list")
 	
 
 	@expose('sap.templates.list')

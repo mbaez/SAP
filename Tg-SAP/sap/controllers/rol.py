@@ -35,7 +35,7 @@ class RolController(RestController):
 		rol = Rol(**kw)
 		DBSession.add(rol)
 		flash("El rol ha sido creado correctamente.")
-		redirect("/rol/list")
+		redirect("/administracion/rol/list")
 	
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('manage'))
@@ -54,7 +54,7 @@ class RolController(RestController):
 		rol = Rol(**kw)
 		DBSession.merge(rol)
 		flash("El rol ha sido modificado correctamente.")
-		redirect("/rol/list")
+		redirect("/administracion/rol/list")
 	
 
 	@expose('sap.templates.list')
@@ -62,12 +62,12 @@ class RolController(RestController):
 	def list(self, **kw):
 		"""Lista todos los roles de la base de datos"""
 		tmpl_context.widget = rol_table
-		value = rol_filter.get_value()
+		value = rol_filler.get_value()
 		return dict(modelname='Rol',value=value)
 	
 	@expose()
 	def post_delete(self, id_rol, **kw):
 		DBSession.delete(DBSession.query(Rol).get(id_rol))
 		flash("El rol ha sido "+ id_rol +" eliminado correctamente.")
-		redirect("/rol/list")
+		redirect("/administracion/rol/list")
 	

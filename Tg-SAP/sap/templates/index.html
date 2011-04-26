@@ -5,36 +5,41 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
-
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-  <title>Welcome to TurboGears 2.0, standing on the 
-  shoulders of giants, since 2007</title>
+  <title>Bienvenido a SAP</title>
 </head>
 
 <body>
-    ${sidebar_top()}
+   <!-- ${sidebar_top()} -->
   <div id="getting_started">
-    <h2>Presentation</h2>
-    <p>TurboGears 2 is rapid web application development toolkit designed to make your life easier.</p>
+    <h2>Presentaci&oacute;n</h2>
+    
+    <p>El Sistema de Gesti&oacute;n de Items de Proyecto pretende ser un sistema apto para el control eficiente de los componentes que componen cada fase de un proyecto de software. Previendo los posibles e inevitables cambios que surgen a trav&eacute;s del tiempo de vida de un proyecto, el sistema estar&aacute; preparado para proveer informaci&oacute;n suficiente al usuario para la correcta gesti&oacute;n de los componentes del proyecto. Adem&aacute;s ser&aacute; capaz de determinar el impacto que tendr&aacute;n estos cambios en las distintas fases.</p>
+    
     <ol id="getting_started_steps">
       <li class="getting_started">
-        <h3>Code your data model</h3>
-        <p> Design your data model, Create the database, and Add some bootstrap data.</p>
+        <h3>Modulo de Administraci&oacute;n</h3>
+        
+        <p>  Este módulo es el encargado de la definici&oacute;n y preconfiguracion de estruturas dentro del sistema. Se podr&aacute;n definir usuarios, roles, prpyectos, tipos de items y fases de acuerdo a los permisos correspondientes de los usuarios.</p>
+        
       </li>
       <li class="getting_started">
-        <h3>Design your URL architecture</h3>
-        <p> Decide your URLs, Program your controller methods, Design your 
-            templates, and place some static files (CSS and/or JavaScript). </p>
+        <h3>Modulo de configuraci&oacute;n</h3>
+        
+        <p> En este m&oacute;dulo el sistema permitirá la gestión de las Lineas Base de un proyecto (Generaci&oacute;n de Linea Base, Abrir Linea Base). Esta gestión se realizar&aacute; por proyecto y estar&aacute; a cargo de un usuario con los permisos correspondientes que generalmente será el L&iacute;der del mismo. </p>
+        
       </li>
       <li class="getting_started">
-        <h3>Distribute your app</h3>
-        <p> Test your source, Generate project documents, Build a distribution.</p>
+        <h3>Modulo de desarrollo</h3>
+        
+        <p> Finalmente este m&oacute;dulo es el encargado de la administaci&oacute;n de los items de un proyeto. El sistema permitir&aacute; la creaci&oacute;n, modificai&oacute;n y eliminaci&oacute;n de los items en una fase especifica asi como la gesti&oacute;n de sus diferentes versiones a trav&eacute;s su desarrollo. </p>
+        
       </li>
     </ol>
   </div>
   <div class="clearingdiv" />
-  <div class="notice"> Thank you for choosing TurboGears. 
+  <div class="notice"> Bienvenido al Sistema de Administraci&oacute;n de Proyectos. 
   </div>
 </body>
 </html>

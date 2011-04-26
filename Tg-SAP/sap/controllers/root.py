@@ -11,9 +11,10 @@ from sap.model import *
 from sap.model import DBSession, metadata
 from sap.controllers.error import ErrorController
 from sap.controllers.secure import SecureController
-from sap.controllers.usuario import UsuarioContoller
-from sap.controllers.proyecto import ProyectoController
-from sap.controllers.rol import RolController
+from sap.controllers.administracion import AdministracionController
+
+from tg import tmpl_context
+from sap.widgets.listform import *
 
 __all__ = ['RootController']
 
@@ -34,21 +35,18 @@ class RootController(BaseController):
 	"""
 	secc = SecureController()
 
-	admin = Catwalk(model, DBSession)
+	administracion = AdministracionController()#Catwalk(model, DBSession)
 
 	error = ErrorController()
 	"""
 	Controlador para usuario, en la url apraecera 
 	usuario/
-	"""
 	usuario = UsuarioContoller()
 	
-	"""
 	Controladores para proyecto y roles
-	"""
 	proyecto = ProyectoController()
 	rol = RolController()
-	
+	"""
 	@expose('sap.templates.index')
 	def index(self):
 		"""Handle the front-page."""
@@ -109,7 +107,15 @@ class RootController(BaseController):
 		goodbye as well.
 		
 		"""
-		flash(_('We hope to see you soon!'))
-		redirect(url('/'))
+		#flash(_('We hope to see you soon!'))
+		redirect(url('/proyectos'))
+	
+	@expose('sap.templates.administracion.list')
+	@require(predicates.has_permission('manage'))
+	def proyectos(self, **kw):
+		"""Lista todos los proyectos de la base de datos"""
+		tmpl_context.widget = admin_proyecto_table
+		value = admin_proyecto_filler.get_value()
+		return dict(modelname='Proyectos',value=value)
 	
 	
