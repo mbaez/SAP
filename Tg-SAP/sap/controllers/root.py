@@ -12,6 +12,8 @@ from sap.model import DBSession, metadata
 from sap.controllers.error import ErrorController
 from sap.controllers.secure import SecureController
 from sap.controllers.administracion import AdministracionController
+from sap.controllers.misproyectos import ProyectosController
+from sap.controllers.checker import *
 
 from tg import tmpl_context
 from sap.widgets.listform import *
@@ -38,6 +40,8 @@ class RootController(BaseController):
 	administracion = AdministracionController()
 
 	error = ErrorController()
+	
+	miproyecto = ProyectosController()
 
 	@expose('sap.templates.index')
 	def index(self):
@@ -105,9 +109,9 @@ class RootController(BaseController):
 	@expose('sap.templates.administracion.list')
 	@require(predicates.has_permission('manage'))
 	def proyectos(self, **kw):
-		"""Lista todos los proyectos de la base de datos"""
 		tmpl_context.widget = admin_proyecto_table
-		value = admin_proyecto_filler.get_value()
+		proyectos = checker.get_poyect_list('ver_proyecto')
+		value = admin_proyecto_filler.get_value(proyectos)
 		return dict(modelname='Proyectos',value=value)
 	
 	
