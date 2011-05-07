@@ -9,7 +9,7 @@ from pylons.i18n import _, ungettext, N_
 from tw.api import WidgetBunch
 import sap.model as model
 
-__all__ = ['Controller', 'BaseController']
+__all__ = ['Controller', 'BaseController','RestController']
 
 
 class BaseController(TGController):

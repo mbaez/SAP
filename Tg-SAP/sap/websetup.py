@@ -11,7 +11,8 @@ from sap.config.environment import load_environment
 __all__ = ['setup_app']
 
 log = logging.getLogger(__name__)
-
+__permisos__= ['ver_proyecto','crear_proyecto','editar_proyecto',
+               'administrar_participantes','eliminar_proyecto']
 
 def setup_app(command, conf, vars):
     """Place any commands to setup sap here"""
@@ -24,7 +25,7 @@ def setup_app(command, conf, vars):
     print "Finish..\nCreating tables"
     model.metadata.create_all(bind=engine)
 
-    manager = model.User()
+    manager = model.Usuario()
     manager.user_name = u'admin'
     manager.display_name = u'Administrador'
     manager.email_address = u'admin@somedomain.com'
@@ -32,34 +33,32 @@ def setup_app(command, conf, vars):
 
     model.DBSession.add(manager)
 
-    group = model.Group()
+    group = model.Rol()
     group.group_name = u'managers'
     group.display_name = u'Managers Group'
 
     group.users.append(manager)
 
     model.DBSession.add(group)
-    
+
     activo = model.EstadoProyecto()
     activo.nombre = u'Activo'
     activo.descripcion = u'Estado que indica que un proyecto esta activo'
-    
+
     model.DBSession.add(activo)
 
-    permission = model.Permission()
+    permission = model.Permiso()
     permission.permission_name = u'manage'
     permission.description = u'This permission give an administrative right to the bearer'
     permission.groups.append(group)
 
     model.DBSession.add(permission)
-
-    editor = model.User()
-    editor.user_name = u'editor'
-    editor.display_name = u'Example editor'
-    editor.email_address = u'editor@somedomain.com'
-    editor.password = u'editpass'
-
-    model.DBSession.add(editor)
+    for name in __permisos__ :
+		permiso = model.Permiso()
+		permiso.permission_name = name
+		permiso.description = u'Este permiso permite '+name
+		permiso.groups.append(group)
+    
     model.DBSession.flush()
 
     transaction.commit()

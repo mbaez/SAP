@@ -7,17 +7,17 @@ This file complements development/deployment.ini.
 Please note that **all the argument values are strings**. If you want to
 convert them into boolean, for example, you should use the
 :func:`paste.deploy.converters.asbool` function, as in::
-    
+
     from paste.deploy.converters import asbool
     setting = asbool(global_conf.get('the_setting'))
- 
+
 """
 
 from tg.configuration import AppConfig
 
 import sap
 from sap import model
-from sap.lib import app_globals, helpers 
+from sap.lib import app_globals, helpers
 
 base_config = AppConfig()
 base_config.renderers = []
@@ -45,11 +45,11 @@ base_config.sa_auth.cookie_secret = "ChangeME"
 base_config.auth_backend = 'sqlalchemy'
 base_config.sa_auth.dbsession = model.DBSession
 # what is the class you want to use to search for users in the database
-base_config.sa_auth.user_class = model.User
+base_config.sa_auth.user_class = model.Usuario
 # what is the class you want to use to search for groups in the database
-base_config.sa_auth.group_class = model.Group
+base_config.sa_auth.group_class = model.Rol
 # what is the class you want to use to search for permissions in the database
-base_config.sa_auth.permission_class = model.Permission
+base_config.sa_auth.permission_class = model.Permiso
 
 
 # override this if you would like to provide a different who plugin for

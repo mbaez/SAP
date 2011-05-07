@@ -13,19 +13,19 @@ import os
 from datetime import datetime
 import sys
 try:
-    from hashlib import sha1
+	from hashlib import sha1
 except ImportError:
-    sys.exit('ImportError: No module named hashlib\n'
-             'If you are on python2.4 this library is not part of python. '
-             'Please install it. Example: easy_install hashlib')
+	sys.exit('ImportError: No module named hashlib\n'
+			 'If you are on python2.4 this library is not part of python. '
+			 'Please install it. Example: easy_install hashlib')
 
 from sqlalchemy import Table, ForeignKey, Column
 from sqlalchemy.types import Unicode, Integer, DateTime
-from sqlalchemy.orm import relation, synonym
+from sqlalchemy.orm import relation, synonym, mapper
 
 from sap.model import DeclarativeBase, metadata, DBSession
 
-__all__ = ['User', 'Group', 'Permission']
+__all__ = ['Usuario', 'Rol', 'Permiso', 'RolPermisoProyecto', 'RolUsuario']
 
 
 #{ Association tables
@@ -34,199 +34,217 @@ __all__ = ['User', 'Group', 'Permission']
 # This is the association table for the many-to-many relationship between
 # groups and permissions. This is required by repoze.what.
 group_permission_table = Table('tg_group_permission', metadata,
-    Column('group_id', Integer, ForeignKey('tg_group.group_id',
-        onupdate="CASCADE", ondelete="CASCADE")),
-    Column('permission_id', Integer, ForeignKey('tg_permission.permission_id',
-        onupdate="CASCADE", ondelete="CASCADE"))
+	Column('group_id', Integer, ForeignKey('rol.group_id',
+		onupdate="CASCADE", ondelete="CASCADE")),
+	Column('permission_id', Integer, ForeignKey('permiso.permission_id',
+		onupdate="CASCADE", ondelete="CASCADE"))
 )
 
 # This is the association table for the many-to-many relationship between
 # groups and members - this is, the memberships. It's required by repoze.what.
 user_group_table = Table('tg_user_group', metadata,
-    Column('user_id', Integer, ForeignKey('tg_user.user_id',
-        onupdate="CASCADE", ondelete="CASCADE")),
-    Column('group_id', Integer, ForeignKey('tg_group.group_id',
-        onupdate="CASCADE", ondelete="CASCADE"))
+	Column('user_id', Integer, ForeignKey('usuario.user_id',onupdate="CASCADE", ondelete="CASCADE"), primary_key=True),
+	Column('group_id', Integer, ForeignKey('rol.group_id',onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
 )
 
+class RolUsuario(object):
+	pass
+
+mapper(RolUsuario, user_group_table)
 
 #{ The auth* model itself
 
 
-class Group(DeclarativeBase):
-    """
-    Group definition for :mod:`repoze.what`.
-    
-    Only the ``group_name`` column is required by :mod:`repoze.what`.
-    
-    """
-    
-    __tablename__ = 'tg_group'
-    
-    #{ Columns
-    
-    group_id = Column(Integer, autoincrement=True, primary_key=True)
-    
-    group_name = Column(Unicode(16), unique=True, nullable=False)
-    
-    display_name = Column(Unicode(255))
-    
-    created = Column(DateTime, default=datetime.now)
-    
-    #{ Relations
-    
-    users = relation('User', secondary=user_group_table, backref='groups')
-    
-    #{ Special methods
-    
-    def __repr__(self):
-        return '<Group: name=%s>' % self.group_name
-    
-    def __unicode__(self):
-        return self.group_name
-    
-    #}
+class Rol(DeclarativeBase):
+	"""
+	Rol definition for :mod:`repoze.what`.
+
+	Only the ``group_name`` column is required by :mod:`repoze.what`.
+
+	"""
+
+	__tablename__ = 'rol'
+
+	#{ Columns
+
+	group_id = Column(Integer, autoincrement=True, primary_key=True)
+
+	group_name = Column(Unicode(16), unique=True, nullable=False)
+
+	display_name = Column(Unicode(255))
+
+	created = Column(DateTime, default=datetime.now)
+
+	#{ Relations
+
+	users = relation('Usuario', secondary=user_group_table, backref='groups')
+
+	#{ Special methods
+
+	def __repr__(self):
+		return '<Rol: name=%s>' % self.group_name
+
+	def __unicode__(self):
+		return self.group_name
+
+	#}
 
 
 # The 'info' argument we're passing to the email_address and password columns
 # contain metadata that Rum (http://python-rum.org/) can use generate an
 # admin interface for your models.
-class User(DeclarativeBase):
-    """
-    User definition.
-    
-    This is the user definition used by :mod:`repoze.who`, which requires at
-    least the ``user_name`` column.
-    
-    """
-    __tablename__ = 'tg_user'
-    
-    #{ Columns
+class Usuario(DeclarativeBase):
+	"""
+	Usuario definition.
 
-    user_id = Column(Integer, autoincrement=True, primary_key=True)
-    
-    user_name = Column(Unicode(16), unique=True, nullable=False)
-    
-    email_address = Column(Unicode(255), unique=True, nullable=False,
-                           info={'rum': {'field':'Email'}})
-    
-    display_name = Column(Unicode(255))
-    
-    _password = Column('password', Unicode(80),
-                       info={'rum': {'field':'Password'}})
-    
-    created = Column(DateTime, default=datetime.now)
-    
-    #{ Special methods
+	This is the user definition used by :mod:`repoze.who`, which requires at
+	least the ``user_name`` column.
 
-    def __repr__(self):
-        return '<User: email="%s", display name="%s">' % (
-                self.email_address, self.display_name)
+	"""
+	__tablename__ = 'usuario'
 
-    def __unicode__(self):
-        return self.display_name or self.user_name
-    
-    #{ Getters and setters
+	#{ Columns
 
-    @property
-    def permissions(self):
-        """Return a set of strings for the permissions granted."""
-        perms = set()
-        for g in self.groups:
-            perms = perms | set(g.permissions)
-        return perms
+	user_id = Column(Integer, autoincrement=True, primary_key=True)
 
-    @classmethod
-    def by_email_address(cls, email):
-        """Return the user object whose email address is ``email``."""
-        return DBSession.query(cls).filter(cls.email_address==email).first()
+	user_name = Column(Unicode(16), unique=True, nullable=False)
 
-    @classmethod
-    def by_user_name(cls, username):
-        """Return the user object whose user name is ``username``."""
-        return DBSession.query(cls).filter(cls.user_name==username).first()
+	email_address = Column(Unicode(255), unique=True, nullable=False,
+						   info={'rum': {'field':'Email'}})
 
-    def _set_password(self, password):
-        """Hash ``password`` on the fly and store its hashed version."""
-        hashed_password = password
-        
-        if isinstance(password, unicode):
-            password_8bit = password.encode('UTF-8')
-        else:
-            password_8bit = password
+	display_name = Column(Unicode(255))
 
-        salt = sha1()
-        salt.update(os.urandom(60))
-        hash = sha1()
-        hash.update(password_8bit + salt.hexdigest())
-        hashed_password = salt.hexdigest() + hash.hexdigest()
+	_password = Column('password', Unicode(80),
+					   info={'rum': {'field':'Password'}})
 
-        # Make sure the hashed password is an UTF-8 object at the end of the
-        # process because SQLAlchemy _wants_ a unicode object for Unicode
-        # columns
-        if not isinstance(hashed_password, unicode):
-            hashed_password = hashed_password.decode('UTF-8')
+	created = Column(DateTime, default=datetime.now)
 
-        self._password = hashed_password
+	#{ Special methods
 
-    def _get_password(self):
-        """Return the hashed version of the password."""
-        return self._password
+	def __repr__(self):
+		return '<Usuario: email="%s", display name="%s">' % (
+				self.email_address, self.display_name)
 
-    password = synonym('_password', descriptor=property(_get_password,
-                                                        _set_password))
-    
-    #}
-    
-    def validate_password(self, password):
-        """
-        Check the password against existing credentials.
-        
-        :param password: the password that was provided by the user to
-            try and authenticate. This is the clear text version that we will
-            need to match against the hashed one in the database.
-        :type password: unicode object.
-        :return: Whether the password is valid.
-        :rtype: bool
+	def __unicode__(self):
+		return self.display_name or self.user_name
 
-        """
-        hashed_pass = sha1()
-        hashed_pass.update(password + self.password[:40])
-        return self.password[40:] == hashed_pass.hexdigest()
+	#{ Getters and setters
+
+	@property
+	def permissions(self):
+		"""Return a set of strings for the permissions granted."""
+		perms = set()
+		for g in self.groups:
+			perms = perms | set(g.permissions)
+		return perms
+
+	@classmethod
+	def by_email_address(cls, email):
+		"""Return the user object whose email address is ``email``."""
+		return DBSession.query(cls).filter(cls.email_address==email).first()
+
+	@classmethod
+	def by_user_name(cls, username):
+		"""Return the user object whose user name is ``username``."""
+		return DBSession.query(cls).filter(cls.user_name==username).first()
+
+	def _set_password(self, password):
+		"""Hash ``password`` on the fly and store its hashed version."""
+		hashed_password = password
+
+		if isinstance(password, unicode):
+			password_8bit = password.encode('UTF-8')
+		else:
+			password_8bit = password
+
+		salt = sha1()
+		salt.update(os.urandom(60))
+		hash = sha1()
+		hash.update(password_8bit + salt.hexdigest())
+		hashed_password = salt.hexdigest() + hash.hexdigest()
+
+		# Make sure the hashed password is an UTF-8 object at the end of the
+		# process because SQLAlchemy _wants_ a unicode object for Unicode
+		# columns
+		if not isinstance(hashed_password, unicode):
+			hashed_password = hashed_password.decode('UTF-8')
+
+		self._password = hashed_password
+
+	def _get_password(self):
+		"""Return the hashed version of the password."""
+		return self._password
+
+	password = synonym('_password', descriptor=property(_get_password,
+														_set_password))
+
+	#}
+
+	def validate_password(self, password):
+		"""
+		Check the password against existing credentials.
+
+		:param password: the password that was provided by the user to
+			try and authenticate. This is the clear text version that we will
+			need to match against the hashed one in the database.
+		:type password: unicode object.
+		:return: Whether the password is valid.
+		:rtype: bool
+
+		"""
+		hashed_pass = sha1()
+		hashed_pass.update(password + self.password[:40])
+		return self.password[40:] == hashed_pass.hexdigest()
 
 
-class Permission(DeclarativeBase):
-    """
-    Permission definition for :mod:`repoze.what`.
-    
-    Only the ``permission_name`` column is required by :mod:`repoze.what`.
-    
-    """
-    
-    __tablename__ = 'tg_permission'
-    
-    #{ Columns
+class Permiso(DeclarativeBase):
+	"""
+	Permiso definition for :mod:`repoze.what`.
 
-    permission_id = Column(Integer, autoincrement=True, primary_key=True)
-    
-    permission_name = Column(Unicode(16), unique=True, nullable=False)
-    
-    description = Column(Unicode(255))
-    
-    #{ Relations
-    
-    groups = relation(Group, secondary=group_permission_table,
-                      backref='permissions')
-    
-    #{ Special methods
-    
-    def __repr__(self):
-        return '<Permission: name=%s>' % self.permission_name
+	Only the ``permission_name`` column is required by :mod:`repoze.what`.
 
-    def __unicode__(self):
-        return self.permission_name
-    
-    #}
+	"""
+
+	__tablename__ = 'permiso'
+
+	#{ Columns
+
+	permission_id = Column(Integer, autoincrement=True, primary_key=True)
+
+	permission_name = Column(Unicode(50), unique=True, nullable=False)
+
+	description = Column(Unicode(255))
+
+	#{ Relations
+
+	groups = relation(Rol, secondary=group_permission_table,
+					  backref='permissions')
+
+	#{ Special methods
+
+	def __repr__(self):
+		return '<Permiso: name=%s>' % self.permission_name
+
+	def __unicode__(self):
+		return self.permission_name
+
+	#}
 
 
 #}
+
+
+class RolPermisoProyecto(DeclarativeBase):
+	
+	__tablename__ = 'rol_permiso_proyecto'
+	
+	group_id = Column('group_id', Integer, ForeignKey('rol.group_id',
+		onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+		
+	permission_id = Column('permission_id', Integer, 
+		ForeignKey('permiso.permission_id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+		
+	proyecto_id = Column ('id_proyecto', Integer,ForeignKey('proyecto.id_proyecto',
+						onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+		
+	

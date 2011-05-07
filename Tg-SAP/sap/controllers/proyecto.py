@@ -17,17 +17,16 @@ from sap.widgets.editform import *
 
 from sap.model import *
 from tg import tmpl_context, redirect, validate
-
+from sap.controllers.checker import *
 from tg.controllers import RestController
 
 class ProyectoController(RestController):
-
 	@expose('sap.templates.new')
-	@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('crear_proyecto'))
 	def new(self, **kw):
 		tmpl_context.widget = new_proyecto_form
 		return dict(value=kw, modelname='Proyecto')
-		
+
 	@validate(new_proyecto_form, error_handler=new)
 	@expose()
 	def post(self, modelname, **kw):
@@ -38,9 +37,9 @@ class ProyectoController(RestController):
 		DBSession.add(proyecto)
 		flash("El proyecto ha sido creado correctamente.")
 		redirect("/administracion/proyecto/list")
-	
+
 	@expose('sap.templates.edit')
-	@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('modificar_proyecto'))
 	def edit(self, id,**kw):
 		proyecto =  DBSession.query(Proyecto).get(id)
 		tmpl_context.widget = proyecto_edit_form
@@ -53,7 +52,7 @@ class ProyectoController(RestController):
 		kw['nro_fases'] = proyecto.nro_fases
 		kw['descripcion'] = proyecto.descripcion
 		return dict(value=kw, modelname='Proyecto')
-	
+
 	@validate(proyecto_edit_form, error_handler=edit)
 	@expose()
 	def put(self, _method, **kw):
@@ -68,18 +67,22 @@ class ProyectoController(RestController):
 		flash("El proyecto ha sido '" + proyecto.nombre+ "' modificado correctamente.")
 		redirect("/administracion/proyecto/list")
 	
-
 	@expose('sap.templates.list')
-	@require(predicates.has_permission('manage'))
+	@require( predicates.has_permission('ver_proyecto'))
 	def list(self, **kw):
 		"""Lista todos los proyectos de la base de datos"""
 		tmpl_context.widget = proyecto_table
-		value = proyecto_filler.get_value()
+		#select distinct * form proyecto join permiso_poyecto on idproy=idperm
+		proyectos = checker.get_poyect_list('ver_proyecto')
+		value = proyecto_filler.get_value(proyectos)
 		return dict(modelname='Proyectos',value=value)
-	
+
 	@expose()
 	def post_delete(self, id_proyecto, **kw):
 		DBSession.delete(DBSession.query(Proyecto).get(id_proyecto))
 		flash("El proyecto ha sido "+ id_proyecto +" eliminado correctamente.")
 		redirect("/administracion/proyecto/list")
+
 	
+		
+

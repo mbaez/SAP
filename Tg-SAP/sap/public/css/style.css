@@ -4,7 +4,20 @@ html {
 	margin: 0;
 	padding: 0;
 }
-
+.filter{
+width: 100%;
+}
+/*#filter_0{
+	visibility: hidden;
+}*/
+.delete-button{
+	background: transparent; 
+	float:left; border:0; 
+	color: #286571; 
+	display: inline; 
+	margin: 0; 
+	padding: 0;
+}
 body {
 	text-align: left;
 	width: 960px;
@@ -23,7 +36,12 @@ header {
 	margin: 10px 10px 0 10px;
 	background: url('../images/headerbg.png') top left no-repeat;
 }
-
+footer {
+	background: url('../images/headerbg.png') top left no-repeat;
+	border-radius:10px;
+	width: 96%;
+	margin-left: 11px;
+}
 header h1 {
 	padding: 0;
 	margin: 0;

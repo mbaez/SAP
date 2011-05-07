@@ -59,6 +59,6 @@ def init_model(engine):
     #mapper(Reflected, t_reflected)
 
 # Import your model modules here.
-from sap.model.auth import User, Group, Permission
+from sap.model.auth import *
 #
 from sap.model.model import *

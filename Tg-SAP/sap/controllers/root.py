@@ -35,18 +35,10 @@ class RootController(BaseController):
 	"""
 	secc = SecureController()
 
-	administracion = AdministracionController()#Catwalk(model, DBSession)
+	administracion = AdministracionController()
 
 	error = ErrorController()
-	"""
-	Controlador para usuario, en la url apraecera 
-	usuario/
-	usuario = UsuarioContoller()
-	
-	Controladores para proyecto y roles
-	proyecto = ProyectoController()
-	rol = RolController()
-	"""
+
 	@expose('sap.templates.index')
 	def index(self):
 		"""Handle the front-page."""
@@ -84,7 +76,7 @@ class RootController(BaseController):
 		if login_counter > 0:
 			flash(_('Wrong credentials'), 'warning')
 		return dict(page='login', login_counter=str(login_counter),
-					came_from=came_from)
+					came_from=url('/proyectos'))
 
 	@expose()
 	def post_login(self, came_from=url('/')):
@@ -98,7 +90,7 @@ class RootController(BaseController):
 			redirect(url('/login', came_from=came_from, __logins=login_counter))
 		userid = request.identity['repoze.who.userid']
 		flash(_('Welcome back, %s!') % userid)
-		redirect(came_from)
+		redirect('/proyectos')
 
 	@expose()
 	def post_logout(self, came_from=url('/')):
@@ -108,7 +100,7 @@ class RootController(BaseController):
 		
 		"""
 		#flash(_('We hope to see you soon!'))
-		redirect(url('/proyectos'))
+		redirect(url('/index'))
 	
 	@expose('sap.templates.administracion.list')
 	@require(predicates.has_permission('manage'))
