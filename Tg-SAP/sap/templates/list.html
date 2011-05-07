@@ -11,9 +11,8 @@
 <script type="text/javascript" src="http://localhost:8080/jquery/table.sorter.js" ></script>
 <script type="text/javascript" src="http://localhost:8080/jquery/table.filter.js" ></script>
 <script type="text/javascript" src="http://localhost:8080/jquery/table.filter_and_sorter.js " ></script>
-<!--link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/table.css')}" / -->
 
-  <title>Listado de ${modelname}</title>
+<title>Listado de ${modelname}</title>
 </head>
 
 <body>
@@ -22,7 +21,7 @@
 	<h1 style="margin-top:1px;">Listado de ${modelname}</h1>
 	${tmpl_context.widget(value=value)}
 </div>
-
-<p><a href="new/">Nuevo</a></p>
+<p><a py:if='tg.predicates.has_permission("crear_"+modelname[:-1].lower())' href="new/">Nuevo</a></p>
+<br/>
 </body>
 </html>
