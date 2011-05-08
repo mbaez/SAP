@@ -38,3 +38,13 @@ class RolEditForm(EditableForm):
 	__model__ = Rol
 	
 rol_edit_form = RolEditForm(DBSession)
+
+class FaseEditFiller(EditFormFiller):
+	__model__ = Fase
+
+fase_edit_filler = RolEditFiller(DBSession)
+
+class FaseEditForm(EditableForm):
+	__model__ = Fase
+	
+fase_edit_form = RolEditForm(DBSession)

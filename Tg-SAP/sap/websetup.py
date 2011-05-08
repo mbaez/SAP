@@ -12,7 +12,8 @@ __all__ = ['setup_app']
 
 log = logging.getLogger(__name__)
 __permisos__= ['ver_proyecto','crear_proyecto','editar_proyecto',
-               'administrar_participantes','eliminar_proyecto']
+               'administrar_participantes','eliminar_proyecto','ver_fase'
+				,'crear_fase','editar_fase','eliminar_fase']
 
 def setup_app(command, conf, vars):
     """Place any commands to setup sap here"""

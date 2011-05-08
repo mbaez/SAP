@@ -25,7 +25,7 @@ from sqlalchemy.orm import relation, synonym, mapper
 
 from sap.model import DeclarativeBase, metadata, DBSession
 
-__all__ = ['Usuario', 'Rol', 'Permiso', 'RolPermisoProyecto', 'RolUsuario']
+__all__ = ['Usuario', 'Rol', 'Permiso', 'RolPermisoProyecto', 'RolPermisoFase','RolUsuario']
 
 
 #{ Association tables
@@ -247,4 +247,15 @@ class RolPermisoProyecto(DeclarativeBase):
 	proyecto_id = Column ('id_proyecto', Integer,ForeignKey('proyecto.id_proyecto',
 						onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
 		
+class RolPermisoFase(DeclarativeBase):
 	
+	__tablename__ = 'rol_permiso_fase'
+	
+	group_id = Column('group_id', Integer, ForeignKey('rol.group_id',
+		onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+		
+	permission_id = Column('permission_id', Integer, 
+		ForeignKey('permiso.permission_id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+		
+	fase_id = Column ('id_fase', Integer,ForeignKey('fase.id_fase',
+						onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)

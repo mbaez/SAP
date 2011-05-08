@@ -44,7 +44,7 @@ class ProyectoController(RestController):
 		proyecto = Proyecto(**kw)
 		DBSession.add(proyecto)
 		flash("El proyecto ha sido creado correctamente.")
-		redirect("/administracion/proyecto/list")
+		redirect("/administracion/proyecto/listall")
 	
 	"""
 	Encargado de carga el widget para editar las instancias, 
@@ -82,7 +82,7 @@ class ProyectoController(RestController):
 		proyecto = Proyecto(**kw)
 		DBSession.merge(proyecto)
 		flash("El proyecto ha sido '" + proyecto.nombre+ "' modificado correctamente.")
-		redirect("/administracion/proyecto/list")
+		redirect("/administracion/proyecto/listall")
 	
 	"""
 	Encargado de cargar el widget de listado, pueden acceder unicamente 
@@ -102,6 +102,22 @@ class ProyectoController(RestController):
 		return dict(modelname='Proyectos',value=value)
 	
 	"""
+	metodo para listar todos los proyectos al administrador
+	"""
+	@expose('sap.templates.list')
+	@require( predicates.has_permission('manage'))
+	def listall(self, **kw):
+		tmpl_context.widget = proyecto_table
+		"""
+		se obtiene la lista de los proyectos en los cuales pose el
+		permiso de ver_proyecto
+		"""
+		#proyectos = checker.get_poyect_list('ver_proyecto')
+		value = proyecto_filler.get_value()
+		return dict(modelname='Proyectos',value=value)
+	
+	
+	"""
 	Evento invocado desde el listado, se encarga de eliminar una instancia
 	de la base de datos.
 	"""
@@ -109,4 +125,4 @@ class ProyectoController(RestController):
 	def post_delete(self, id_proyecto, **kw):
 		DBSession.delete(DBSession.query(Proyecto).get(id_proyecto))
 		flash("El proyecto ha sido "+ id_proyecto +" eliminado correctamente.")
-		redirect("/administracion/proyecto/list")
+		redirect("/administracion/proyecto/listall")

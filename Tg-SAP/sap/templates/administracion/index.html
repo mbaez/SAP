@@ -21,7 +21,7 @@
 		<a href="${tg.url('/administracion/usuario/list')}">Usuarios</a>
 	</li>
 	<li py:if="tg.predicates.has_permission('manage')" id="admin">
-		<a href="${tg.url('/administracion/proyecto/list')}">Proyectos</a>
+		<a href="${tg.url('/administracion/proyecto/listall')}">Proyectos</a>
 	</li>
 	<li py:if="tg.predicates.has_permission('manage')" id="admin">
 		<a href="${tg.url('/administracion/rol/list')}">Roles</a>

@@ -107,7 +107,7 @@ class RootController(BaseController):
 		redirect(url('/index'))
 	
 	@expose('sap.templates.administracion.list')
-	@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('ver_proyecto'))
 	def proyectos(self, **kw):
 		tmpl_context.widget = admin_proyecto_table
 		proyectos = checker.get_poyect_list('ver_proyecto')

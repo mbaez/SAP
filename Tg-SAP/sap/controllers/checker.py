@@ -71,5 +71,28 @@ class CheckerController(RestController):
 						current_user.user_id).\
 					all()
 		return proyectos
+	"""
+	metodo para listar las fases sobre las cuales el usuario tiene permiso "permiso_name" 
+	y pertenecen al proyecto seleccionado "idproyecto"
+	""" 	
+	def get_fases_by_proyecto_list(self, idproyecto, permiso_name):
+		current_user = self.get_current_user()
+		
+		fases = DBSession.query(Fase).\
+					filter(RolPermisoFase.group_id ==
+						RolUsuario.group_id).\
+					filter(RolPermisoFase.fase_id ==
+						Fase.id_fase).\
+					filter(Permiso.permission_id ==
+						RolPermisoFase.permission_id).\
+					filter(Permiso.permission_name ==
+						permiso_name).\
+					filter(RolUsuario.user_id == 
+						current_user.user_id).\
+					filter(Fase.proyecto == 
+						idproyecto).\
+					all()
+		return fases
+	
 
 checker =  CheckerController()

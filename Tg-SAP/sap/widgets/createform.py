@@ -20,12 +20,17 @@ class NewRolForm(AddRecordForm):
 	__model__ = Rol
 	__omit_fields__ = ['id_rol']
 
+class NewFaseForm(AddRecordForm):
+	__model__ = Fase
+	__omit_fields__ = ['id_fase']
+	
 class NewEstadoProyectoForm(AddRecordForm):
 	__model__ = EstadoProyecto
 	__omit_fields__ = ['id_estado_proyecto']
 	__require_fields__ = ['nombre','descripcion']
 
+
 new_usuario_form = NewUsuarioForm(DBSession)
 new_proyecto_form = NewProyectoForm(DBSession)
 new_rol_form = NewRolForm(DBSession)
-
+new_fase_form = NewFaseForm(DBSession)

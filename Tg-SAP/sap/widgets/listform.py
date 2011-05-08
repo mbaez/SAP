@@ -113,10 +113,23 @@ class ProyectoAdminTableFiller(ExtendedTableFiller):
 
 	def accion (self, obj):
 		
-		accion = ', '.join(['<a href="/administracion/proyecto/' + 
-							str(obj.id_proyecto) + '/edit">ver</a>'])
+		accion = ', '.join(['<a href="/miproyecto/ver/' +str(obj.id_proyecto)+'">ver</a>'])
 		return accion.join(('<div>', '</div>'))
 
+class FaseAdminTable(TableBase):
+	__model__ = Fase
+	__omit_fields__ = ['id_fase', '__actions__'  ]
+	__xml_fields__ = ['accion']
+	__add_fields__ = {'accion':None}
+
+class FaseAdminTableFiller(ExtendedTableFiller):
+	__model__ = Fase
+	__add_fields__ = {'accion':None}
+
+	def accion (self, obj):
+		
+		accion = ', '.join(['<a href="/miproyecto/fase/' +str(obj.id_fase)+'">ver</a>'])
+		return accion.join(('<div>', '</div>'))
 
 class RolTable(TableBase):
 	__model__ = Rol
@@ -132,6 +145,9 @@ usuario_table = UsuarioTable(DBSession);
 
 proyecto_table = ProyectoTable(DBSession);
 proyecto_filler = ProyectoTableFiller(DBSession);
+
+fase_table = FaseAdminTable(DBSession);
+fase_filler = FaseAdminTableFiller(DBSession);
 
 rol_table = RolTable(DBSession);
 rol_filler = RolTableFiller(DBSession);
