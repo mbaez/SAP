@@ -22,7 +22,7 @@ class NewRolForm(AddRecordForm):
 
 class NewFaseForm(AddRecordForm):
 	__model__ = Fase
-	__omit_fields__ = ['id_fase']
+	__omit_fields__ = ['id_fase', 'proyecto']
 	
 class NewEstadoProyectoForm(AddRecordForm):
 	__model__ = EstadoProyecto

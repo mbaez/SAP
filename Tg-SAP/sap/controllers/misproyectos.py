@@ -5,22 +5,23 @@ from tg import expose, flash, require, url, request, redirect
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from repoze.what import predicates
 
-#import de widget
-from sap.widgets.listform import *
 from sap.lib.base import BaseController
 from sap.model import *
 from sap.model import DBSession, metadata
 from sap.controllers.fase import FaseController
-from sap.controllers.configuracion import ConfiguracionController
+#import de widgets
+from sap.widgets.createform import *
+from sap.widgets.listform import *
+from sap.widgets.editform import *
+#impot del checker de permisos
+from sap.controllers.checker import *
 
 __all__ = ['RootController']
-
 
 class ProyectosController(BaseController):
 	
 	
 	fase = FaseController()
-	modConfiguracion = ConfiguracionController()
 	
 	@expose('sap.templates.miproyecto')
 	#@require(predicates.has_permission('manage'))
