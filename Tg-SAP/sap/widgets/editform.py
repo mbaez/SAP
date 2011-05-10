@@ -26,7 +26,7 @@ proyecto_edit_filler = ProyectoEditFiller(DBSession)
 
 class ProyectoEditForm(EditableForm):
 	__model__ = Proyecto
-	__omit_fields__ = ['lider_id','estado_id']
+	__omit_fields__ = ['lider_id','lider','estado_id']
 	
 proyecto_edit_form = ProyectoEditForm(DBSession)
 

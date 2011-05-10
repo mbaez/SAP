@@ -53,7 +53,12 @@ class ProyectoController(RestController):
 		
 		flash("El proyecto ha sido creado correctamente.")
 		redirect("/administracion/proyecto/list")
-	
+	"""
+	En este proceso se crear un nuevo rol denominado lider_(proyecto_id) 
+	y se copian los permisos del rol lider que viene a ser como un template. 
+	Este rol y sus permisos son vinculados al proyecto mendiante 
+	la tabla, rol_permisos_proyecto
+	"""
 	def asignar_lider(self, proyecto):
 		#Se obtiene el template de lider
 		rol_lider = DBSession.query(Rol).filter(Rol.group_name == 'lider').first()
@@ -108,7 +113,7 @@ class ProyectoController(RestController):
 	Asigna un el rol al participante y de asociar los permisos del rol 
 	al proyecto especificado
 	"""
-	def asignar_participante(self, user_id, rol_name, proyecto_id):
+	def asignar_participante(self, user_id, rol_name, proyecto_id, ):
 		rol = self.asignar_rol_usuario(user_id, rol_name, proyecto_id)
 		#Se obtiene los permisos que posee el rol
 		permisos_rol = DBSession.query(RolPermiso).\
@@ -135,7 +140,7 @@ class ProyectoController(RestController):
 		tmpl_context.widget = proyecto_edit_form
 		kw['id_proyecto'] = proyecto.id_proyecto
 		kw['nombre'] = proyecto.nombre
-		kw['lider'] = DBSession.query(Usuario).all()
+		kw['lider'] = proyecto.lider
 		kw['estado'] = DBSession.query(EstadoProyecto).all()
 		kw['lider_id'] = proyecto.lider_id
 		kw['estado_id'] = proyecto.estado_id
@@ -151,16 +156,17 @@ class ProyectoController(RestController):
 	@require(predicates.has_permission('editar_proyecto'))
 	@expose()
 	def put(self, _method, **kw):
-		del kw['sprox_id']
-		del kw['lider']
-		del kw['estado']
-		#kw['lider'] = DBSession.query(Usuario).get(int(kw['lider']))
-		#kw['estado'] = DBSession.query(EstadoProyecto).get(int(kw['estado']))
-		#proyecto = Proyecto();
-		proyecto = Proyecto(**kw)
+		#Se obtiene de la base de datos el proyecto modifcado
+		proyecto = DBSession.query(Proyecto).get(int(kw['id_proyecto']))
+		#Se actualizan unicamente los campos actualizables
+		proyecto.nombre=kw['nombre']
+		proyecto.nro_fases = kw['nro_fases'] 
+		proyecto.descripcion = kw['descripcion']
+		proyecto.estado=DBSession.query(EstadoProyecto).get(int(kw['estado']))
 		DBSession.merge(proyecto)
-		flash("El proyecto ha sido '" + proyecto.nombre+ "' modificado correctamente.")
-		redirect("/administracion/proyecto/listall")
+		
+		flash("El proyecto ha sido '" +proyecto.nombre+ "' modificado correctamente.")
+		redirect("/administracion/proyecto/list")
 	
 	"""
 	Encargado de cargar el widget de listado, pueden acceder unicamente 
@@ -171,10 +177,10 @@ class ProyectoController(RestController):
 	@require( predicates.has_permission('ver_proyecto'))
 	def list(self, **kw):
 		tmpl_context.widget = proyecto_table
-		"""
+		'''
 		se obtiene la lista de los proyectos en los cuales pose el
 		permiso de ver_proyecto
-		"""
+		'''
 		proyectos = checker.get_poyect_list('ver_proyecto')
 		value = proyecto_filler.get_value(proyectos)
 		return dict(modelname='Proyectos',value=value)
@@ -186,11 +192,7 @@ class ProyectoController(RestController):
 	@require( predicates.has_permission('manage'))
 	def listall(self, **kw):
 		tmpl_context.widget = proyecto_table
-		"""
-		se obtiene la lista de los proyectos en los cuales pose el
-		permiso de ver_proyecto
-		"""
-		#proyectos = checker.get_poyect_list('ver_proyecto')
+		#se obtiene la lista de todos los proyectos 
 		value = proyecto_filler.get_value()
 		return dict(modelname='Proyectos',value=value)
 	
@@ -201,7 +203,8 @@ class ProyectoController(RestController):
 	"""
 	@expose()
 	def post_delete(self, id_proyecto, **kw):
-		DBSession.delete(DBSession.query(RolPermisoProyecto).filter(RolPermisoProyecto.proyecto_id == id_proyecto))
+		DBSession.delete(DBSession.query(RolPermisoProyecto).\
+				  filter(RolPermisoProyecto.proyecto_id == id_proyecto))
 		DBSession.delete(DBSession.query(Proyecto).get(id_proyecto))
 		flash("El proyecto ha sido "+ id_proyecto +" eliminado correctamente.")
 		redirect("/administracion/proyecto/list")
