@@ -1,5 +1,6 @@
 
 from sap.model import *
+from sap.widgets.extended import ExtendedEditableForm
 
 from sprox.formbase import EditableForm
 from sprox.fillerbase import EditFormFiller
@@ -14,7 +15,7 @@ class UsuarioEditForm(EditableForm):
 	__model__ = Usuario
 	__omit_fields__ = ['proyectos']
 	contrasenha = PasswordField
-	
+
 
 usuario_edit_form = UsuarioEditForm(DBSession)
 
@@ -34,8 +35,9 @@ class RolEditFiller(EditFormFiller):
 
 rol_edit_filler = RolEditFiller(DBSession)
 
-class RolEditForm(EditableForm):
+class RolEditForm(ExtendedEditableForm):
 	__model__ = Rol
+	__omit_fields__ = ['users']
 	
 rol_edit_form = RolEditForm(DBSession)
 
@@ -46,5 +48,5 @@ fase_edit_filler = RolEditFiller(DBSession)
 
 class FaseEditForm(EditableForm):
 	__model__ = Fase
-	
+
 fase_edit_form = RolEditForm(DBSession)

@@ -30,9 +30,16 @@ class RolController(RestController):
 		
 	@validate(new_rol_form, error_handler=new)
 	@expose()
-	def post(self, modelname, **kw):
+	def post(self, **kw):
 		del kw['sprox_id']
-		rol = Rol(**kw)
+		rol = Rol()
+		#rol.group_id = kw['group_id']
+		rol.group_name = kw['group_name'] 
+		rol.display_name = kw['display_name']
+		
+		for permiso in kw['permissions'] :
+			rol.permissions.append(DBSession.query(Permiso).get(permiso)) 
+		
 		DBSession.add(rol)
 		flash("El rol ha sido creado correctamente.")
 		redirect("/administracion/rol/list")
@@ -42,9 +49,10 @@ class RolController(RestController):
 	def edit(self, id,**kw):
 		rol =  DBSession.query(Rol).get(id)
 		tmpl_context.widget = rol_edit_form
-		kw['id_rol'] = rol.id_rol
-		kw['nombre'] = rol.nombre
-		kw['descripcion'] = rol.descripcion
+		kw['group_id'] = rol.group_id
+		kw['group_name'] = rol.group_name
+		kw['display_name'] = rol.display_name
+		kw['permissions'] = rol.permissions
 		return dict(value=kw, modelname='Rol')
 	
 	@validate(rol_edit_form, error_handler=edit)

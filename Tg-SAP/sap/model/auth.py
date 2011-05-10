@@ -25,7 +25,7 @@ from sqlalchemy.orm import relation, synonym, mapper
 
 from sap.model import DeclarativeBase, metadata, DBSession
 
-__all__ = ['Usuario', 'Rol', 'Permiso', 'RolPermisoProyecto', 'RolPermisoFase','RolUsuario']
+__all__ = ['Usuario', 'Rol', 'Permiso', 'RolPermisoProyecto', 'RolPermisoFase','RolUsuario', 'RolPermiso']
 
 
 #{ Association tables
@@ -35,9 +35,9 @@ __all__ = ['Usuario', 'Rol', 'Permiso', 'RolPermisoProyecto', 'RolPermisoFase','
 # groups and permissions. This is required by repoze.what.
 group_permission_table = Table('tg_group_permission', metadata,
 	Column('group_id', Integer, ForeignKey('rol.group_id',
-		onupdate="CASCADE", ondelete="CASCADE")),
+		onupdate="CASCADE", ondelete="CASCADE"),primary_key=True),
 	Column('permission_id', Integer, ForeignKey('permiso.permission_id',
-		onupdate="CASCADE", ondelete="CASCADE"))
+		onupdate="CASCADE", ondelete="CASCADE"),primary_key=True)
 )
 
 # This is the association table for the many-to-many relationship between
@@ -50,17 +50,19 @@ user_group_table = Table('tg_user_group', metadata,
 class RolUsuario(object):
 	pass
 
+class RolPermiso(object):
+	pass
+
 mapper(RolUsuario, user_group_table)
 
+mapper(RolPermiso , group_permission_table)
 #{ The auth* model itself
 
 
 class Rol(DeclarativeBase):
 	"""
 	Rol definition for :mod:`repoze.what`.
-
 	Only the ``group_name`` column is required by :mod:`repoze.what`.
-
 	"""
 
 	__tablename__ = 'rol'
@@ -240,12 +242,15 @@ class RolPermisoProyecto(DeclarativeBase):
 	
 	group_id = Column('group_id', Integer, ForeignKey('rol.group_id',
 		onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-		
+	
+	
 	permission_id = Column('permission_id', Integer, 
 		ForeignKey('permiso.permission_id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-		
+	
+	
 	proyecto_id = Column ('id_proyecto', Integer,ForeignKey('proyecto.id_proyecto',
 						onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+	
 		
 class RolPermisoFase(DeclarativeBase):
 	

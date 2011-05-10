@@ -31,13 +31,13 @@ class UsuarioContoller(RestController):
 	"""
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('manage'))
-	def new(self, **kw):
+	def new(self, modelname='',**kw):
 		tmpl_context.widget = new_usuario_form
 		return dict(value=kw, modelname='Usuario')
 		
 	@validate(new_usuario_form, error_handler=new)
 	@expose()
-	def post(self, modelname, **kw):
+	def post(self, modelname='', **kw):
 		del kw['sprox_id']
 		usuario = Usuario(**kw)
 		DBSession.add(usuario)

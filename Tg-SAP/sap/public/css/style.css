@@ -7,6 +7,7 @@ html {
 .filter{
 width: 100%;
 }
+
 /*#filter_0{
 	visibility: hidden;
 }*/
@@ -18,6 +19,60 @@ width: 100%;
 	margin: 0; 
 	padding: 0;
 }
+.shuttle_buttons{
+	float:left; 
+	padding: 25px 10px 10px 10px;
+}
+.shuttle,
+.dijit,
+.dijitReset,
+.dijitLeft, 
+.dijitInline, 
+.dijitButton
+/*.dijitButtonFocused,*/
+{
+	border-radius:10px;
+	margin:1px;
+	background:#7F7F7F;
+	color:#FFFFFF;
+}
+.submitbutton, .date_field_button{
+	border-radius:10px;
+	background:#7F7F7F;
+	color:#FFFFFF;
+	margin: 5px;
+	padding: 5px;
+	border:0px;
+}
+.dijitFocused{
+	border-radius:5px;
+	background:#FFFFFF;
+	color:#000000;
+}
+
+.textfield, .textarea, .sproxcalendardatetimepicker{
+	border-radius:0px;
+	margin: 5px;
+	padding: 5px;
+}
+
+.select{
+	float:left; 
+	padding: 5px; 
+
+}
+
+select {
+	width:15em;
+	border-radius:5px;
+	margin:0px;
+	background:#FFFFFF;
+	color:#000000;
+	border:1px;
+	border-style: solid;
+	border-color:#7F7F7F;
+}
+
 body {
 	text-align: left;
 	width: 960px;
@@ -184,6 +239,7 @@ form.loginfields label
     vertical-align: middle;
 }
 
+
 form.loginfields input.text
 {
     float: left;
@@ -193,7 +249,7 @@ form.loginfields input.text
     height: 21px;
     padding: 5px;
     border: 0;
-    background: url('../images/inputbg.png') top left no-repeat;
+    background: #4D4D4D;/* url('../images/inputbg.png') top left no-repeat;*/
     color: #fff;
 }
 

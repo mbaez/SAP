@@ -19,6 +19,8 @@ from sap.controllers.checker import *
 #import del controlador
 from tg.controllers import RestController
 
+import transaction
+
 class ProyectoController(RestController):
 	"""
 	Encargado de carga el widget para crear nuevas instancias, 
@@ -26,7 +28,7 @@ class ProyectoController(RestController):
 	"""
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_proyecto'))
-	def new(self, **kw):
+	def new(self, modelname='',**kw):
 		tmpl_context.widget = new_proyecto_form
 		return dict(value=kw, modelname='Proyecto')
 	
@@ -37,14 +39,90 @@ class ProyectoController(RestController):
 	@validate(new_proyecto_form, error_handler=new)
 	@require(predicates.has_permission('crear_proyecto'))
 	@expose()
-	def post(self, modelname, **kw):
+	def post(self,modelname ,**kw):
 		del kw['sprox_id']
 		kw['lider'] = DBSession.query(Usuario).get(kw['lider'])
 		kw['estado'] = DBSession.query(EstadoProyecto).get(kw['estado'])
 		proyecto = Proyecto(**kw)
+		#persiste el proyecto
 		DBSession.add(proyecto)
+		#Se anhade el rol de lider
+		proy=DBSession.query(Proyecto).filter(Proyecto.nombre==proyecto.nombre).first()
+		
+		self.asignar_lider(proy)
+		
 		flash("El proyecto ha sido creado correctamente.")
-		redirect("/administracion/proyecto/listall")
+		redirect("/administracion/proyecto/list")
+	
+	def asignar_lider(self, proyecto):
+		#Se obtiene el template de lider
+		rol_lider = DBSession.query(Rol).filter(Rol.group_name == 'lider').first()
+		#rol_lider = rol_lider[0]
+		#Se copia el template en un rol nuevo
+		rol = Rol()
+		rol.group_name = 'lider_'+str(proyecto.id_proyecto)
+		rol.display_name = 'Lider del proyecto '+ proyecto.nombre
+		DBSession.add(rol)
+		#Se obtiene el id de rol
+		new_rol = DBSession.query(Rol).filter(Rol.group_name == rol.group_name).all()
+		rol = new_rol[0]
+		#Se obtienen los permisos del template
+		permisos_rol = DBSession.query(RolPermiso).\
+						filter(RolPermiso.group_id == rol_lider.group_id)
+		#Se copian los permisos del template a rol nuevo
+		for permiso in permisos_rol:
+			new_permiso = RolPermiso()
+			
+			new_permiso.group_id = rol.group_id
+			new_permiso.permission_id = permiso.permission_id
+			DBSession.add(new_permiso)
+		#Se asigna el rol al usuario
+		self.asignar_participante (proyecto.lider.user_id, 
+									rol.group_name, 
+									proyecto.id_proyecto)
+		DBSession.flush()
+		transaction.commit()
+
+	
+	"""
+	Se encarga de asignar un rol a un usuario
+	"""
+	def asignar_rol_usuario(self,user_id , rol_name, id_proyecto):
+		
+		#Se obtiene el rol con el nombre correspondiente
+		rol = DBSession.query(Rol).filter(Rol.group_name == rol_name).all()
+		#Se verifica si el usuario posee el rol
+		rol_usuario = DBSession.query(RolUsuario).\
+					filter(RolUsuario.user_id == user_id).\
+					filter(RolUsuario.group_id == rol[0].group_id).all()
+		
+		#si no posee el rol, se le asigna
+		if(len(rol_usuario) == 0):
+			rol_usuario = RolUsuario()
+			rol_usuario.user_id = user_id
+			rol_usuario.group_id = rol[0].group_id
+			DBSession.add(rol_usuario)
+		
+		return rol[0]
+	"""
+	Asigna un el rol al participante y de asociar los permisos del rol 
+	al proyecto especificado
+	"""
+	def asignar_participante(self, user_id, rol_name, proyecto_id):
+		rol = self.asignar_rol_usuario(user_id, rol_name, proyecto_id)
+		#Se obtiene los permisos que posee el rol
+		permisos_rol = DBSession.query(RolPermiso).\
+						filter(RolPermiso.group_id == rol.group_id)
+						
+		#Se asocian los permisos de los roles a los proyectos
+		for permiso in permisos_rol : 
+			rol_permiso_proyecto = RolPermisoProyecto()
+			
+			rol_permiso_proyecto.group_id = rol.group_id
+			rol_permiso_proyecto.proyecto_id = proyecto_id
+			rol_permiso_proyecto.permission_id = permiso.permission_id
+			
+			DBSession.add(rol_permiso_proyecto)
 	
 	"""
 	Encargado de carga el widget para editar las instancias, 
@@ -123,6 +201,7 @@ class ProyectoController(RestController):
 	"""
 	@expose()
 	def post_delete(self, id_proyecto, **kw):
+		DBSession.delete(DBSession.query(RolPermisoProyecto).filter(RolPermisoProyecto.proyecto_id == id_proyecto))
 		DBSession.delete(DBSession.query(Proyecto).get(id_proyecto))
 		flash("El proyecto ha sido "+ id_proyecto +" eliminado correctamente.")
-		redirect("/administracion/proyecto/listall")
+		redirect("/administracion/proyecto/list")

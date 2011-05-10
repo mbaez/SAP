@@ -2,9 +2,11 @@
 
 from tw.api import WidgetsList
 from tw.forms import TableForm, SingleSelectField, TextField, TextArea, PasswordField, SubmitButton
-
 from sprox.formbase import AddRecordForm
 from sap.model import *
+from sprox.widgets import *
+from sap.widgets.extended import ExtendedAddRecordForm
+##Form definition
 
 class NewUsuarioForm(AddRecordForm):
 	__model__ = Usuario
@@ -16,9 +18,9 @@ class NewProyectoForm(AddRecordForm):
 	__model__ = Proyecto
 	__omit_fields__ = ['id_proyecto','lider_id','estado_id']
 
-class NewRolForm(AddRecordForm):
+class NewRolForm(ExtendedAddRecordForm):
 	__model__ = Rol
-	__omit_fields__ = ['id_rol']
+	__omit_fields__ = ['group_id','users']
 
 class NewFaseForm(AddRecordForm):
 	__model__ = Fase
