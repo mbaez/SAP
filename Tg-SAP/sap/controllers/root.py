@@ -6,6 +6,11 @@ from pylons.i18n import ugettext as _, lazy_ugettext as l_
 from catwalk.tg2 import Catwalk
 from repoze.what import predicates
 
+"""
+solo para probar libreria y metodos
+"""
+from sap.controllers.item import *
+
 from sap.lib.base import BaseController
 from sap.model import *
 from sap.model import DBSession, metadata
@@ -42,7 +47,7 @@ class RootController(BaseController):
 	error = ErrorController()
 	
 	miproyecto = ProyectosController()
-
+	
 	@expose('sap.templates.index')
 	def index(self):
 		"""Handle the front-page."""
@@ -112,5 +117,23 @@ class RootController(BaseController):
 		proyectos = checker.get_poyect_list('ver_proyecto')
 		value = admin_proyecto_filler.get_value(proyectos)
 		return dict(modelname='Proyectos',value=value)
-	
-	
+	"""
+	metodo para probar el calculo de impacto
+	"""
+	@expose('sap.templates.index')
+	def prueba(self):
+		#contruye el grafo del proyecto 1 en este caso
+		grafo = item.proyectGraphConstructor(1)
+		#construye el grafo de la fase 1 del proyecto 1
+		grafo2 = item.faseGraphConstructor(1)
+		#construye el grafo de la fase 2 del proyecto 1
+		grafo3 = item.faseGraphConstructor(2)
+		
+		impacto = item.calcularImpacto(grafo, 2)
+		
+		flash("Grafo de la fase 1 " + str(grafo2)+\
+					" Grafo de la fase 2 "+ str(grafo3)+\
+					" Grafo del proyecto 1 "+ str(grafo)+\
+					" calculo de impacto del item 2 = "+ str(impacto))
+		
+		redirect('/')

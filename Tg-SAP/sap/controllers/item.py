@@ -29,7 +29,7 @@ class ItemController(BaseController):
 	retorna:
 	- item Item
 	"""
-	def getPadre (item):
+	def getPadre (self, item):
 		#lista de padres
 		padre
 		#relaciones
@@ -53,7 +53,7 @@ class ItemController(BaseController):
 	retorna:
 	- List[] Item
 	"""
-	def getItemsAprobados (idfase):
+	def getItemsAprobados (self, idfase):
 		#lista de items aprobados de la fase. Suponiendo que el id del estado "aprobado"
 		#sea 1
 		itemsAprobados = DBSession.query(Item).filter(Item.fase==idfase).\
@@ -68,23 +68,28 @@ class ItemController(BaseController):
 	retorna:
 	grafo: digraph 
 	"""
-	def proyectGraphConstructor(idproyecto):
-		fases = DBSession.query(Fase).filter(Fase.proyecto==idproyecto)
+	def proyectGraphConstructor(self, idproyecto):
+		fases = DBSession.query(Fase).filter(Fase.proyecto==idproyecto).all()
 		grafo = digraph()
 		items = []
+		itemsId = []
+		
 		#se "obtienen los items de cada fase
-		for fase in fases
-			items = items + DBSession.query(Item).filter(Item.fase==fase.id_fase)
+		for fase in fases:
+			items = items + list(DBSession.query(Item).filter(Item.fase==fase.id_fase))
 		
 		for item in items:
 			grafo.add_nodes([item.id_item])
 		
-		"""
+		#guardar los ids de los items
+		for item in items:
+			itemsId = itemsId + [item.id_item]
+ 		"""
 		Se busca en la tabla RelacionItem todas las relaciones 
 		que contengan a los items del proyecto
 		"""
 		relaciones = DBSession.query(RelacionItem).\
-						filter(RelacionItem.id.in_(items)).\
+						filter((RelacionItem.id).in_(itemsId)).\
 						all()
 		
 		#Se añaden las aristas entre los items relacionados
@@ -101,9 +106,10 @@ class ItemController(BaseController):
 	retorna:
 	- grafo digraph (grafo dirigido)
 	"""	
-	def faseGraphConstructor(idfase):
+	def faseGraphConstructor(self, idfase):
 		#lista de items para el grafo
 		items = DBSession.query(Item).filter(Item.fase==idfase).all()
+		itemsId = []
 		
 		"""
 		Todos los items de la fase forman parte del grafo (item = nodo)
@@ -118,12 +124,13 @@ class ItemController(BaseController):
 		Se busca en la tabla RelacionItem todas las relaciones de padre-hijo
 		que contengan a los items de la fase
 		"""
+		#guardar los ids de los items
+		for item in items:
+			itemsId = itemsId + [item.id_item]
+			
 		relaciones = DBSession.query(RelacionItem).\
-						#filtro de acuerdo al tipo de relacion
 						filter(RelacionItem.relacion_parentesco==1).\
-						#filtro para que solo traiga las relaciones de los 
-						#items de esta fase.
-						filter(RelacionItem.id.in_(items)).\
+						filter(RelacionItem.id.in_(itemsId)).\
 						all()
 		
 		#Se añaden las aristas entre los items relacionados
@@ -142,10 +149,10 @@ class ItemController(BaseController):
 			True si es que se forma un ciclo con la nueva relacion
 			False en caso contrario
 	"""		
-	def ciclo (nuevaRelacion, idfase):
+	def ciclo (self, nuevaRelacion, idfase):
 		grafo = graphConstructor(idfase) 
 		grafo.add_edges(nuevaRelacion.id, nuevaRelacion.item_realcionado)
-		if(find_cycle(grafo)!= [])
+		if(find_cycle(grafo)!= []):
 			return True
 		return False
 	
@@ -157,14 +164,14 @@ class ItemController(BaseController):
 	retorna:
 	- valorImpacto Tipo Integer
 	""" 
-	def calcularImpacto(grafo, itemId):
+	def calcularImpacto(self, grafo, itemId):
 		"""
 		obtener la lista de todos antecesores directos e indirectos
 		el list(set()) es para que elimine los repetidos
 		los metodos listBackwards y listForward retornan listas con elementos
 		repetidos.
 		"""
-		antecesores = list(set(listBackward(grafo, grafo.incidents(itemId))))
+		antecesores = list(set(self.listBackward(grafo, grafo.incidents(itemId))))
 		"""
 		se añade a la lista el propio item
 		"""
@@ -172,12 +179,13 @@ class ItemController(BaseController):
 		"""
 		obtener la lista de todos sucesores directos e indirectos
 		"""
-		sucesores = list(set(listForward(grafo, grafo.neighbors(itemId))))
+		sucesores = list(set(self.listForward(grafo, grafo.neighbors(itemId))))
 		
 		#suma de listas
 		impactoList = antecesores + item + sucesores
 		
-		for idItem in impactoList
+		valorImpacto = 0;
+		for idItem in impactoList:
 			itemActual = DBSession.query(Item).get(idItem)
 			valorImpacto = valorImpacto + itemActual.complejidad
 		
@@ -192,7 +200,7 @@ class ItemController(BaseController):
 	retorna
 	List[Item]
 	"""	
-	def listForward(grafo, items):
+	def listForward(self, grafo, items):
 		if(len(items)==0):
 			return [] 
 		if(len(items)==1 and len(grafo.neighbors(items[0])) == 0):
@@ -215,7 +223,7 @@ class ItemController(BaseController):
 	retorna
 	List[Item]
 	"""	
-	def listBackward(grafo, items):
+	def listBackward(self, grafo, items):
 		if(len(items)==0):
 			return []
 		if(len(items)==1 and len(grafo.incidents(items[0]))==0):
@@ -238,12 +246,15 @@ class ItemController(BaseController):
 	retorna:
 		True si es que deja huerfano a algun item
 		False en caso contrario
-	"""
-	def huerfano(grafo, idItem)
-		"""
+	
+	
 		TODO
 		no se si esto se aplica solo sobre items aprobados o que onda
-		"""
+		
 	
+	"""
+    #def huerfano(grafo, idItem):
+item = ItemController()
+
 	
 		
