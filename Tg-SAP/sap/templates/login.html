@@ -12,13 +12,23 @@
 </head>
 
 <body>
-<div id="loginform">
-<form action="${tg.url('/login_handler', came_from = came_from.encode('utf-8'), __logins = login_counter.encode('utf-8'))}" method="POST" class="loginfields">
-    <h2><span>Acceder</span></h2>
-    <label for="login">Username:</label><input type="text" id="login" name="login" class="text"></input><br/>
-    <label for="password">Contrase&ntilde;a:</label><input type="password" id="password" name="password" class="text"></input>
-    <input type="submit" id="submit" value="Acceder" />
-</form>
-</div>
+<section class="login-box shade">
+	<div class="wrapper">
+		<h2 class="top">Sign in</h2>
+		<div id="loginform">
+			<form action="${tg.url('/login_handler', came_from = came_from.encode('utf-8'), __logins = login_counter.encode('utf-8'))}" method="POST" class="loginfields">
+				<div class="form-row">
+				<label for="login">Username:</label>
+					<input type="text" id="login" name="login" class="text"></input><br/>
+				</div>
+				<div class="form-row">
+				<label for="password">Contrase&ntilde;a:</label>
+					<input type="password" id="password" name="password" class="text"></input>
+				</div>
+				<input type="submit" id="submit" value="Acceder" />
+			</form>
+		</div>
+	</div>
+</section>
 </body>
 </html>

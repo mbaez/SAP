@@ -5,56 +5,34 @@
       xmlns:xi="http://www.w3.org/2001/XInclude"
       py:strip="">
     <xi:include href="header.html" />
-    <xi:include href="sidebars.html" />
+    
     <xi:include href="footer.html" />
-<head py:match="head" py:attrs="select('@*')">
-    <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-    <title py:replace="''">Sistema de Administraci&oacute;n de Proyectos</title>
-    <meta py:replace="select('*')"/>
-    <link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/style.css')}" />
-</head>
+    
+	<head py:match="head" py:attrs="select('@*')">
+		<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+		<title py:replace="''">Sistema de Administraci&oacute;n de Proyectos</title>
+		<meta py:replace="select('*')"/>
+		<link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/master.css')}" />
+	</head>
 
 <body py:match="body" py:attrs="select('@*')">
-  ${header()}
-  
-  <ul id="mainmenu">
-    <li class="first">
-		<a href="${tg.url('/')}" class="${('', 'active')[defined('page') and page==page=='index']}">Inicio</a>
-	</li>
-    
-	<li py:if="tg.predicates.has_permission('manage')">
-		<a href="/proyectos">Mis Proyectos</a>
-	</li>
-
-	<li>
-		<a href="${tg.url('/about')}" class="${('', 'active')[defined('page') and page==page=='about']}">Ayuda</a>
-    </li>
-     
-    <span py:if="tg.auth_stack_enabled" py:strip="True">
-        <li py:if="not request.identity" id="login" class="loginlogout">
-			<a href="${tg.url('/login')}">Acceder</a>
-		</li>
-        <li py:if="request.identity" id="login" class="loginlogout">
-			<a href="${tg.url('/logout_handler')}">Salir</a>
-        </li>
-        <!--Solo el usuario que tiene permisos de manage puede ver el link -->
-        <li py:if="tg.predicates.has_permission('manage')" id="admin" class="loginlogout">
-			<a href='/administracion'>Administraci&oacute;n</a>
-		</li>
-    </span>
-  </ul>
-  <section id="content">
-    <py:if test="defined('page')">
-    <article class="currentpage">
-    <!-- Contenedor para las paginas-->
-    </article>
-    </py:if>
-    <py:with vars="flash=tg.flash_obj.render('flash', use_js=False)">
-        <div py:if="flash" py:content="XML(flash)" />
-    </py:with>
-    <div py:replace="select('*|text()')"/>
-    <!-- End of content -->
-  </section>
+<div id="container">
+	${header()}
+	<!--h2 class="module-title"><a>Projects </a> ProyectName</h2-->
+	<section id="content" class="shade">
+		<div class="wrapper">
+			<py:if test="defined('page')">
+			<div class="currentpage">
+				<!-- La pagina actual-->
+			</div>
+			</py:if>
+			<py:with vars="flash=tg.flash_obj.render('flash', use_js=False)">
+				<div py:if="flash" py:content="XML(flash)" />
+			</py:with>
+			<div py:replace="select('*|text()')"/>
+		</div>
+	</section>
   ${footer()}
+  </div>
 </body>
 </html>

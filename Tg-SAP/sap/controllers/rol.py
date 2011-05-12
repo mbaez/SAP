@@ -22,7 +22,7 @@ from tg.controllers import RestController
 
 class RolController(RestController):
 
-	@expose('sap.templates.new')
+	@expose('sap.templates.administracion.new')
 	@require(predicates.has_permission('manage'))
 	def new(self, **kw):
 		tmpl_context.widget = new_rol_form
@@ -33,7 +33,6 @@ class RolController(RestController):
 	def post(self, **kw):
 		del kw['sprox_id']
 		rol = Rol()
-		#rol.group_id = kw['group_id']
 		rol.group_name = kw['group_name'] 
 		rol.display_name = kw['display_name']
 		
@@ -44,7 +43,7 @@ class RolController(RestController):
 		flash("El rol ha sido creado correctamente.")
 		redirect("/administracion/rol/list")
 	
-	@expose('sap.templates.edit')
+	@expose('sap.templates.administracion.edit')
 	@require(predicates.has_permission('manage'))
 	def edit(self, id,**kw):
 		rol =  DBSession.query(Rol).get(id)
@@ -65,7 +64,7 @@ class RolController(RestController):
 		redirect("/administracion/rol/list")
 	
 
-	@expose('sap.templates.list')
+	@expose('sap.templates.administracion.list')
 	@require(predicates.has_permission('manage'))
 	def list(self, **kw):
 		"""Lista todos los roles de la base de datos"""

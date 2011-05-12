@@ -1,12 +1,49 @@
-<html xmlns:py="http://genshi.edgewall.org/"
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
       xmlns:xi="http://www.w3.org/2001/XInclude"
       py:strip="">
+      
+<script type="text/javascript" src="./jquery/jquery.min.js"></script>
+<script type="text/javascript" src="./jquery/jquery-ui.min.js"></script>
+<script type="text/javascript" src="./jquery/query.alerts.js"></script>
+<script type="text/javascript" src="./jquery/cookie.js"></script>
+<script type="text/javascript" src="./jquery/busylissy-ui.js"></script>
+
 <py:def function="header">
-  <header>
-  	<h1>
-		SAP Proyect
-		<span class="subtitle">Sistema de Administrai&oacute;n de Proyectos</span>
-	</h1>
-  </header>
+	<header class="page-header">
+		<h1><a>Sistema de Administraci&oacute;n de Proyectos</a></h1>
+		<nav>
+			<ul>
+				
+				<li id="top-projects" class="top-nav" 
+					py:if="tg.predicates.has_permission('manage')">
+					<a href='/administracion'>Administraci&oacute;n</a>
+				</li>
+				<li id="user"><a class="user-top"><img src="/img/saved_resource" /></a>
+					<div>
+						<dl>
+							<dt py:if="request.identity" id="login" class="loginlogout" >
+								<?python 
+									userid = request.identity['repoze.who.userid']
+								?>
+								${userid}
+								<span><a class="rss">Rss fe</a></span>
+							</dt>
+							<dd py:if="request.identity" id="login" class="loginlogout"><a>Edit Profile</a></dd>
+							<dd py:if="request.identity" id="login" class="loginlogout"><a>Settings</a></dd>
+							<div py:if="tg.auth_stack_enabled" py:strip="True">
+								<dd py:if="not request.identity" id="login" class="loginlogout">
+									<a href="${tg.url('/login')}" >Acceder</a>
+								</dd>
+								<dd py:if="request.identity" id="login" class="loginlogout">
+									<a href="${tg.url('/logout_handler')}">Salir</a>
+								</dd>
+							</div>
+						</dl>
+					</div>
+				</li>
+			</ul>
+		</nav>
+	</header>
 </py:def>
 </html>

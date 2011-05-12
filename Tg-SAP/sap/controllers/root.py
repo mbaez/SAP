@@ -93,7 +93,6 @@ class RootController(BaseController):
 			login_counter = request.environ['repoze.who.logins'] + 1
 			redirect(url('/login', came_from=came_from, __logins=login_counter))
 		userid = request.identity['repoze.who.userid']
-		flash(_('Welcome back, %s!') % userid)
 		redirect('/proyectos')
 
 	@expose()
@@ -104,7 +103,7 @@ class RootController(BaseController):
 		
 		"""
 		#flash(_('We hope to see you soon!'))
-		redirect(url('/index'))
+		redirect(url('/login'))
 	
 	@expose('sap.templates.administracion.list')
 	@require(predicates.has_permission('ver_proyecto'))

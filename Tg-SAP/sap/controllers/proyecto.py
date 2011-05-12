@@ -26,7 +26,7 @@ class ProyectoController(RestController):
 	Encargado de carga el widget para crear nuevas instancias, 
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
 	"""
-	@expose('sap.templates.new')
+	@expose('sap.templates.administracion.new')
 	@require(predicates.has_permission('crear_proyecto'))
 	def new(self, modelname='',**kw):
 		tmpl_context.widget = new_proyecto_form
@@ -133,7 +133,7 @@ class ProyectoController(RestController):
 	Encargado de carga el widget para editar las instancias, 
 	solo tienen acceso aquellos usuarios que posean el premiso de editar
 	"""
-	@expose('sap.templates.edit')
+	@expose('sap.templates.administracion.edit')
 	@require(predicates.has_permission('editar_proyecto'))
 	def edit(self, id,**kw):
 		proyecto =  DBSession.query(Proyecto).get(id)
@@ -173,7 +173,7 @@ class ProyectoController(RestController):
 	los usuarios que posena el permiso de ver, este widget se encuentra 
 	acompanhado de enlaces de editar y eliminar
 	"""
-	@expose('sap.templates.list')
+	@expose('sap.templates.administracion.list')
 	@require( predicates.has_permission('ver_proyecto'))
 	def list(self, **kw):
 		tmpl_context.widget = proyecto_table
@@ -188,7 +188,7 @@ class ProyectoController(RestController):
 	"""
 	metodo para listar todos los proyectos al administrador
 	"""
-	@expose('sap.templates.list')
+	@expose('sap.templates.administracion.list')
 	@require( predicates.has_permission('manage'))
 	def listall(self, **kw):
 		tmpl_context.widget = proyecto_table

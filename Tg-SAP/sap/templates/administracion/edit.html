@@ -6,14 +6,21 @@
 
 <xi:include href="master.html" />
 <xi:include href="header/header_administracion.html" />
+
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-  <title>Administraci&oacute;n de configuraciones del sistema</title>
+  <title>Editar ${modelname}</title>
 </head>
 
 <body>
 ${header_administracion()}
-<h2>Administraci&oacute;n de configuraciones del sistema</h2>
+<h2>Editar ${modelname}</h2>
 
+<!--div py:replace="tmpl_context.form()">Input Form</div-->
+<div>
+	<div style="float:left width: 80%">
+		${tmpl_context.widget(value=value, action='./')}
+	</div>
+</div>
 </body>
 </html>

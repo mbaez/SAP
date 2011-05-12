@@ -21,7 +21,7 @@
 	<h1 style="margin-top:1px;">Listado de ${modelname}</h1>
 	${tmpl_context.widget(value=value)}
 </div>
-<p><a py:if='tg.predicates.has_permission("crear_"+modelname[:-1].lower())' href="new/">Nuevo</a></p>
+<p><a class="button" py:if='tg.predicates.has_permission("crear_"+modelname[:-1].lower())' href="new/">Nuevo</a></p>
 <br/>
 </body>
 </html>
