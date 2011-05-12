@@ -1,0 +1,37 @@
+<div xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:py="http://genshi.edgewall.org/"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+	  dojoType="$dojoType" 
+	  id="${name}_SelectShuttle">
+	  <link rel="stylesheet" type="text/css" media="screen" href="/css/master.css" />
+    
+    <div class="select" >
+        Disponibles<br/>
+        <select class="shuttle" id="${name}_src" multiple="true" name="" size="$size">
+                <option py:for="value, description, attrs in options"
+                        py:content="description"
+                        value="${value}"/>
+        </select>
+    </div>
+    
+    <div class= "shuttle_buttons" id="${name}_Buttons">
+        <button class="shuttle" id="${name}_AllRightButton">&gt;&gt;</button><br/>
+        <button class="shuttle" id="${name}_RightButton">=&gt;</button><br/>
+        <button class="shuttle" id="${name}_LeftButton">&lt;=</button><br/>
+        <button class="shuttle" id="${name}_AllLeftButton">&lt;&lt;</button>
+    </div>
+    
+    <div class="select">
+            Selecionados<br/>
+
+            <select class="shuttle" id="${name}" multiple="true" name="${name}" size="$size">
+                <option py:for="value, description, attrs in selected_options"
+                        py:content="description"
+                        value="${value}"/>
+            </select>
+    </div>
+
+    <script type="text/javascript">
+    //create an object of this type here
+    </script>
+</div>
