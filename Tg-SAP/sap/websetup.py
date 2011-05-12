@@ -18,6 +18,9 @@ __permisos__= ['ver_proyecto','crear_proyecto','editar_proyecto',
 				'ver_rol','crear_usuario', 'eliminar_usuario',
 				'editar_usuario', 'ver_usuario']
 
+#lista de tipos de relacion
+__relaciones__= ['padre_hijo','antecesor_sucesor']
+
 def setup_app(command, conf, vars):
     """Place any commands to setup sap here"""
     load_environment(conf.global_conf, conf.local_conf)
@@ -44,7 +47,16 @@ def setup_app(command, conf, vars):
     group.users.append(manager)
 
     model.DBSession.add(group)
+    
+    group2 = model.Rol()
+    group2.group_name = u'lider'
+    group2.display_name = u'Managers Group'
 
+    group2.users.append(manager)
+    
+    model.DBSession.add(group2)
+	
+	
     activo = model.EstadoProyecto()
     activo.nombre = u'Activo'
     activo.descripcion = u'Estado que indica que un proyecto esta activo'
@@ -63,7 +75,102 @@ def setup_app(command, conf, vars):
 		permiso.description = u'Este permiso permite '+name
 		permiso.groups.append(group)
     
+    """
+    --------------------Datos Prueba Grafos---------------------
+    """
+    proyecto = model.Proyecto()
+    proyecto.lider_id = manager.user_id
+    proyecto.nombre = u'proyecto1'
+    proyecto.nro_fases = 3
+   
+    model.DBSession.add(proyecto)
+    
     model.DBSession.flush()
+    
+    fase1 = model.Fase()
+    fase1.nombre = u'fase1' 
+    fase1.proyecto = 1
+    
+    model.DBSession.add(fase1)
+		
+    fase2 = model.Fase()
+    fase2.nombre = u'fase2' 
+    fase2.proyecto = 1
+    
+    model.DBSession.add(fase2)
+    
+    tipodeitem1 = model.TipoItem()
+    tipodeitem1.fase = fase1.id_fase
+    tipodeitem1.nombre = u'tipo1'
+    
+    model.DBSession.add(tipodeitem1)
+    
+    tipodeitem2 = model.TipoItem()
+    tipodeitem2.fase = fase2.id_fase
+    tipodeitem2.nombre = u'tipo2'
+    
+    model.DBSession.add(tipodeitem2)
+    
+    estadoitem = model.EstadoItem()
+    estadoitem.nombre = u'estado1'
+    
+    model.DBSession.add(estadoitem)
+    
+    for name in __relaciones__ :
+		relacion = model.RelacionParentesco()
+		relacion.nombre = name
+		relacion.descripcion = u'Este tipo representa la relacion '+name
+		model.DBSession.add(relacion)
+    
+    model.DBSession.flush()
+    
+    for i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]: 	
+		item = model.Item() 
+		item.estado = 1 
+		item.tipo_item = 1
+		item.fase = 1
+		item.version = 1
+		item.prioridad = 1 
+		item.complejidad = i+1 
+		model.DBSession.add(item)
+	
+    item = model.Item() 
+    item.estado = 1 
+    item.tipo_item = 1
+    item.fase = 2
+    item.version = 1
+    item.prioridad = 1
+    item.complejidad = 11 
+    model.DBSession.add(item)
+    
+    model.DBSession.flush()
+	
+    relacion1 = model.RelacionItem()
+    relacion1.id = 1
+    relacion1.item_realcionado = 2
+    relacion1.relacion_parentesco = 1     
+		
+    model.DBSession.add(relacion1)
+    
+    relacion2 = model.RelacionItem()
+    relacion2.id = 1
+    relacion2.item_realcionado = 11
+    relacion2.relacion_parentesco = 2     
+		
+    model.DBSession.add(relacion2)
+    
+    
+    relacion3 = model.RelacionItem()
+    relacion3.id = 2
+    relacion3.item_realcionado = 5
+    relacion3.relacion_parentesco = 1     
+		
+    model.DBSession.add(relacion3)
+	
+    """
+    --------------------Fin Datos de Prueba----------------------
+    """
+    
 
     transaction.commit()
     print "Successfully setup"
