@@ -1,0 +1,2 @@
+recursive-include tw/dojo/templates *
+recursive-include tw/dojo/static *

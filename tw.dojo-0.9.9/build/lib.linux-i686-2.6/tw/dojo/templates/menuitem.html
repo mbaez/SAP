@@ -1,0 +1,4 @@
+<div dojoType="dijit.MenuItem" onClick="${on_click}" xmlns="http://www.w3.org/1999/xhtml" xmlns:py="http://genshi.edgewall.org/" class="${css_class}">
+<a href="${href}" py:if="href">${title}</a>
+<div py:strip="True" py:if="not href">${title}</div>
+</div>

@@ -1,0 +1,8 @@
+<div dojoType="dijit.PopupMenuBarItem" xmlns="http://www.w3.org/1999/xhtml" xmlns:py="http://genshi.edgewall.org/" class="${css_class}">
+        <span>${title}</span>
+        <div dojoType="dijit.Menu">
+                 <py:for each="child in children">
+                ${child(value_for(child), **args_for(child))}</py:for>
+        </div>
+</div>
+

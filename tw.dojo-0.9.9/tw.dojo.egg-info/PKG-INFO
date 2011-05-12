@@ -1,0 +1,20 @@
+Metadata-Version: 1.0
+Name: tw.dojo
+Version: 0.9.9
+Summary: Dojo 1.4.1 widget for ToscaWidgets
+Home-page: http://toscawidgets.org/
+Author: Michele Bertoldi and Christopher Perkins
+Author-email: michele@vico10.com
+License: UNKNOWN
+Download-URL: http://toscawidgets.org/download
+Description: UNKNOWN
+Keywords: toscawidgets.widgets
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Environment :: Web Environment
+Classifier: Environment :: Web Environment :: ToscaWidgets
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Software Development :: Widget Sets
+Classifier: Intended Audience :: Developers
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python

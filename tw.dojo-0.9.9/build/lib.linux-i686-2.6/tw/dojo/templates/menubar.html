@@ -1,0 +1,4 @@
+<div dojoType="dijit.MenuBar" id="navMenu" xmlns="http://www.w3.org/1999/xhtml" xmlns:py="http://genshi.edgewall.org/" class="${css_class}">
+     <py:for each="child in children">
+    ${child(value_for(child), **args_for(child))}</py:for>
+</div>

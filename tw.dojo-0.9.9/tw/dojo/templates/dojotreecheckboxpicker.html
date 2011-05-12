@@ -1,0 +1,7 @@
+<span xmlns="http://www.w3.org/1999/xhtml" xmlns:py="http://genshi.edgewall.org/">
+	<div dojoType="dojox.data.FileStore" pathAsQueryParam="true" jsId="folder_store"
+		url="$url"></div>
+	<div dojoType="twdojo.CheckedTree" jsId="$jsId" id="$jsId" label="Folders" store="folder_store" query="{type:'folder'}"
+		labelAttr="name" typeAttr="type">
+	</div>
+</span>
