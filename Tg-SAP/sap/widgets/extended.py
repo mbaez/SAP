@@ -1,4 +1,5 @@
 
+from sprox.widgets.dojo import SproxDojoSelectShuttleField
 from sprox.widgetselector import SAWidgetSelector
 from tw.dojo.selectshuttle import DojoSelectShuttleField
 from sprox.widgets import PropertyMixin
@@ -8,10 +9,8 @@ from sprox.formbase import EditableForm
 from sprox.fillerbase import *
 from sap.model import *
 
-
 class ExtendedSelectShuttleField(DojoSelectShuttleField):
 	template = "sap.templates.extended.selectshuttle"
-	#css = [DojoCSSLink(basename = '')]
 
 class SproxExtendedSelectShuttleField(ExtendedSelectShuttleField, PropertyMixin):
 	def update_params(self, d):
