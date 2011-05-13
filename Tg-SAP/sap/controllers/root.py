@@ -110,13 +110,14 @@ class RootController(BaseController):
 		#flash(_('We hope to see you soon!'))
 		redirect(url('/login'))
 	
-	@expose('sap.templates.administracion.list')
+	@expose('sap.templates.list')
 	@require(predicates.has_permission('ver_proyecto'))
 	def proyectos(self, **kw):
 		tmpl_context.widget = admin_proyecto_table
 		proyectos = checker.get_poyect_list('ver_proyecto')
 		value = admin_proyecto_filler.get_value(proyectos)
-		return dict(modelname='Proyectos',value=value)
+		header_file="administracion"
+		return dict(modelname='Proyectos', header_file=header_file,value=value)
 	"""
 	metodo para probar el calculo de impacto
 	"""

@@ -20,6 +20,8 @@ from tg import tmpl_context, redirect, validate
 
 from tg.controllers import RestController
 
+header_file="administracion"
+
 class UsuarioContoller(RestController):
 	"""
 	prueba de abm y de visibilidad de datos en el template master.html
@@ -33,7 +35,7 @@ class UsuarioContoller(RestController):
 	@require(predicates.has_permission('manage'))
 	def new(self, modelname='',**kw):
 		tmpl_context.widget = new_usuario_form
-		return dict(value=kw, modelname='Usuario')
+		return dict(value=kw,header_file=header_file, modelname='Usuario')
 		
 	@validate(new_usuario_form, error_handler=new)
 	@expose()
@@ -57,7 +59,7 @@ class UsuarioContoller(RestController):
 		kw['mail'] = usuario.mail
 		kw['observacion'] = usuario.observacion
 		kw['estado'] = usuario.estado
-		return dict(value=kw, modelname='Usuario')
+		return dict(value=kw, header_file=header_file,modelname='Usuario')
 	
 	@validate(usuario_edit_form, error_handler=edit)
 	@expose()
@@ -75,7 +77,7 @@ class UsuarioContoller(RestController):
 		"""Lista todos los usuarios de la base de datos"""
 		tmpl_context.widget = usuario_table
 		value = usuario_filler.get_value()
-		return dict(modelname='Usuarios',value=value)
+		return dict(modelname='Usuarios',header_file=header_file,value=value)
 	
 	@expose()
 	def post_delete(self, id_usuario, **kw):

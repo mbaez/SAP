@@ -26,11 +26,12 @@ class ProyectoController(RestController):
 	Encargado de carga el widget para crear nuevas instancias, 
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
 	"""
-	@expose('sap.templates.administracion.new')
+	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_proyecto'))
 	def new(self, modelname='',**kw):
 		tmpl_context.widget = new_proyecto_form
-		return dict(value=kw, modelname='Proyecto')
+		header_file="administracion"
+		return dict(value=kw,header_file=header_file,modelname='Proyecto')
 	
 	"""
 	Evento invocado luego de un evento post en el form de crear
@@ -133,7 +134,7 @@ class ProyectoController(RestController):
 	Encargado de carga el widget para editar las instancias, 
 	solo tienen acceso aquellos usuarios que posean el premiso de editar
 	"""
-	@expose('sap.templates.administracion.edit')
+	@expose('sap.templates.edit')
 	@require(predicates.has_permission('editar_proyecto'))
 	def edit(self, id,**kw):
 		proyecto =  DBSession.query(Proyecto).get(id)
@@ -146,7 +147,8 @@ class ProyectoController(RestController):
 		kw['estado_id'] = proyecto.estado_id
 		kw['nro_fases'] = proyecto.nro_fases
 		kw['descripcion'] = proyecto.descripcion
-		return dict(value=kw, modelname='Proyecto')
+		header_file="administracion"
+		return dict(value=kw, header_file=header_file, modelname='Proyecto')
 
 	"""
 	Evento invocado luego de un evento post en el form de editar
@@ -164,7 +166,6 @@ class ProyectoController(RestController):
 		proyecto.descripcion = kw['descripcion']
 		proyecto.estado=DBSession.query(EstadoProyecto).get(int(kw['estado']))
 		DBSession.merge(proyecto)
-		
 		flash("El proyecto ha sido '" +proyecto.nombre+ "' modificado correctamente.")
 		redirect("/administracion/proyecto/list")
 	
@@ -173,7 +174,7 @@ class ProyectoController(RestController):
 	los usuarios que posena el permiso de ver, este widget se encuentra 
 	acompanhado de enlaces de editar y eliminar
 	"""
-	@expose('sap.templates.administracion.list')
+	@expose('sap.templates.list')
 	@require( predicates.has_permission('ver_proyecto'))
 	def list(self, **kw):
 		tmpl_context.widget = proyecto_table
@@ -183,18 +184,20 @@ class ProyectoController(RestController):
 		'''
 		proyectos = checker.get_poyect_list('ver_proyecto')
 		value = proyecto_filler.get_value(proyectos)
-		return dict(modelname='Proyectos',value=value)
+		header_file="administracion"
+		return dict(modelname='Proyectos',header_file=header_file,value=value)
 	
 	"""
 	metodo para listar todos los proyectos al administrador
 	"""
-	@expose('sap.templates.administracion.list')
+	@expose('sap.templates.list')
 	@require( predicates.has_permission('manage'))
 	def listall(self, **kw):
 		tmpl_context.widget = proyecto_table
 		#se obtiene la lista de todos los proyectos 
 		value = proyecto_filler.get_value()
-		return dict(modelname='Proyectos',value=value)
+		header_file="administracion"
+		return dict(modelname='Proyectos',header_file=header_file,value=value)
 	
 	
 	"""

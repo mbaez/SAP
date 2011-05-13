@@ -5,6 +5,7 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <xi:include href="master.html" />
+<xi:include href="header/${header_file}.html" />
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -12,7 +13,7 @@
 </head>
 
 <body>
-
+	${sub_header()}
 <h1>Nuevo ${modelname}</h1>
 
 <!--div py:replace="tmpl_context.form()">Input Form</div-->

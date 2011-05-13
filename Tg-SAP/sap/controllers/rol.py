@@ -20,13 +20,15 @@ from tg import tmpl_context, redirect, validate
 
 from tg.controllers import RestController
 
-class RolController(RestController):
+header_file="administracion"
 
-	@expose('sap.templates.administracion.new')
+class RolController(RestController):
+	
+	@expose('sap.templates.new')
 	@require(predicates.has_permission('manage'))
 	def new(self, **kw):
 		tmpl_context.widget = new_rol_form
-		return dict(value=kw, modelname='Rol')
+		return dict(value=kw, header_file=header_file, modelname='Rol')
 		
 	@validate(new_rol_form, error_handler=new)
 	@expose()
@@ -43,7 +45,7 @@ class RolController(RestController):
 		flash("El rol ha sido creado correctamente.")
 		redirect("/administracion/rol/list")
 	
-	@expose('sap.templates.administracion.edit')
+	@expose('sap.templates.edit')
 	@require(predicates.has_permission('manage'))
 	def edit(self, id,**kw):
 		rol =  DBSession.query(Rol).get(id)
@@ -52,7 +54,7 @@ class RolController(RestController):
 		kw['group_name'] = rol.group_name
 		kw['display_name'] = rol.display_name
 		kw['permissions'] = rol.permissions
-		return dict(value=kw, modelname='Rol')
+		return dict(value=kw, header_file=header_file, modelname='Rol')
 	
 	@validate(rol_edit_form, error_handler=edit)
 	@expose()
@@ -64,13 +66,13 @@ class RolController(RestController):
 		redirect("/administracion/rol/list")
 	
 
-	@expose('sap.templates.administracion.list')
+	@expose('sap.templates.list')
 	@require(predicates.has_permission('manage'))
 	def list(self, **kw):
 		"""Lista todos los roles de la base de datos"""
 		tmpl_context.widget = rol_table
 		value = rol_filler.get_value()
-		return dict(modelname='Rol',value=value)
+		return dict(modelname='Rol',header_file=header_file,value=value)
 	
 	@expose()
 	def post_delete(self, id_rol, **kw):
