@@ -2,7 +2,7 @@
       xmlns:py="http://genshi.edgewall.org/"
       xmlns:xi="http://www.w3.org/2001/XInclude"
       py:strip="">
-      
+
 <script type="text/javascript" src="./jquery/jquery.min.js"></script>
 <script type="text/javascript" src="./jquery/jquery-ui.min.js"></script>
 <script type="text/javascript" src="./jquery/query.alerts.js"></script>
@@ -11,11 +11,11 @@
 
 <py:def function="header">
 	<header class="page-header">
-		<h1><a>Sistema de Administraci&oacute;n de Proyectos</a></h1>
+		<h1><a>SAP</a></h1>
 		<nav>
 			<ul>
-				
-				<li id="top-projects" class="top-nav" 
+
+				<li id="top-projects" class="top-nav"
 					py:if="tg.predicates.has_permission('manage')">
 					<a href='/administracion'>Administraci&oacute;n</a>
 				</li>
@@ -23,7 +23,7 @@
 					<div>
 						<dl>
 							<dt py:if="request.identity" id="login" class="loginlogout" >
-								<?python 
+								<?python
 									userid = request.identity['repoze.who.userid']
 								?>
 								${userid}
@@ -44,6 +44,9 @@
 				</li>
 			</ul>
 		</nav>
+		<py:with vars="flash=tg.flash_obj.render('flash', use_js=False)">
+			<div py:if="flash" py:content="XML(flash)" />
+		</py:with>
 	</header>
 </py:def>
 </html>

@@ -1,6 +1,6 @@
 @charset "utf-8";
 /*==========================================================
-Version:    Beta 
+Version:    Beta
 Author:    	WdeB
 Owner:		Bread&Pepper
 
@@ -10,7 +10,7 @@ Green: 		#222
 
 
 TABLE OF CONTENT
-00 - Global reset 
+00 - Global reset
 01 - Main Elements
 02 - General Typo
 03 - Header
@@ -18,12 +18,12 @@ TABLE OF CONTENT
 
 
 /*==========================================================
-		00 - GLOBAL RESET				
+		00 - GLOBAL RESET
 ===========================================================*/
 @import url('syntax.css');
 
 /* Normalizes margin, padding */
-body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, p, blockquote, th, td 
+body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, form, fieldset, input, p, blockquote, th, td
 { margin : 0; padding : 0; }
 
 /* Normalizes font-size for headers */
@@ -57,7 +57,7 @@ q:before, q:after { content :''; }
 section, header, nav{display: block;}
 
 /*==========================================================
-		01 - Main Elements				
+		01 - Main Elements
 ===========================================================*/
 
 html, body {
@@ -74,11 +74,11 @@ html, body {
 	font-size: 14px;
 	background-color: #f3efa3;
 	border-bottom: 2px solid #1a1a1a;
-    position: relative;
-    display: none;
+	position: relative;
+	display: none;
 }
 
-#top-notification a.close{
+#top-notification {
     position: absolute;
     right: 5px;
     top: 0px;
@@ -113,16 +113,16 @@ nav{
 }
 
 .shade{
-	border-radius: 8px;  
-    -moz-border-radius: 8px;  
+	border-radius: 8px;
+    -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
 	border: 2px solid #efeee9;
 }
 
 .wrapper{
     border: 1px solid #dadcd8;
-    border-radius: 6px;  
-       -moz-border-radius: 6px;  
+    border-radius: 6px;
+       -moz-border-radius: 6px;
        -webkit-border-radius: 6px;
 		min-height: 15em;
 	background-color: #fff;
@@ -140,8 +140,8 @@ nav{
 	width: 600px;
 	margin: 14px 0 0 -300px;
 	text-align: center;
-	border-radius: 3px;  
-       -moz-border-radius: 3px;  
+	border-radius: 3px;
+       -moz-border-radius: 3px;
        -webkit-border-radius: 3px;
 }
 
@@ -175,7 +175,7 @@ footer p{
 
 
 /*==========================================================
-		02 - General Typo				
+		02 - General Typo
 ===========================================================*/
 
 a{
@@ -259,7 +259,7 @@ blockquote{
 
 
 /*==========================================================
-		03 - page Header				
+		03 - page Header
 ===========================================================*/
 
 header h1{
@@ -270,7 +270,7 @@ header h1{
 	padding: 0 0 0 0;
 	font: normal normal 1.9em Georgia, "Times New Roman", Times, serif;
 	overflow: hidden;
-	text-indent: -9999px;
+	text-indent: 5px;
 }
 
 header h1:hover{
@@ -281,6 +281,7 @@ header h1 a{
 	height: 50px;
 	width: 200px;
 	display: block;
+	color:#8dad48;
 }
 
 header.page-header nav ul{
@@ -292,7 +293,7 @@ header.page-header nav ul li{
     float: left;
     margin: 0 0 0 20px;
     line-height: 50px;
-	
+
 }
 
 header.page-header nav ul li.top-nav a{
@@ -364,7 +365,7 @@ nav li#user div{
 
 nav li#user:hover div{
 	display: block;
-	
+
 }
 
 nav li#user:hover div dt, nav li#user:hover div dd{
@@ -383,7 +384,7 @@ nav li#user:hover div dl dt{
 	font-size: 1.1em;
 	position: relative;
 	overflow: hidden;
-	
+
 }
 
 nav li#user:hover div dl dt span{
@@ -421,7 +422,7 @@ a.rss:hover{
 }
 
 /*==========================================================
-		04 - content header				
+		04 - content header
 ===========================================================*/
 
 header.content-header{
@@ -488,7 +489,7 @@ li#search{
 	float: right;
 	border: none;
 	border-left: 1px solid #faf9f7;
-} 
+}
 
 li#search form{
 	border-left: 1px solid #e4e5e0;
@@ -506,7 +507,7 @@ li#search input{
 	border: none;
 	font-size: 1.1em;
 	line-height: 1.4em;
-	
+
 }
 
 li#search input:hover{
@@ -521,7 +522,7 @@ li#search input:focus{
 }
 
 /*==========================================================
-		05 - BL forms				
+		05 - BL forms
 ===========================================================*/
 
 
@@ -531,8 +532,8 @@ form div{
 
 form input, textarea{
 	padding: 0.5em;
-	border-radius: 3px;  
-       -moz-border-radius: 3px;  
+	border-radius: 3px;
+       -moz-border-radius: 3px;
        -webkit-border-radius: 3px;
        border: 1px solid #b9bab9;
 	font-size: 1.3em;
@@ -574,19 +575,19 @@ ul.errorlist li{
 	width: 497px;
 	display: block;
 	padding: 0 0 0 3px;
-	
+
 }
 
 input[type=submit], .button{
 	background: url(../img/bg-grad-blue.jpg) repeat-x;
-	
+
 	font-size: 1.2em;
 	color: #c1e5f4;
 	text-shadow: #1f8de6 0 0 0;
 	padding: 0.5em;
 	display: block;
-	border-radius: 3px;  
-       -moz-border-radius: 3px;  
+	border-radius: 3px;
+       -moz-border-radius: 3px;
        -webkit-border-radius: 3px;
 	text-transform: uppercase;
 	text-align: center;
@@ -622,8 +623,8 @@ input[type=submit]:hover{
 	background-color: #fff;
 	padding: 20px;
 	border: 10px solid #1a1a1a;
-	border-radius: 8px;  
-    -moz-border-radius: 8px;  
+	border-radius: 8px;
+    -moz-border-radius: 8px;
     -webkit-border-radius: 8px;
 
 }
@@ -658,8 +659,8 @@ div.ui-datepicker table{
 
 div.ui-datepicker{
 	background-color: #1a1a1a;
-	border-radius: 3px;  
-       -moz-border-radius: 3px;  
+	border-radius: 3px;
+       -moz-border-radius: 3px;
        -webkit-border-radius: 3px;
 }
 
@@ -667,7 +668,7 @@ div.ui-datepicker{
 	background-color: #ebebe3;
 	text-align: center;
 	padding: 0;
-	
+
 }
 
 .ui-datepicker-calendar td a{
@@ -695,8 +696,8 @@ div.ui-datepicker{
 	font-weight: normal;
 	font-style: normal;
 	text-align: center;
-	border-radius: 0px;  
-       -moz-border-radius: 0px;  
+	border-radius: 0px;
+       -moz-border-radius: 0px;
        -webkit-border-radius: 0px;
 	line-height: 15px;
 	background-color: #cbccbe;
@@ -744,8 +745,8 @@ a.ui-datepicker-next{
 	border: 2px dotted #ccc;
 	max-width: 492px;
 	padding: 5px 10px 10px;
-	border-radius: 3px;  
-    -moz-border-radius: 3px;  
+	border-radius: 3px;
+    -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
 }
 
@@ -783,7 +784,7 @@ div.delete{
 }
 
 /*==========================================================
-		06 - login				
+		06 - login
 ===========================================================*/
 
 .login-switch{
@@ -880,9 +881,9 @@ a.forgot:hover{
 
 .openid_large_btn:hover{
 	border: 1px solid #008ee8;
-}		
-		
-	}	
+}
+
+	}
 	a.openid_large_btn:focus {
 		outline: none;
 	}
@@ -893,15 +894,15 @@ a.forgot:hover{
 	.openid_selected {
 		border: 0px solid #DDD;
 	}
-	
+
 .errors p{
 	font-weight: bold;
 	color: #ed082a;
 	font-size: 14px;
-}	
+}
 
 /*==========================================================
-		07 - all projects				
+		07 - all projects
 ===========================================================*/
 
 #list-wrapper{
@@ -934,7 +935,7 @@ a.forgot:hover{
 	overflow: hidden;
 	background-color: #ebebe3;
 	border: 1px solid #e4e5e0;
-	
+
 }
 
 .block h3{
@@ -953,7 +954,7 @@ a.forgot:hover{
 	margin: 8px 0 0 0;
 	padding: 0;
 	border-top: 1px solid #dee0d1;
-	
+
 }
 
 #projects-list li.main li{
@@ -1031,7 +1032,7 @@ a.notif-accept, a.notif-decline{
 
 ul#dash-items ul.tagged-list{
 	border-bottom: 1px solid #ccc;
-	
+
 }
 
 ul#dash-items ul.tagged-list li{
@@ -1063,7 +1064,7 @@ ul.tagged-list li span{
 }
 
 /*==========================================================
-		08 - dashboard				
+		08 - dashboard
 ===========================================================*/
 
 #dashboard-sidebar{
@@ -1085,7 +1086,7 @@ ul.tagged-list li span{
 #dash-items h5{
 	margin: 0 0 2px;
 	position: relative;
-	
+
 }
 
 a.next, a.prev
@@ -1155,8 +1156,8 @@ a.more{
 .project-info{
 	background-color: #ebebe3;
 	margin: 0 0 20px;
-	border-radius: 6px;  
-       -moz-border-radius: 6px;  
+	border-radius: 6px;
+       -moz-border-radius: 6px;
        -webkit-border-radius: 6px;
 	overflow: auto;
     padding: 0 0 10px;
@@ -1258,7 +1259,7 @@ a.edit-project{
 
 
 /*==========================================================
-		09 - messages				
+		09 - messages
 ===========================================================*/
 ul.messages{
 	margin: 0 220px 30px 0;
@@ -1331,7 +1332,7 @@ ul.messages li h3{
 
 ul.messages li:hover .thread-action{
 	display: block;
-	
+
 }
 
 .post-body{
@@ -1394,8 +1395,8 @@ a.message-delete{
 
 .pager .page a {
   padding: 1px 4px;
-   border-radius: 2px;  
-       -moz-border-radius: 2px;  
+   border-radius: 2px;
+       -moz-border-radius: 2px;
        -webkit-border-radius: 2px;
 	background-color: #008ee8;
 	color: #fff;
@@ -1407,8 +1408,8 @@ a.message-delete{
 
 .pager .current {
 	padding: 1px 5px;
-   border-radius: 2px;  
-       -moz-border-radius: 2px;  
+   border-radius: 2px;
+       -moz-border-radius: 2px;
        -webkit-border-radius: 2px;
 	background-color: #1a1a1a;
 	color: #fff;
@@ -1417,20 +1418,20 @@ a.message-delete{
 
 
 /*==========================================================
-		10 - sidebar				
+		10 - sidebar
 ===========================================================*/
 
 
 a.add-button{
 	background: url(../img/bg-grad-blue.jpg) repeat-x;
-	
+
 	font-size: 1.2em;
 	color: #c1e5f4;
 	text-shadow: #1f8de6 0 0 0;
 	padding: 0.5em;
 	display: block;
-	border-radius: 3px;  
-       -moz-border-radius: 3px;  
+	border-radius: 3px;
+       -moz-border-radius: 3px;
        -webkit-border-radius: 3px;
 	text-transform: uppercase;
 	text-align: center;
@@ -1492,12 +1493,12 @@ div.form h4 span, aside h4 span{
 	color: #a6a79a;
 	margin: 0;
 	font-size: 0.9em;
-	
+
 }
 
 #selected-tags{
 	padding: 0px 20px 0 10px;
-	
+
 }
 
 a.tag{
@@ -1574,7 +1575,7 @@ a.tag:hover{
 }
 
 /*==========================================================
-		11 - file-table				
+		11 - file-table
 ===========================================================*/
 
 #file-table{
@@ -1627,7 +1628,7 @@ a.fb_deletelink{
 	display: block;
 	float: right;
 	text-indent: -9999px;
-	
+
 }
 #file-table tr:hover a.fb_deletelink{
 	background-image: url(../img/icons/notification_error.png);
@@ -1636,7 +1637,7 @@ a.fb_deletelink{
 
 
 /*==========================================================
-		12 - tasks			
+		12 - tasks
 ===========================================================*/
 
 .task-list{
@@ -1646,8 +1647,8 @@ a.fb_deletelink{
 }
 
 .parent, .child{
-	border-radius: 6px;  
-    -moz-border-radius: 6px;  
+	border-radius: 6px;
+    -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
     position: relative;
     padding: 8px 8px 4px 8px ;
@@ -1657,12 +1658,12 @@ a.fb_deletelink{
 .parent{
 	font-weight: bold;
 	background: #c8c9b9 url(../img/bg-grad-dark.jpg) repeat-x;
-    
+
 }
 
 .child{
 	background: #f5f4ef url(../img/bg-grad-light.jpg) repeat-x;
-	
+
 }
 
 
@@ -1671,7 +1672,7 @@ a.fb_deletelink{
 	margin: 0 0 0px;
 	background: url(../img/dot.jpg) repeat-y 15px 0;
 	z-index: 2;
-	
+
 }
 
 .task-list ul ul{
@@ -1794,7 +1795,7 @@ a.task-note{
 }
 
 /*==========================================================
-		14 - invite page	
+		14 - invite page
 ===========================================================*/
 
 #invite-box{
@@ -1815,11 +1816,11 @@ a.task-note{
 
 .left .invite, .right .invite{
 	background-color: #ebebe3;
-	border-radius: 6px;  
-       -moz-border-radius: 6px;  
+	border-radius: 6px;
+       -moz-border-radius: 6px;
        -webkit-border-radius: 6px;
        min-height: 380px;
-	
+
 }
 
 .right .invite{
@@ -1843,7 +1844,7 @@ a.task-note{
 
 #associate-new, #associate-ex{
 	margin: 20px 10px;
-} 
+}
 
 h5.associate-text{
 	margin: 0 0 10px;
@@ -1872,7 +1873,7 @@ h5.associate-text{
 
 #invite-user input[type=text]{
 	background: #fff url(../img/icons/activity-user.png) no-repeat 5px center;
-	
+
 }
 
 #invite-email textarea{
@@ -1913,7 +1914,7 @@ h5.associate-text{
 }
 
 /*==========================================================
-		15 - Blog	
+		15 - Blog
 ===========================================================*/
 #comments .messages {
     width: 100%;
@@ -1944,7 +1945,7 @@ h5.associate-text{
 
 
 /*==========================================================
-		16 - agenda				
+		16 - agenda
 ===========================================================*/
 
 #agenda-wrapper{
@@ -1958,8 +1959,8 @@ table#agenda{
 	width: 100%;
 }
 
-table#agenda td, table#agenda th { 
-	padding: 2px; 
+table#agenda td, table#agenda th {
+	padding: 2px;
 }
 
 table#agenda th {
@@ -1986,34 +1987,34 @@ table#agenda th.table-top a{
 	margin: 0 40px;
 }
 
-   
-table#agenda dt { 
+
+table#agenda dt {
 	font-weight: bold;
 }
-   table#agenda dd { 
-   	margin-bottom: .5em; 
+   table#agenda dd {
+   	margin-bottom: .5em;
 }
 
-.month-view td { 
-	vertical-align: top; 		height: 6em; 
+.month-view td {
+	vertical-align: top; 		height: 6em;
 	min-height: 6em;
-	border: 1px solid #ebebe3; 
+	border: 1px solid #ebebe3;
 }
 
-	
-    .month-view td, .month-view th { 
+
+    .month-view td, .month-view th {
 	width: 200px;
-		
-}    
-.month-view .day-ordinal { 
-    font-weight: bold; 
-    font-size: 1.1em; 
-    text-align: right; 
+
 }
-.month-view ul { 
-    list-style: none; 
-    margin: 1px 2px; 
-    padding: 0; 
+.month-view .day-ordinal {
+    font-weight: bold;
+    font-size: 1.1em;
+    text-align: right;
+}
+.month-view ul {
+    list-style: none;
+    margin: 1px 2px;
+    padding: 0;
 }
 
 .month-view ul li{
@@ -2021,8 +2022,8 @@ table#agenda dt {
 	margin: 0 0 4px;
 	background-color: #fec8b5;
 	padding: 2px;
-	border-radius: 3px;  
-    -moz-border-radius: 3px;  
+	border-radius: 3px;
+    -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
 }
 
@@ -2044,11 +2045,11 @@ span.done{
 }
 
 span.event_times{
-	color: #1a1a1a;  
+	color: #1a1a1a;
 }
 
-.month-view .today{ 
- 	background-color: #eed; 
+.month-view .today{
+ 	background-color: #eed;
 }
 
 .extra_options {
@@ -2059,8 +2060,8 @@ div.form{
 	background-color: #ebebe3;
 	margin: 0 220px 10px 0;
 	position: relative;
-	border-radius: 6px;  
-    -moz-border-radius: 6px;  
+	border-radius: 6px;
+    -moz-border-radius: 6px;
     -webkit-border-radius: 6px;
 }
 
@@ -2088,8 +2089,8 @@ ul.types-calendar li p,
 ul.project-calendar li p{
 	margin: 1px 0 0 22px;
 	font-weight: bold;
-	border-radius: 3px;  
-    -moz-border-radius: 3px;  
+	border-radius: 3px;
+    -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     padding: 2px 3px;
 }
@@ -2135,7 +2136,7 @@ p.kleur{
 }
 
 /*==========================================================
-		17 - 404 error				
+		17 - 404 error
 ===========================================================*/
 
 
@@ -2146,36 +2147,105 @@ p.kleur{
 	color: #1f1f1f;
 }
 
+/*
+ *##############################################
+ *#              Edited by: Mbaez              #
+ *##############################################
+ */
+ 
+.filter{
+width: 100%;
+}
 
+/*#filter_0{
+	visibility: hidden;
+}*/
 
+#flash, .notice {
+	font-size:120%;
+	font-weight:bolder;
+	margin:0pt auto 0.5em;
+	width:680px;
+}
+#flash div, .notice {
+	padding:10px 0px 0px 65px;
+	height: 30px;
+	border-bottom-right-radius: 10px 10px;
+	border-bottom-left-radius: 10px 10px;
 
+}
+#flash .ok {
+	background:#d8ecd8 url(../images/ok.png) no-repeat scroll 10px center;
+}
+#flash .warning {
+	background:#fff483 url(../images/warning.png) no-repeat scroll 10px center;
+}
+#flash .error {
+	background:#f9c5c1 url(../images/error.png) no-repeat scroll 10px center;
+}
+#flash .alert,
+#flash .info {
+	background:#EEEEFF url(../images/info.png) no-repeat scroll 10px center;
+}
+.notice {
+	background:#EEEEFF url(../images/info.png) no-repeat scroll 10px center;
+}
 
+/*
+ * Extended Widget Style 
+ */ 
 
+.shuttle_buttons{
+	float:left; 
+	padding: 25px 10px 10px 10px;
+}
+.shuttle,
+.dijit,
+.dijitReset,
+.dijitLeft, 
+.dijitInline, 
+.dijitButton
+/*.dijitButtonFocused,*/
+{
+	margin:1px;
+	background: url(../img/bg-grad-blue.jpg) repeat-x;
+	color: #c1e5f4;
+	text-shadow: #1f8de6 0 0 0;
+	border-radius: 3px;
+		-moz-border-radius: 3px;
+		-webkit-border-radius: 3px;
+	text-align: center;
+}
+.submitbutton, .date_field_button{
+	border-radius:3px;
+	background: url(../img/bg-grad-blue.jpg) repeat-x;
+	color:#FFFFFF;
+	margin: 5px;
+	padding: 5px;
+	border:0px;
+}
+.dijitFocused{
+	border-radius:5px;
+	background:#FFFFFF;
+	color:#000000;
+}
 
+.textfield, .textarea, .sproxcalendardatetimepicker{
+	border-radius:px;
+	margin: 5px;
+	padding: 5px;
+}
 
+.select{
+	float:left; 
+	padding: 5px; 
 
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+select[size], select[multiple], select[size][multiple] {
+	border-radius: 5px;
+	white-space: initial;
+	background: #FFFFFF;
+	width: 170px;
+	border: 1px inset gray;
+}

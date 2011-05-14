@@ -6,10 +6,6 @@ from repoze.what import predicates
 from sap.lib.base import BaseController
 from sap.model import DBSession, metadata
 
-
-"""
-Import widgets
-"""
 from tg import tmpl_context
 from sap.widgets.createform import *
 from sap.widgets.listform import *
@@ -20,31 +16,32 @@ from tg import tmpl_context, redirect, validate
 
 from tg.controllers import RestController
 
+#nombre del header que ser va cargar
 header_file="administracion"
 
 class RolController(RestController):
-	
+
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('manage'))
 	def new(self, **kw):
 		tmpl_context.widget = new_rol_form
 		return dict(value=kw, header_file=header_file, modelname='Rol')
-		
+
 	@validate(new_rol_form, error_handler=new)
 	@expose()
 	def post(self, **kw):
 		del kw['sprox_id']
 		rol = Rol()
-		rol.group_name = kw['group_name'] 
+		rol.group_name = kw['group_name']
 		rol.display_name = kw['display_name']
-		
+
 		for permiso in kw['permissions'] :
-			rol.permissions.append(DBSession.query(Permiso).get(permiso)) 
-		
+			rol.permissions.append(DBSession.query(Permiso).get(permiso))
+
 		DBSession.add(rol)
 		flash("El rol ha sido creado correctamente.")
 		redirect("/administracion/rol/list")
-	
+
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('manage'))
 	def edit(self, id,**kw):
@@ -55,16 +52,21 @@ class RolController(RestController):
 		kw['display_name'] = rol.display_name
 		kw['permissions'] = rol.permissions
 		return dict(value=kw, header_file=header_file, modelname='Rol')
-	
+
 	@validate(rol_edit_form, error_handler=edit)
 	@expose()
 	def put(self, _method, **kw):
-		del kw['sprox_id']
-		rol = Rol(**kw)
+		rol = DBSession.query(Rol).get(int(kw['group_id']))
+		rol.group_name = kw['group_name']
+		rol.display_name = kw['display_name']
+		rol.permissions = []
+		for permiso in kw['permissions'] :
+			rol.permissions.append(DBSession.query(Permiso).get(permiso))
+
 		DBSession.merge(rol)
-		flash("El rol ha sido modificado correctamente.")
+		flash("El rol ha sido"+rol.display_name+" modificado correctamente.")
 		redirect("/administracion/rol/list")
-	
+
 
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('manage'))
@@ -73,10 +75,10 @@ class RolController(RestController):
 		tmpl_context.widget = rol_table
 		value = rol_filler.get_value()
 		return dict(modelname='Rol',header_file=header_file,value=value)
-	
+
 	@expose()
 	def post_delete(self, id_rol, **kw):
 		DBSession.delete(DBSession.query(Rol).get(id_rol))
 		flash("El rol ha sido "+ id_rol +" eliminado correctamente.")
 		redirect("/administracion/rol/list")
-	
+

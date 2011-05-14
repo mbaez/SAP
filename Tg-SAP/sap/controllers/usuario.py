@@ -31,7 +31,7 @@ class UsuarioContoller(RestController):
 	anotados con @require(predicates.has_permission('manage')) esto es para que 
 	no se pueda acceder a al formulario atravez de la url.
 	"""
-	@expose('sap.templates.administracion.new')
+	@expose('sap.templates.new')
 	@require(predicates.has_permission('manage'))
 	def new(self, modelname='',**kw):
 		tmpl_context.widget = new_usuario_form
@@ -46,7 +46,7 @@ class UsuarioContoller(RestController):
 		flash("El usuario ha sido creado correctamente.")
 		redirect("/administracion/usuario/list")
 	
-	@expose('sap.templates.administracion.edit')
+	@expose('sap.templates.edit')
 	@require(predicates.has_permission('manage'))
 	def edit(self, id,**kw):
 		usuario =  DBSession.query(Usuario).get(id)
@@ -71,7 +71,7 @@ class UsuarioContoller(RestController):
 		redirect("/administracion/usuario/list")
 	
 
-	@expose('sap.templates.administracion.list')
+	@expose('sap.templates.list')
 	@require(predicates.has_permission('manage'))
 	def list(self, **kw):
 		"""Lista todos los usuarios de la base de datos"""
