@@ -73,7 +73,7 @@ class FaseAdminTableFiller(ExtendedTableFiller):
 
 	def accion (self, obj):
 		
-		accion = ', '.join(['<a href="/miproyecto/fase/' +str(obj.id_fase)+'">ver</a>'])
+		accion = ', '.join(['<a href="/miproyecto/fase/ver/' +str(obj.id_fase)+'">ver</a>'])
 		return accion.join(('<div>', '</div>'))
 
 class RolTable(TableBase):
@@ -81,6 +81,21 @@ class RolTable(TableBase):
 
 class RolTableFiller(TableFiller):
 	__model__ = Rol
+	
+class ItemTable(TableBase):
+	__model__ = Item
+	__omit_fields__ = ['tipo_item','fase','id_item']
+
+class ItemTableFiller(TableFiller):
+	__model__ = Item
+	__omit_fields__ = ['tipo_item','fase','id_item']
+	
+class TipoItemTable(TableBase):
+	__model__ = TipoItem
+
+class TipoItemTableFiller(TableFiller):
+	__model__ = TipoItem
+
 
 
 
@@ -99,3 +114,9 @@ rol_filler = RolTableFiller(DBSession);
 
 admin_proyecto_table = ProyectoAdminTable(DBSession);
 admin_proyecto_filler = ProyectoAdminTableFiller(DBSession);
+
+item_table = ItemTable(DBSession);
+item_filler = ItemTableFiller(DBSession);
+
+tipo_item_table = TipoItemTable(DBSession);
+tipo_item_filler = TipoItemTableFiller(DBSession);

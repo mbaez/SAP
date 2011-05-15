@@ -23,7 +23,7 @@
 	${tmpl_context.widget(value=value)}
 </div>
 		<a class = "add-button" py:if='tg.predicates.has_permission("crear_"+modelname[:-1].lower())'
-			style="width:120px; margin-top:10px" href="new/">
+			style="width:120px; margin-top:10px" href="${new_url}">
 					+ Nuevo
 		</a>
 <br/>

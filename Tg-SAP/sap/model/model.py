@@ -221,3 +221,20 @@ class Recurso(DeclarativeBase):
 	adjunto = Column ('adjunto', BYTEA, nullable = False)
 
 	observacion = Column ('observacion', VARCHAR(100))
+
+
+class TipoAtributo(DeclarativeBase):
+	
+	__tablename__ = 'tipo_atributo'
+	
+	id_tipo_atributo = Column('id_tipo_atributo', INTEGER, autoincrement=True, primary_key=True)
+	
+	nombre = Column('nombre', VARCHAR(100))
+	
+	descripcion = Column('descripcion', VARCHAR(200))
+	
+	def __str__(self):
+		return '%s' % (self.nombre)
+
+	def __unicode__(self):
+		return self.nombre or self.descripcion

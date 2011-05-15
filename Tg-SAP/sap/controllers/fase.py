@@ -29,7 +29,8 @@ class FaseController(RestController):
 	@require(predicates.has_permission('crear_fase'))
 	def new(self, idproyecto, modelname, **kw):
 		tmpl_context.widget = new_fase_form
-		return dict(value=kw, modelname= "Fase")
+		header_file = "abstract"
+		return dict(value=kw, modelname= "Fase",header_file=header_file)
 	
 	"""
 	Evento invocado luego de un evento post en el form de crear
@@ -101,7 +102,21 @@ class FaseController(RestController):
 		DBSession.delete(DBSession.query(Fase).get(id_fase))
 		flash("La fase "+ id_proyecto + "ha sido eliminada correctamente.")
 		redirect("/miproyecto/fase/list")
-
-		
 	
+	@expose('sap.templates.list')
+	@require(predicates.has_permission('manage'))
+	def ver(self, idfase, **kw):
+		"""Lista todos los items de la base de datos"""
+		tmpl_context.widget = item_table
+		value = item_filler.get_value()
+		header_file = "fase"
+		return dict(modelname='Items',header_file=header_file, idfase=idfase, value=value)
 		
+	@expose('sap.templates.list')
+	@require(predicates.has_permission('manage'))
+	def tipo_item(self, idfase, **kw):
+		"""Lista todos los items de la base de datos"""
+		tmpl_context.widget = tipo_item_table
+		value = tipo_item_filler.get_value()
+		header_file = "abstract"
+		return dict(modelname='TipoItems',header_file=header_file,value=value)

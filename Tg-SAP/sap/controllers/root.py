@@ -18,6 +18,7 @@ from sap.controllers.error import ErrorController
 from sap.controllers.secure import SecureController
 from sap.controllers.administracion import AdministracionController
 from sap.controllers.misproyectos import ProyectosController
+from sap.controllers.proyecto import ProyectoController
 from sap.controllers.checker import *
 
 from tg import tmpl_context
@@ -117,7 +118,8 @@ class RootController(BaseController):
 		proyectos = checker.get_poyect_list('ver_proyecto')
 		value = admin_proyecto_filler.get_value(proyectos)
 		header_file="administracion"
-		return dict(modelname='Proyectos', header_file=header_file,value=value)
+		new_url = "/proyecto/new"
+		return dict(modelname='Proyectos', header_file=header_file, new_url=new_url, value=value)
 	"""
 	metodo para probar el calculo de impacto
 	"""

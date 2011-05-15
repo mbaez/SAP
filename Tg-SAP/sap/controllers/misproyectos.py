@@ -23,7 +23,7 @@ class ProyectosController(BaseController):
 	
 	fase = FaseController()
 	
-	@expose('sap.templates.miproyecto')
+	@expose('sap.templates.list')
 	#@require(predicates.has_permission('manage'))
 	def ver(self, idproyecto):
 		tmpl_context.widget = fase_table
@@ -34,7 +34,9 @@ class ProyectosController(BaseController):
 		"""
 		fases = checker.get_fases_by_proyecto_list(idproyecto, 'ver_fase')
 		value = fase_filler.get_value(fases)
-		return dict(modelname='Fases', idproyecto=idproyecto, value=value)
+		header_file = "proyecto"
+		new_url = "/miproyecto/fase/" + idproyecto + "/new"
+		return dict(modelname='Fases', idproyecto=idproyecto, header_file=header_file, new_url=new_url,  value=value)
 	
 	
 	
