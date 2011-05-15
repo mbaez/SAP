@@ -2152,9 +2152,10 @@ p.kleur{
  *#              Edited by: Mbaez              #
  *##############################################
  */
- 
+
+
 .filter{
-width: 100%;
+	width: 98%;
 }
 
 /*#filter_0{
@@ -2175,35 +2176,35 @@ width: 100%;
 
 }
 #flash .ok {
-	background:#d8ecd8 url(../images/ok.png) no-repeat scroll 10px center;
+	background:#d8ecd8 url(../img/ok.png) no-repeat scroll 10px center;
 }
 #flash .warning {
-	background:#fff483 url(../images/warning.png) no-repeat scroll 10px center;
+	background:#fff483 url(../img/warning.png) no-repeat scroll 10px center;
 }
 #flash .error {
-	background:#f9c5c1 url(../images/error.png) no-repeat scroll 10px center;
+	background:#f9c5c1 url(../img/error.png) no-repeat scroll 10px center;
 }
 #flash .alert,
 #flash .info {
-	background:#EEEEFF url(../images/info.png) no-repeat scroll 10px center;
+	background:#EEEEFF url(../img/info.png) no-repeat scroll 10px center;
 }
 .notice {
-	background:#EEEEFF url(../images/info.png) no-repeat scroll 10px center;
+	background:#EEEEFF url(../img/info.png) no-repeat scroll 10px center;
 }
 
 /*
- * Extended Widget Style 
- */ 
+ * Extended Widget Style
+ */
 
 .shuttle_buttons{
-	float:left; 
+	float:left;
 	padding: 25px 10px 10px 10px;
 }
 .shuttle,
 .dijit,
 .dijitReset,
-.dijitLeft, 
-.dijitInline, 
+.dijitLeft,
+.dijitInline,
 .dijitButton
 /*.dijitButtonFocused,*/
 {
@@ -2237,8 +2238,8 @@ width: 100%;
 }
 
 .select{
-	float:left; 
-	padding: 5px; 
+	float:left;
+	padding: 5px;
 
 }
 

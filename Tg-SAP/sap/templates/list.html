@@ -5,6 +5,10 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
 <xi:include href="master.html" />
 <xi:include href="header/${header_file}.html" />
+<script type="text/javascript" src="/jquery/jquery.js"></script>
+<script type="text/javascript" src="/jquery/table.sorter.js" ></script>
+<script type="text/javascript" src="/jquery/table.filter.js" ></script>
+<script type="text/javascript" src="/jquery/table.filter_and_sorter.js " ></script>
 
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
@@ -18,7 +22,7 @@
 	<h1 style="margin-top:1px;">Listado de ${modelname}</h1>
 	${tmpl_context.widget(value=value)}
 </div>
-<a class = "add-button" py:if='tg.predicates.has_permission("crear_"+modelname[:-1].lower())'
+		<a class = "add-button" py:if='tg.predicates.has_permission("crear_"+modelname[:-1].lower())'
 			style="width:120px; margin-top:10px" href="new/">
 					+ Nuevo
 		</a>
