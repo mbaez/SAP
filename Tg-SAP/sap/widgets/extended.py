@@ -32,7 +32,7 @@ una lista de las entidades(entity_list) que se desean mostar
 '''
 class ExtendedTableFiller(TableFiller):
 	'''
-	Representa el codigo html que representa a los enlaces de eidtar y 
+	Representa el codigo html que representa a los enlaces de eidtar y
 	eliminar
 	'''
 	__action__ = 	"<a style= '##editstate##;' href='##id##/edit'>editar</a>"+\
@@ -45,17 +45,17 @@ class ExtendedTableFiller(TableFiller):
 	'''
 	Representa al usuario que se encuentra logeado en el sistema
 	'''
-	
+
 	def get_value(self,entity_list=None, values=None, **kw):
 		if entity_list == None :
 			objs = DBSession.query(self.__entity__).all()
 			count = len(objs)
 		else :
 			count, objs = len(entity_list), entity_list
-	
+
 		self.__count__ = count
 		rows = []
-		
+
 		for obj in objs:
 			row = {}
 			for field in self.__fields__:
@@ -80,3 +80,18 @@ class ExtendedTableFiller(TableFiller):
 				row[field] = unicode(value)
 			rows.append(row)
 		return rows
+
+from sprox.widgets import PropertySingleSelectField
+
+class ExtendedTipoItemField(PropertySingleSelectField):
+	idfase=0
+	#def set_idfase(self, idfase):
+	#	self.idfase=idfase
+
+	def _my_update_params(self, d, nullable=False):
+		tipo_items = DBSession.query(TipoItem).filter(TipoItem.fase==self.idfase).all()
+		options = [(tipo_item.id_tipo_item, '%s' %(tipo_item.nombre))
+							for tipo_item in tipo_items]
+		d['options']= options
+		return d
+

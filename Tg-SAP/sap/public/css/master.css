@@ -832,7 +832,7 @@ h3.or{
 	position: relative;
 }
 
-.login-box .form-row span{
+.login-box .form-row span {
 	position: absolute;
 	right: 0;
 	top: 0;
@@ -2231,7 +2231,7 @@ p.kleur{
 	color:#000000;
 }
 
-.textfield, .textarea, .sproxcalendardatetimepicker{
+.sproxcalendardatetimepicker{
 	border-radius:px;
 	margin: 5px;
 	padding: 5px;
@@ -2249,4 +2249,17 @@ select[size], select[multiple], select[size][multiple] {
 	background: #FFFFFF;
 	width: 170px;
 	border: 1px inset gray;
+}
+/*###############################
+ *# Text field y textarea style #
+ *###############################
+ */
+.labelcol label{
+	margin: 10px;
+}
+ .fieldcol input[type=text],
+ .fieldcol textarea,
+ .fieldcol input[type=password]{
+	margin: 5px;
+	width: 300px;
 }

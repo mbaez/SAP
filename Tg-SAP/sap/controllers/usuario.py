@@ -28,7 +28,7 @@ class UsuarioContoller(RestController):
 	anhadi py:if="tg.predicates.has_permission('manage')" para que solo
 	muestre el link a los usuarios que posean el permiso 'manage'
 	ademas los metodos de new_usuario, create_usuario y list_usuario estan
-	anotados con @require(predicates.has_permission('manage')) esto es para que 
+	anotados con @require(predicates.has_permission('manage')) esto es para que
 	no se pueda acceder a al formulario atravez de la url.
 	"""
 	@expose('sap.templates.new')
@@ -36,7 +36,7 @@ class UsuarioContoller(RestController):
 	def new(self, modelname='',**kw):
 		tmpl_context.widget = new_usuario_form
 		return dict(value=kw,header_file=header_file, modelname='Usuario')
-		
+
 	@validate(new_usuario_form, error_handler=new)
 	@expose()
 	def post(self, modelname='', **kw):
@@ -45,7 +45,7 @@ class UsuarioContoller(RestController):
 		DBSession.add(usuario)
 		flash("El usuario ha sido creado correctamente.")
 		redirect("/administracion/usuario/list")
-	
+
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('manage'))
 	def edit(self, id,**kw):
@@ -60,7 +60,7 @@ class UsuarioContoller(RestController):
 		kw['observacion'] = usuario.observacion
 		kw['estado'] = usuario.estado
 		return dict(value=kw, header_file=header_file,modelname='Usuario')
-	
+
 	@validate(usuario_edit_form, error_handler=edit)
 	@expose()
 	def put(self, _method, **kw):
@@ -69,7 +69,7 @@ class UsuarioContoller(RestController):
 		DBSession.merge(usuario)
 		flash("El usuario "+usuario.__str__()+"ha sido modificado correctamente.")
 		redirect("/administracion/usuario/list")
-	
+
 
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('manage'))
@@ -77,8 +77,9 @@ class UsuarioContoller(RestController):
 		"""Lista todos los usuarios de la base de datos"""
 		tmpl_context.widget = usuario_table
 		value = usuario_filler.get_value()
-		return dict(modelname='Usuarios',header_file=header_file,value=value)
-	
+		new_url = "/administracion/usuario/new"
+		return dict(modelname='Usuarios',header_file=header_file,new_url=new_url,value=value)
+
 	@expose()
 	def post_delete(self, id_usuario, **kw):
 		DBSession.delete(DBSession.query(Usuario).get(id_usuario))

@@ -5,14 +5,15 @@ from tw.forms import TableForm, SingleSelectField, TextField, TextArea, Password
 from sprox.formbase import AddRecordForm
 from sap.model import *
 from sprox.widgets import *
-from sap.widgets.extended import ExtendedAddRecordForm
+from sap.widgets.extended import *
 ##Form definition
 
 class NewUsuarioForm(AddRecordForm):
 	__model__ = Usuario
-	__omit_fields__ = ['id_usuario','proyectos']
-	__require_fields__ = ['username','nombre','apellido','contrasenha']
-	contrasenha = PasswordField
+	__omit_fields__ = ['groups','proyectos']
+	__field_order__ = ['user_id','user_name','display_name','email_address','password','_password']
+	__field_attrs__ = {'display_name':{'rows':'2'}, 'email_address':{'rows':'2'}}
+	password = PasswordField
 
 class NewProyectoForm(AddRecordForm):
 	__model__ = Proyecto
@@ -25,7 +26,7 @@ class NewRolForm(ExtendedAddRecordForm):
 class NewFaseForm(AddRecordForm):
 	__model__ = Fase
 	__omit_fields__ = ['id_fase', 'proyecto']
-	
+
 class NewEstadoProyectoForm(AddRecordForm):
 	__model__ = EstadoProyecto
 	__omit_fields__ = ['id_estado_proyecto']
@@ -33,9 +34,9 @@ class NewEstadoProyectoForm(AddRecordForm):
 
 class NewItemForm(ExtendedAddRecordForm):
 	__model__ = Item
-	__omit_fields__ = ['id_item', 'tipo_item']
+	__omit_fields__ = ['id_item', 'tipo_item', 'fase']
 	__dropdown_field_names__ = {'tipo_item_relacion':'nombre'}
-
+	tipo_item_relacion = ExtendedTipoItemField
 
 
 

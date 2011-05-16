@@ -5,25 +5,53 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <xi:include href="master.html" />
-
+<xi:include href="header/proyecto.html" />
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
   <title>Mi proyecto </title>
 </head>
 
 <body>
+	${sub_header()}
+	<section id="inner-content">
+		<aside id="dashboard-sidebar">
+			<div class="project-info">
+				<h4>Projecto info<span><a class="edit-project">Edit</a> </span></h4>
+				<h5>Nombre </h5>
+				<p></p>
+				<p>${proyecto.nombre}</p>
+				<p></p>
+				<h5>Descripcion </h5>
+				<div id="selected-tags">
+				</div>
+				<p></p>
+				<p>${proyecto.descripcion}</p>
+				<p></p>
+			</div>
+			<div class="project-info">
+				<h4>Project Team
+					<span>
+						<a href="participantes" class="add-member">Add People</a>
+					</span>
+				</h4>
+				<ul id="team">
 
-		<li class="first">
-			<a href='/miproyecto/fase/${idproyecto}/new' class="">Nueva Fase</a>
-			<a href='/administracion/???' class="">Configurar</a>
-			<a href='/administracion/???' class="">Participantes</a>
-		</li>
-		
-		<li> Listado de Fases del proyecto </li>
-		
-		<div style="float:left width: 80%">
+					<li py:for="usuario in usuarios">
+						<img src="/img/saved_resource" alt="">${usuario}
+							<div class="member-edit">
+								<a>Delete</a>
+							</div>
+						</img>
+					</li>
+
+				</ul>
+			</div>
+		</aside>
+		<h2> Listado de Fases del proyecto </h2>
+		<div style="float:left; width: 60%">
 			${tmpl_context.widget(value=value)}
 		</div>
+	</section>
 </body>
 </html>
 

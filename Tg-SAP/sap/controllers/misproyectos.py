@@ -19,25 +19,30 @@ from sap.controllers.checker import *
 __all__ = ['RootController']
 
 class ProyectosController(BaseController):
-	
-	
+
+
 	fase = FaseController()
-	
-	@expose('sap.templates.list')
+
+	@expose('sap.templates.miproyecto')
 	#@require(predicates.has_permission('manage'))
 	def ver(self, idproyecto):
 		tmpl_context.widget = fase_table
 		"""
-		se obtiene la lista de las fases sobre las cuales el usurio 
-		tiene permisos de 'ver' y que pertenecen al proyecto que 
+		se obtiene la lista de las fases sobre las cuales el usurio
+		tiene permisos de 'ver' y que pertenecen al proyecto que
 		selecciono
 		"""
 		fases = checker.get_fases_by_proyecto_list(idproyecto, 'ver_fase')
 		value = fase_filler.get_value(fases)
-		header_file = "proyecto"
 		new_url = "/miproyecto/fase/" +idproyecto+ "/new"
-		return dict(modelname='Fases', idproyecto=idproyecto, header_file=header_file, new_url=new_url,  value=value)
-	
-	
-	
-	
+
+		proyecto = DBSession.query(Proyecto).get(idproyecto)
+		usuarios = util.__get_usuarios_proyecto__(idproyecto)
+
+		return dict(modelname='Fases', idproyecto=idproyecto,
+						proyecto=proyecto, usuarios=usuarios,
+						new_url=new_url, value=value)
+
+
+
+
