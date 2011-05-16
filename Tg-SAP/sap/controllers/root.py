@@ -118,7 +118,7 @@ class RootController(BaseController):
 		proyectos = checker.get_poyect_list('ver_proyecto')
 		value = admin_proyecto_filler.get_value(proyectos)
 		header_file="administracion"
-		new_url = "/proyecto/new"
+		new_url = "/administracion/proyecto/new"
 		return dict(modelname='Proyectos', header_file=header_file, new_url=new_url, value=value)
 	"""
 	metodo para probar el calculo de impacto
@@ -126,13 +126,13 @@ class RootController(BaseController):
 	@expose('sap.templates.index')
 	def prueba(self):
 		#contruye el grafo del proyecto 1 en este caso
-		grafo = item.proyectGraphConstructor(1)
+		grafo = item2.proyectGraphConstructor(1)
 		#construye el grafo de la fase 1 del proyecto 1
-		grafo2 = item.faseGraphConstructor(1)
+		grafo2 = item2.faseGraphConstructor(1)
 		#construye el grafo de la fase 2 del proyecto 1
-		grafo3 = item.faseGraphConstructor(2)
+		grafo3 = item2.faseGraphConstructor(2)
 		
-		impacto = item.calcularImpacto(grafo, 2)
+		impacto = item2.calcularImpacto(grafo, 2)
 		
 		flash("Grafo de la fase 1 " + str(grafo2)+\
 					" Grafo de la fase 2 "+ str(grafo3)+\

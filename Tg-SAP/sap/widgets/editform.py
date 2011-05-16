@@ -50,3 +50,14 @@ class FaseEditForm(EditableForm):
 	__model__ = Fase
 
 fase_edit_form = RolEditForm(DBSession)
+
+class ItemEditFiller(EditFormFiller):
+	__model__ = Item
+
+item_edit_filler = ItemEditFiller(DBSession)
+
+class ItemEditForm(ExtendedEditableForm):
+	__model__ = Item
+
+item_edit_form = ItemEditForm(DBSession)
+

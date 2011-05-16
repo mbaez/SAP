@@ -31,8 +31,16 @@ class NewEstadoProyectoForm(AddRecordForm):
 	__omit_fields__ = ['id_estado_proyecto']
 	__require_fields__ = ['nombre','descripcion']
 
+class NewItemForm(ExtendedAddRecordForm):
+	__model__ = Item
+	__omit_fields__ = ['id_item', 'tipo_item']
+	__dropdown_field_names__ = {'tipo_item_relacion':'nombre'}
+
+
+
 
 new_usuario_form = NewUsuarioForm(DBSession)
 new_proyecto_form = NewProyectoForm(DBSession)
 new_rol_form = NewRolForm(DBSession)
 new_fase_form = NewFaseForm(DBSession)
+new_item_form = NewItemForm(DBSession)

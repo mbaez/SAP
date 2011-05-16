@@ -35,7 +35,7 @@ class ProyectosController(BaseController):
 		fases = checker.get_fases_by_proyecto_list(idproyecto, 'ver_fase')
 		value = fase_filler.get_value(fases)
 		header_file = "proyecto"
-		new_url = "/miproyecto/fase/" + idproyecto + "/new"
+		new_url = "/miproyecto/fase/" +idproyecto+ "/new"
 		return dict(modelname='Fases', idproyecto=idproyecto, header_file=header_file, new_url=new_url,  value=value)
 	
 	

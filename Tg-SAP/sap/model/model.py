@@ -157,6 +157,8 @@ class Item(DeclarativeBase):
 						ForeignKey ('tipo_item.id_tipo_item'),
 						nullable=False)
 
+	tipo_item_relacion = relation('TipoItem', backref='items')
+
 	fase = Column ('id_fase', INTEGER, ForeignKey('fase.id_fase'),
 					nullable=False)
 
@@ -238,3 +240,18 @@ class TipoAtributo(DeclarativeBase):
 
 	def __unicode__(self):
 		return self.nombre or self.descripcion
+
+
+class DetalleItem(DeclarativeBase):
+	__tablename__ = 'detalle_item'
+
+	id_item = Column ('id_item', INTEGER, ForeignKey ('item.id_item'),
+				primary_key=True)
+
+	id = Column ('id_item_detalle', INTEGER, 
+				autoincrement=True, primary_key=True)
+
+	recurso = Column ('id_recurso', INTEGER,
+				ForeignKey('recurso.id_recurso'), nullable=False)
+
+	valor = Column('valor', VARCHAR(200))

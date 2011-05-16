@@ -10,18 +10,67 @@ from repoze.what import predicates
 from sap.lib.pygraph.classes.digraph import *
 from sap.lib.pygraph.algorithms.cycles import *
 
+#import de widgets
+from sap.widgets.createform import *
+from sap.widgets.listform import *
+from sap.widgets.editform import *
+
 from sap.lib.base import BaseController
 from sap.model import *
 from sap.model import DBSession, metadata
 
 class ItemController(BaseController):
 	
-	@expose('sap.templates.pruebas.pruebas')
-	def prueba(self):
-		
-		
-		return dict('/prueba')
-		
+	@expose('sap.templates.new')
+	#@require(predicates.has_permission('crear_item'))
+	def new(self, idfase, **kw):
+		tmpl_context.widget = new_item_form
+		header_file = "fase"
+		return dict(value=kw, idfase=idfase, modelname= "Item",header_file=header_file)
+	
+	"""
+	Evento invocado luego de un evento post en el form de crear
+	ecargado de persistir las nuevas instancias.
+	"""
+	@validate(new_item_form, error_handler=new)
+	#@require(predicates.has_permission('crear_item'))
+	@expose()
+	def post(self, idfase, **kw):
+		del kw['sprox_id']
+		item = Item(**kw)
+		item.fase = idfase
+		DBSession.add(item)
+		flash("El item se ha creado correctamente")
+		redirect("/miproyecto/fase/ver/"+idfase)
+	
+	"""
+	Encargado de carga el widget para editar las instancias, 
+	solo tienen acceso aquellos usuarios que posean el premiso de editar
+	"""
+	@expose('sap.templates.edit')
+	#@require(predicates.has_permission('editar_fase'))
+	def edit(self, id,**kw):
+		fase =  DBSession.query(Fase).get(id)
+		tmpl_context.widget = fase_edit_form
+		kw['id_fase'] = fase.id_fase
+		kw['nombre'] = fase.nombre
+		kw['descripcion'] = fase.descripcion
+		return dict(value=kw, modelname='Fase')
+
+	"""
+	Evento invocado luego de un evento post en el form de editar
+	encargado de persistir las modificaciones de las instancias.
+	"""
+	@validate(fase_edit_form, error_handler=edit)
+	#@require(predicates.has_permission('editar_fase'))
+	@expose()
+	def put(self, _method, **kw):
+		del kw['sprox_id']
+		fase = Fase(**kw)
+		DBSession.merge(fase)
+		flash("La fase '" + fase.nombre+ "'ha sido modificado correctamente.")
+		redirect("/miproyecto/fase/list")
+	
 	"""
 	metodo que retorna el padres de un item.
 	parametros:
@@ -254,7 +303,7 @@ class ItemController(BaseController):
 	
 	"""
     #def huerfano(grafo, idItem):
-item = ItemController()
+item2 = ItemController()
 
 	
 		

@@ -197,7 +197,8 @@ class ProyectoController(RestController):
 		#se obtiene la lista de todos los proyectos 
 		value = proyecto_filler.get_value()
 		header_file="administracion"
-		return dict(modelname='Proyectos',header_file=header_file,value=value)
+		return dict(modelname='Proyectos',header_file=header_file,
+									value=value, new_url='/administracion/proyecto/new')
 	
 	
 	"""

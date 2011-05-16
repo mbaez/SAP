@@ -16,11 +16,13 @@ from sap.model import *
 from tg import tmpl_context, redirect, validate
 #impot del checker de permisos
 from sap.controllers.checker import *
+from sap.controllers.item import *
 #import del controlador
 from tg.controllers import RestController
 
 class FaseController(RestController):
 
+	item = ItemController()
 	"""
 	Encargado de carga el widget para crear nuevas instancias, 
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
@@ -110,7 +112,8 @@ class FaseController(RestController):
 		tmpl_context.widget = item_table
 		value = item_filler.get_value()
 		header_file = "fase"
-		return dict(modelname='Items',header_file=header_file, idfase=idfase, value=value)
+		new_url = "/miproyecto/fase/item/new/1"
+		return dict(modelname='Items',header_file=header_file, idfase=idfase, value=value, new_url=new_url)
 		
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('manage'))
