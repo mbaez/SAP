@@ -35,25 +35,25 @@ def setup_app(command, conf, vars):
 
     manager = model.Usuario()
     manager.user_name = u'admin'
-    manager.display_name = u'Administrador'
+    manager.nombre = u'Administrador'
     manager.email_address = u'admin@somedomain.com'
     manager.password = u'admin'
 
     model.DBSession.add(manager)
 
     group = model.Rol()
-    group.group_name = u'managers'
-    group.display_name = u'Managers Group'
+    group.nombre = u'managers'
+    group.descripcion = u'Managers Group'
 
-    group.users.append(manager)
+    group.usuarios.append(manager)
 
     model.DBSession.add(group)
 
     group2 = model.Rol()
-    group2.group_name = u'lider'
-    group2.display_name = u'Managers Group'
+    group2.nombre= u'lider'
+    group2.descripcion = u'Managers Group'
 
-    group2.users.append(manager)
+    group2.usuarios.append(manager)
 
     model.DBSession.add(group2)
 
@@ -65,22 +65,22 @@ def setup_app(command, conf, vars):
     model.DBSession.add(activo)
 
     permission = model.Permiso()
-    permission.permission_name = u'manage'
-    permission.description = u'This permission give an administrative right to the bearer'
-    permission.groups.append(group)
+    permission.nombre = u'manage'
+    permission.descripcion = u'This permission give an administrative right to the bearer'
+    permission.roles.append(group)
 
     model.DBSession.add(permission)
     for name in __permisos__ :
 		permiso = model.Permiso()
-		permiso.permission_name = name
-		permiso.description = u'Este permiso permite '+name
-		permiso.groups.append(group)
+		permiso.nombre = name
+		permiso.descripcion = u'Este permiso permite '+name
+		permiso.roles.append(group)
 
     """
     --------------------Datos Prueba Grafos---------------------
     """
     proyecto = model.Proyecto()
-    proyecto.lider_id = manager.user_id
+    proyecto.lider_id = manager.usuario_id
     proyecto.nombre = u'proyecto1'
     proyecto.nro_fases = 3
 
@@ -174,16 +174,16 @@ def setup_app(command, conf, vars):
     model.DBSession.flush()
     for i in range(17):
         rpp = model.RolPermisoProyecto()
-        rpp.group_id = 1
+        rpp.rol_id = 1
         rpp.proyecto_id = 1
-        rpp.permission_id = i+1
+        rpp.permiso_id = i+1
 
         model.DBSession.add(rpp)
 
         rpf = model.RolPermisoFase()
         rpf.fase_id = 1
-        rpf.permission_id = i+1
-        rpf.group_id = 1
+        rpf.permiso_id = i+1
+        rpf.rol_id = 1
 
         model.DBSession.add(rpf)
 

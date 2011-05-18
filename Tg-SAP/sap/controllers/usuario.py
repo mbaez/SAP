@@ -51,14 +51,13 @@ class UsuarioContoller(RestController):
 	def edit(self, id,**kw):
 		usuario =  DBSession.query(Usuario).get(id)
 		tmpl_context.widget = usuario_edit_form
-		kw['id_usuario'] = usuario.id_usuario
-		kw['username'] = usuario.username
+		kw['usuario_id'] = usuario.id_usuario
+		kw['user_name'] = usuario.username
 		kw['nombre'] = usuario.nombre
-		kw['apellido'] = usuario.apellido
-		kw['contrasenha'] = usuario.contrasenha
-		kw['mail'] = usuario.mail
-		kw['observacion'] = usuario.observacion
-		kw['estado'] = usuario.estado
+		kw['_password'] = usuario.contrasenha
+		kw['email_address'] = usuario.mail
+		#kw['observacion'] = usuario.observacion
+		#kw['estado'] = usuario.estado
 		return dict(value=kw, header_file=header_file,modelname='Usuario')
 
 	@validate(usuario_edit_form, error_handler=edit)

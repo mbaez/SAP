@@ -8,6 +8,10 @@
 <xi:include href="header/proyecto.html" />
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+	<link type="text/css" href="${tg.url('/css/redmond/jquery-ui-1.8.13.custom.css')}" rel="stylesheet" />
+	<script type="text/javascript" src="${tg.url('/jquery/jquery-1.5.1.min.js')}"></script>
+	<script type="text/javascript" src="${tg.url('/jquery/jquery-ui-1.8.13.custom.min.js')}"></script>
+	<script type="text/javascript" src="${tg.url('/jquery/sap-ui.js')}"></script>
   <title>Mi proyecto </title>
 </head>
 
@@ -31,7 +35,7 @@
 			<div class="project-info">
 				<h4>Project Team
 					<span>
-						<a href="participantes" class="add-member">Add People</a>
+						<a href="#" id="dialog_link" class="add-member">Add People</a>
 					</span>
 				</h4>
 				<ul id="team">
@@ -51,7 +55,21 @@
 		<div style="float:left; width: 60%">
 			${tmpl_context.widget(value=value)}
 		</div>
+		<div>
+			<!-- ui-dialog -->
+			<div id="dialog" title="Participantes">
+				<?python
+					from sap.widgets.createform import *
+					from tg import tmpl_context
+
+					tmpl_context.widget = new_rol_form
+					#value= rol_filler.get_value()
+				?>
+				${tmpl_context.widget()}
+			</div>
+		</div>
 	</section>
+
 </body>
 </html>
 

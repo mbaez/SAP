@@ -16,6 +16,7 @@ class SproxExtendedSelectShuttleField(ExtendedSelectShuttleField, PropertyMixin)
 	def update_params(self, d):
 		self._my_update_params(d)
 		super(SproxExtendedSelectShuttleField, self).update_params(d)
+		print d['options']
 
 class ExtendedSAWidgetSelector (SAWidgetSelector):
 	default_multiple_select_field_widget_type = SproxExtendedSelectShuttleField
@@ -84,9 +85,8 @@ class ExtendedTableFiller(TableFiller):
 from sprox.widgets import PropertySingleSelectField
 
 class ExtendedTipoItemField(PropertySingleSelectField):
+
 	idfase=0
-	#def set_idfase(self, idfase):
-	#	self.idfase=idfase
 
 	def _my_update_params(self, d, nullable=False):
 		tipo_items = DBSession.query(TipoItem).filter(TipoItem.fase==self.idfase).all()

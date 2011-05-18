@@ -32,10 +32,10 @@ class RolController(RestController):
 	def post(self, **kw):
 		del kw['sprox_id']
 		rol = Rol()
-		rol.group_name = kw['group_name']
-		rol.display_name = kw['display_name']
+		rol.nombre = kw['nombre']
+		rol.descripcion = kw['descripcion']
 
-		for permiso in kw['permissions'] :
+		for permiso in kw['permisos'] :
 			rol.permissions.append(DBSession.query(Permiso).get(permiso))
 
 		DBSession.add(rol)
@@ -47,20 +47,20 @@ class RolController(RestController):
 	def edit(self, id,**kw):
 		rol =  DBSession.query(Rol).get(id)
 		tmpl_context.widget = rol_edit_form
-		kw['group_id'] = rol.group_id
-		kw['group_name'] = rol.group_name
-		kw['display_name'] = rol.display_name
-		kw['permissions'] = rol.permissions
+		kw['rol_id'] = rol.rol_id
+		kw['nombre'] = rol.nombre
+		kw['descripcion'] = rol.descripcion
+		kw['permisos'] = rol.permisos
 		return dict(value=kw, header_file=header_file, modelname='Rol')
 
 	@validate(rol_edit_form, error_handler=edit)
 	@expose()
 	def put(self, _method, **kw):
-		rol = DBSession.query(Rol).get(int(kw['group_id']))
-		rol.group_name = kw['group_name']
-		rol.display_name = kw['display_name']
+		rol = DBSession.query(Rol).get(int(kw['rol_id']))
+		rol.group_name = kw['nombre']
+		rol.display_name = kw['descripcion']
 		rol.permissions = []
-		for permiso in kw['permissions'] :
+		for permiso in kw['permisos'] :
 			rol.permissions.append(DBSession.query(Permiso).get(permiso))
 
 		DBSession.merge(rol)

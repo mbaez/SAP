@@ -11,8 +11,8 @@ from sap.widgets.extended import *
 class NewUsuarioForm(AddRecordForm):
 	__model__ = Usuario
 	__omit_fields__ = ['groups','proyectos']
-	__field_order__ = ['user_id','user_name','display_name','email_address','password','_password']
-	__field_attrs__ = {'display_name':{'rows':'2'}, 'email_address':{'rows':'2'}}
+	__field_order__ = ['usuario_id','user_name','nombre','email_address','password','_password']
+	__field_attrs__ = {'nombre':{'rows':'2'}, 'email_address':{'rows':'2'}}
 	password = PasswordField
 
 class NewProyectoForm(AddRecordForm):
@@ -21,7 +21,7 @@ class NewProyectoForm(AddRecordForm):
 
 class NewRolForm(ExtendedAddRecordForm):
 	__model__ = Rol
-	__omit_fields__ = ['group_id','users']
+	__omit_fields__ = ['rol_id','usuarios']
 
 class NewFaseForm(AddRecordForm):
 	__model__ = Fase

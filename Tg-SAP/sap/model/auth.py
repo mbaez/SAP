@@ -33,18 +33,18 @@ __all__ = ['Usuario', 'Rol', 'Permiso', 'RolPermisoProyecto', 'RolPermisoFase','
 
 # This is the association table for the many-to-many relationship between
 # groups and permissions. This is required by repoze.what.
-group_permission_table = Table('tg_group_permission', metadata,
-	Column('group_id', Integer, ForeignKey('rol.group_id',
+rol_permiso_table = Table('rol_permiso', metadata,
+	Column('rol_id', Integer, ForeignKey('rol.rol_id',
 		onupdate="CASCADE", ondelete="CASCADE"),primary_key=True),
-	Column('permission_id', Integer, ForeignKey('permiso.permission_id',
+	Column('permiso_id', Integer, ForeignKey('permiso.permiso_id',
 		onupdate="CASCADE", ondelete="CASCADE"),primary_key=True)
 )
 
 # This is the association table for the many-to-many relationship between
 # groups and members - this is, the memberships. It's required by repoze.what.
-user_group_table = Table('tg_user_group', metadata,
-	Column('user_id', Integer, ForeignKey('usuario.user_id',onupdate="CASCADE", ondelete="CASCADE"), primary_key=True),
-	Column('group_id', Integer, ForeignKey('rol.group_id',onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+usuario_rol_table = Table('usuario_rol', metadata,
+	Column('usuario_id', Integer, ForeignKey('usuario.usuario_id',onupdate="CASCADE", ondelete="CASCADE"), primary_key=True),
+	Column('rol_id', Integer, ForeignKey('rol.rol_id',onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
 )
 
 class RolUsuario(object):
@@ -53,9 +53,9 @@ class RolUsuario(object):
 class RolPermiso(object):
 	pass
 
-mapper(RolUsuario, user_group_table)
+mapper(RolUsuario, usuario_rol_table)
 
-mapper(RolPermiso , group_permission_table)
+mapper(RolPermiso , rol_permiso_table)
 #{ The auth* model itself
 
 
@@ -69,25 +69,25 @@ class Rol(DeclarativeBase):
 
 	#{ Columns
 
-	group_id = Column(Integer, autoincrement=True, primary_key=True)
+	rol_id = Column(Integer, autoincrement=True, primary_key=True)
 
-	group_name = Column(Unicode(16), unique=True, nullable=False)
+	nombre = Column(Unicode(16), unique=True, nullable=False)
 
-	display_name = Column(Unicode(255))
+	descripcion = Column(Unicode(255))
 
 	created = Column(DateTime, default=datetime.now)
 
 	#{ Relations
 
-	users = relation('Usuario', secondary=user_group_table, backref='groups')
+	usuarios = relation('Usuario', secondary=usuario_rol_table, backref='roles')
 
 	#{ Special methods
 
 	def __repr__(self):
-		return '<Rol: name=%s>' % self.group_name
+		return '<Rol: name=%s>' % self.nombre
 
 	def __unicode__(self):
-		return self.group_name
+		return self.nombre
 
 	#}
 
@@ -107,14 +107,14 @@ class Usuario(DeclarativeBase):
 
 	#{ Columns
 
-	user_id = Column(Integer, autoincrement=True, primary_key=True)
+	usuario_id = Column(Integer, autoincrement=True, primary_key=True)
 
 	user_name = Column(Unicode(16), unique=True, nullable=False)
 
 	email_address = Column(Unicode(255), unique=True, nullable=False,
 						   info={'rum': {'field':'Email'}})
 
-	display_name = Column(Unicode(255))
+	nombre = Column(Unicode(255))
 
 	_password = Column('password', Unicode(80),
 					   info={'rum': {'field':'Password'}})
@@ -124,11 +124,11 @@ class Usuario(DeclarativeBase):
 	#{ Special methods
 
 	def __repr__(self):
-		return '<Usuario: email="%s", display name="%s">' % (
-				self.email_address, self.display_name)
+		return '<Usuario: email="%s", nombre="%s">' % (
+				self.email_address, self.nombre)
 
 	def __unicode__(self):
-		return self.display_name or self.user_name
+		return self.nombre or self.user_name
 
 	#{ Getters and setters
 
@@ -136,8 +136,8 @@ class Usuario(DeclarativeBase):
 	def permissions(self):
 		"""Return a set of strings for the permissions granted."""
 		perms = set()
-		for g in self.groups:
-			perms = perms | set(g.permissions)
+		for g in self.roles:
+			perms = perms | set(g.permisos)
 		return perms
 
 	@classmethod
@@ -211,25 +211,24 @@ class Permiso(DeclarativeBase):
 
 	#{ Columns
 
-	permission_id = Column(Integer, autoincrement=True, primary_key=True)
+	permiso_id = Column(Integer, autoincrement=True, primary_key=True)
 
-	permission_name = Column(Unicode(50), unique=True, nullable=False)
+	nombre = Column(Unicode(50), unique=True, nullable=False)
 
-	description = Column(Unicode(255))
+	descripcion = Column(Unicode(255))
 
 	#{ Relations
 
-	groups = relation(Rol, secondary=group_permission_table,
-					  backref='permissions')
+	roles = relation(Rol, secondary=rol_permiso_table,
+					  backref='permisos')
 
 	#{ Special methods
 
 	def __repr__(self):
-		return '<Permiso: name=%s>' % self.permission_name
+		return '<Permiso: name=%s>' % self.nombre
 
 	def __unicode__(self):
-		return self.permission_name
-
+		return self.nombre
 	#}
 
 
@@ -237,30 +236,30 @@ class Permiso(DeclarativeBase):
 
 
 class RolPermisoProyecto(DeclarativeBase):
-	
+
 	__tablename__ = 'rol_permiso_proyecto'
-	
-	group_id = Column('group_id', Integer, ForeignKey('rol.group_id',
+
+	rol_id = Column('rol_id', Integer, ForeignKey('rol.rol_id',
 		onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-	
-	
-	permission_id = Column('permission_id', Integer, 
-		ForeignKey('permiso.permission_id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-	
-	
+
+
+	permiso_id = Column('permiso_id', Integer,
+		ForeignKey('permiso.permiso_id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+
+
 	proyecto_id = Column ('id_proyecto', Integer,ForeignKey('proyecto.id_proyecto',
 						onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-	
-		
+
+
 class RolPermisoFase(DeclarativeBase):
-	
+
 	__tablename__ = 'rol_permiso_fase'
-	
-	group_id = Column('group_id', Integer, ForeignKey('rol.group_id',
+
+	rol_id = Column('rol_id', Integer, ForeignKey('rol.rol_id',
 		onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-		
-	permission_id = Column('permission_id', Integer, 
-		ForeignKey('permiso.permission_id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-		
+
+	permiso_id = Column('permiso_id', Integer,
+		ForeignKey('permiso.permiso_id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+
 	fase_id = Column ('id_fase', Integer,ForeignKey('fase.id_fase',
 						onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)

@@ -11,12 +11,12 @@ from sap.widgets.extended import ExtendedTableFiller
 
 class UsuarioTableFiller(ExtendedTableFiller):
 	__model__ = Usuario
-	__omit_fields__ = ['contrasenha','proyectos']
-	
+	__omit_fields__ = ['_password','proyectos']
+
 
 class UsuarioTable(TableBase):
 	__model__ = Usuario
-	__omit_fields__ = ['contrasenha','proyectos']
+	__omit_fields__ = ['_password','proyectos']
 
 """
 """
@@ -29,20 +29,20 @@ class ProyectoTable(TableBase):
 class ProyectoTableFiller(ExtendedTableFiller):
 	__model__ = Proyecto
 	__add_fields__ = {'accion':None}
-	
+
 	def accion (self, obj):
 		accion = ', '.join([self.__action__.replace('##id##', str(obj.id_proyecto)).
 		replace('##editstate##', self.check_permiso(obj.id_proyecto,'editar_proyecto')).
 		replace('##deletestate##', self.check_permiso(obj.id_proyecto,'eliminar_proyecto'))])
 		return accion.join(('<div>', '</div>'))
-	
+
 	def check_permiso(self, id_proyecto, permiso_name):
 		has_permiso = checker.check_proyecto_permiso(id_proyecto,permiso_name,True)
-		
+
 		if(has_permiso ==None):
 			return 'visibility: hidden'
 		return ''
-		
+
 """
 """
 class ProyectoAdminTable(TableBase):
@@ -57,7 +57,7 @@ class ProyectoAdminTableFiller(ExtendedTableFiller):
 	__add_fields__ = {'accion':None}
 
 	def accion (self, obj):
-		
+
 		accion = ', '.join(['<a href="/miproyecto/ver/' +str(obj.id_proyecto)+'">ver</a>'])
 		return accion.join(('<div>', '</div>'))
 
@@ -72,7 +72,7 @@ class FaseAdminTableFiller(ExtendedTableFiller):
 	__add_fields__ = {'accion':None}
 
 	def accion (self, obj):
-		
+
 		accion = ', '.join(['<a href="/miproyecto/fase/ver/' +str(obj.id_fase)+'">ver</a>'])
 		return accion.join(('<div>', '</div>'))
 
@@ -81,7 +81,7 @@ class RolTable(TableBase):
 
 class RolTableFiller(TableFiller):
 	__model__ = Rol
-	
+
 class ItemTable(TableBase):
 	__model__ = Item
 	__omit_fields__ = ['tipo_item','fase','id_item']
@@ -89,7 +89,7 @@ class ItemTable(TableBase):
 class ItemTableFiller(TableFiller):
 	__model__ = Item
 	__omit_fields__ = ['tipo_item','fase','id_item']
-	
+
 class TipoItemTable(TableBase):
 	__model__ = TipoItem
 

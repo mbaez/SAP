@@ -39,7 +39,7 @@ class Proyecto(DeclarativeBase):
 							primary_key=True)
 
 	lider_id = Column ('id_usuario_lider', INTEGER,
-					ForeignKey('usuario.user_id'))
+					ForeignKey('usuario.usuario_id'))
 	"""
 	Se relaciona con una instnacia de una clase Usuario
 	"""
@@ -226,15 +226,15 @@ class Recurso(DeclarativeBase):
 
 
 class TipoAtributo(DeclarativeBase):
-	
+
 	__tablename__ = 'tipo_atributo'
-	
+
 	id_tipo_atributo = Column('id_tipo_atributo', INTEGER, autoincrement=True, primary_key=True)
-	
+
 	nombre = Column('nombre', VARCHAR(100))
-	
+
 	descripcion = Column('descripcion', VARCHAR(200))
-	
+
 	def __str__(self):
 		return '%s' % (self.nombre)
 
@@ -248,7 +248,7 @@ class DetalleItem(DeclarativeBase):
 	id_item = Column ('id_item', INTEGER, ForeignKey ('item.id_item'),
 				primary_key=True)
 
-	id = Column ('id_item_detalle', INTEGER, 
+	id = Column ('id_item_detalle', INTEGER,
 				autoincrement=True, primary_key=True)
 
 	recurso = Column ('id_recurso', INTEGER,
