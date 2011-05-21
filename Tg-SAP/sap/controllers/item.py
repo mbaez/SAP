@@ -33,7 +33,7 @@ class ItemController(BaseController):
 	Evento invocado luego de un evento post en el form de crear
 	ecargado de persistir las nuevas instancias.
 	"""
-	@validate(new_item_form, error_handler=new)
+	#@validate(new_item_form, error_handler=new)
 	#@require(predicates.has_permission('crear_item'))
 	@expose()
 	def post(self, idfase, **kw):
@@ -62,7 +62,7 @@ class ItemController(BaseController):
 	Evento invocado luego de un evento post en el form de editar
 	encargado de persistir las modificaciones de las instancias.
 	"""
-	@validate(fase_edit_form, error_handler=edit)
+	#@validate(fase_edit_form, error_handler=edit)
 	#@require(predicates.has_permission('editar_fase'))
 	@expose()
 	def put(self, _method, **kw):

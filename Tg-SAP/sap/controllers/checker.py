@@ -6,22 +6,35 @@ from repoze.what import predicates
 from sap.lib.base import BaseController
 from sap.model import DBSession, metadata
 
-
+from tg import tmpl_context, redirect, validate
 """
 
 """
-from tg import tmpl_context
 
 from sap.model import *
-from tg import tmpl_context, redirect, validate
 
-from tg.controllers import RestController
+import transaction
 
-class CheckerController(RestController):
-	@expose()
+class SessionChecker():
+
 	def check_proyecto_permiso(self, id_proyecto, permiso_name,nuleable=False):
 		"""
-		Controla si el usuario logeado posee permisos sobre el proyecto
+		Controla si el usuario que actualmente se encuentra logeado posee
+		el deteminado permiso sobre un proyecto.
+
+		@type   id_proyecto : Integer
+		@param  id_proyecto : Identificador del proyecto
+
+		@type  permiso_name : String
+		@param permiso_name : Nombre del permiso
+
+		@type      nuleable : Boolean
+		@param     nuleable : Variable de control del valor de retorno.
+							  Si es True y el usuario no posee permisos
+							  retorna None
+
+		@rtype  : Predicates
+		@return : retorna las credenciales del usuario
 		"""
 		current_user = self.get_current_user()
 		rol_permiso_proyecto = DBSession.query(RolPermisoProyecto).\
@@ -34,152 +47,324 @@ class CheckerController(RestController):
 								filter(Permiso.nombre ==
 									permiso_name).\
 								filter(RolUsuario.usuario_id ==
-									current_user.id_usuario).\
+									current_user.usuario_id).\
 								all()
 
 		if (len(rol_permiso_proyecto) != 0):
 			return predicates.has_permission(permiso_name)
 		elif nuleable == False:
-			return predicates.has_permission(permiso_name+' '+str(id_proyecto))
+			#return predicates.has_permission(permiso_name+' '+str(id_proyecto))
+			return predicates.unmet()
 		else:
 			return None
 
-
 	def get_current_user(self):
+		"""
+		Obtiene el username del usuario que se encuentra actualmente
+		logeado en el sistema de la cabecera http y recupera
+		de la base de datos el usuario.
+
+		@rtype  : Usuario
+		@return : retorna una instancia de la clase usuario
+		"""
 		identity = request.environ.get('repoze.who.identity')
 		username = identity['repoze.who.userid']
 
 		current_user = DBSession.query(Usuario).\
 				filter(Usuario.user_name == username ).\
 				first()
+
 		return current_user
 
 
 	def get_poyect_list(self, permiso_name):
+		"""
+		Obtiene un lista de los proyectos para los cuales el usuario
+		que se encuentra logeado posee el correspondiente permiso.
+
+		@type  permiso_name : String
+		@param permiso_name : Nombre del permiso
+
+		@rtype  : Proyecto [ ]
+		@return : retorna una lista de los poryectos
+		"""
 		current_user = self.get_current_user()
 
 		proyectos = DBSession.query(Proyecto).\
-					filter(RolPermisoProyecto.rol_id ==
-						RolUsuario.rol_id).\
-					filter(RolPermisoProyecto.proyecto_id ==
-						Proyecto.id_proyecto).\
-					filter(Permiso.permiso_id ==
-						RolPermisoProyecto.permiso_id).\
-					filter(Permiso.nombre ==
-						permiso_name).\
-					filter(RolUsuario.usuario_id ==
-						current_user.usuario_id).\
+					filter(	RolPermisoProyecto.rol_id ==
+							RolUsuario.rol_id).\
+					filter(	RolPermisoProyecto.proyecto_id ==
+							Proyecto.id_proyecto).\
+					filter(	Permiso.permiso_id ==
+							RolPermisoProyecto.permiso_id).\
+					filter(	Permiso.nombre ==
+							permiso_name).\
+					filter(	RolUsuario.usuario_id ==
+							current_user.usuario_id).\
 					all()
 		return proyectos
-	"""
-	metodo para listar las fases sobre las cuales el usuario tiene permiso "permiso_name"
-	y pertenecen al proyecto seleccionado "idproyecto"
-	"""
+
+
 	def get_fases_by_proyecto_list(self, idproyecto, permiso_name):
+		"""
+		Obtiene un lista de las fases que pertenecen a un proyecto, para
+		los cuales el usuario que se encuentra logeado posee el
+		correspondiente permiso.
+
+		@type   idproyecto : Integer
+		@param  idproyecto : Identificador del proyecto
+
+		@type  permiso_name : String
+		@param permiso_name : Nombre del permiso
+
+		@rtype  : Fase []
+		@return : retorna una lista de fases
+		"""
 		current_user = self.get_current_user()
 
 		fases = DBSession.query(Fase).\
-					filter(RolPermisoFase.rol_id ==
-						RolUsuario.rol_id).\
-					filter(RolPermisoFase.fase_id ==
-						Fase.id_fase).\
-					filter(Permiso.permiso_id ==
-						RolPermisoFase.permiso_id).\
-					filter(Permiso.nombre ==
-						permiso_name).\
-					filter(RolUsuario.usuario_id ==
-						current_user.usuario_id).\
-					filter(Fase.proyecto ==
-						idproyecto).\
+					filter(RolPermisoFase.rol_id == RolUsuario.rol_id).\
+					filter(RolPermisoFase.fase_id == Fase.id_fase).\
+					filter(Permiso.permiso_id == RolPermisoFase.permiso_id).\
+					filter(Permiso.nombre == permiso_name).\
+					filter(RolUsuario.usuario_id == current_user.usuario_id).\
+					filter(Fase.proyecto == idproyecto).\
 					all()
 		return fases
 
 
-checker =  CheckerController()
+checker =  SessionChecker()
 
-class UtilController(RestController) :
+class SessionUtil() :
 
-	"""
-	En este proceso se crear un nuevo rol denominado lider_(proyecto_id)
-	y se copian los permisos del rol lider que viene a ser como un template.
-	Este rol y sus permisos son vinculados al proyecto mendiante
-	la tabla, rol_permisos_proyecto
-	"""
 	def asignar_lider(self, proyecto):
-		#Se obtiene el template de lider
-		rol_lider = DBSession.query(Rol).filter(Rol.nombre == 'lider').first()
-		#Se copia el template en un rol nuevo
+		"""
+		Al usuario que fue seleccionado como lider en el proyecto es registrado
+		como un participante en el proyecto, con el rol de lider.
+
+		@type  proyecto : Proyecto
+		@param proyecto : Proyecto al cual estara asociado el lider.
+
+		"""
+		self.asignar_participante (proyecto.lider.usuario_id,
+									'lider',#codigo del rol
+									proyecto.id_proyecto)
+
+	def get_rol_by_codigo(self, cod_rol):
+		"""
+		Obtiene el rol que posee el nombre especificado
+
+		@type  cod_rol   : String
+		@param cod_rol   : Codigo unico del rol
+
+		@rtype  : Rol
+		@return : El rol que posee dicho codigo, en el caso de que no exista
+				  ningun rol con dicho nombre retorna None
+		"""
+		rol = DBSession.query(Rol).filter(Rol.codigo == cod_rol).first()
+		#if rol == None :
+		#	return None
+		return rol
+
+	def asociar_rol_proyecto(self, cod_rol, proyecto, can_commit=True):
+		"""
+		Crea una copia del template de un rol, anhadiendo al nombre del este
+		rol el id de un proyecto.
+
+		@type  cod_rol   : String
+		@param cod_rol   : Codigo del rol
+
+		@type  proyecto   : Proyecto
+		@param proyecto   : Proyecto al cual se va aplicar el rol
+
+		@type  can_commit : Boolean
+		@param can_commit : Variable de control de la transaccion
+
+		@rtype  : Rol
+		@return : El rol que es aplicado al proyecto.
+		"""
+		#Se obtine el rol template
+		rol_template = self.get_rol_by_codigo(cod_rol)
+
+		if rol_template.is_template ==  True :
+			rol = self.get_rol_by_codigo(cod_rol+'_'+str(proyecto.id_proyecto))
+		else:
+			rol= rol_template
+		#Si ya existe el rol para el proyecto
+		if rol != None:
+			return rol
+		#Si no existe el rol para el proyecto lo crea
 		rol = Rol()
-		rol.group_name = 'lider_'+str(proyecto.id_proyecto)
-		rol.display_name = 'Lider del proyecto '+ proyecto.nombre
+		#cambia el nombre del rol
+		rol.codigo = cod_rol+'_'+str(proyecto.id_proyecto)
+		rol.nombre = rol_template.nombre
+		rol.descripcion = rol_template.descripcion
+		#se periste el rol
 		DBSession.add(rol)
-		#Se obtiene el id de rol
-		new_rol = DBSession.query(Rol).filter(Rol.nombre == rol.nombre).all()
-		rol = new_rol[0]
+
+		#rol = self.get_rol_by_codigo(rol.nombre)
 		#Se obtienen los permisos del template
-		permisos_rol = DBSession.query(RolPermiso).\
-						filter(RolPermiso.rol_id == rol_lider.rol_id)
+		permisos_rol = DBSession.query(Permiso).\
+						filter(RolPermiso.permiso_id == Permiso.permiso_id).\
+						filter(RolPermiso.rol_id == rol_template.rol_id)
+		#Anhade a la session el rol para ser persistido
+		rol = self.get_rol_by_codigo(rol.codigo)
 		#Se copian los permisos del template a rol nuevo
 		for permiso in permisos_rol:
-			new_permiso = RolPermiso()
+			rol.permisos.append(permiso)
 
-			new_permiso.rol_id = rol.rol_id
-			new_permiso.permiso_id = permiso.permiso_id
-			DBSession.add(new_permiso)
-		#Se asigna el rol al usuario
-		self.asignar_participante (proyecto.lider.usuario_id,
-									rol.nombre,
-									proyecto.id_proyecto)
-		DBSession.flush()
-		transaction.commit()
+			rpp = RolPermisoProyecto()
+			rpp.proyecto_id = proyecto.id_proyecto
+			rpp.rol_id = rol.rol_id
+			rpp.permiso_id = permiso.permiso_id
+			#Asocia el rol con los permisos y el proyecto
+			#rol._permisos.append(permiso)
+			DBSession.add(rpp)
 
-	"""
-	Se encarga de asignar un rol a un usuario
-	"""
-	def asignar_rol_usuario(self,user_id , rol_name, id_proyecto):
+		DBSession.add(rol)
+		#En el caso de que
+		#self.commit_transaction(can_commit)
 
+		return rol
+
+	def asignar_rol_usuario(self,usuario_id , cod_rol, id_proyecto, can_commit=True):
+		"""
+		Asigna un rol asociado a un proyecto al usuario determinado.
+
+		@type  usuario_id  : Integer
+		@param usuario_id  : Identificador del usuario
+
+		@type  cod_rol    : String
+		@param cod_rol    : Codigo del rol
+
+		@type  id_proyecto : Integer
+		@param id_proyecto : Identificador del proyecto al cual se va aplicar el rol
+
+		@type  can_commit  : Boolean
+		@param can_commit  : Variable de control de la transaccion
+
+		@rtype  : Rol
+		@return : El rol que es asignado al usuario.
+		"""
 		#Se obtiene el rol con el nombre correspondiente
-		rol = DBSession.query(Rol).filter(Rol.nombre == rol_name).all()
+		rol = self.get_rol_by_codigo(cod_rol)
 		#Se verifica si el usuario posee el rol
-		rol_usuario = DBSession.query(RolUsuario).\
-					filter(RolUsuario.usuario_id == usuario_id).\
-					filter(RolUsuario.rol_id == rol[0].rol_id).all()
-
+		rol_usuario = self.usuario_has_rol(usuario_id, rol)
 		#si no posee el rol, se le asigna
-		if(len(rol_usuario) == 0):
+		if rol_usuario == None:
 			rol_usuario = RolUsuario()
 			rol_usuario.usuario_id = usuario_id
-			rol_usuario.group_id = rol[0].group_id
+			rol_usuario.rol_id = rol.rol_id
+
 			DBSession.add(rol_usuario)
 
-		return rol[0]
-	"""
-	Asigna un el rol al participante y de asociar los permisos del rol
-	al proyecto especificado
-	"""
-	def asignar_participante(self, user_id, rol_name, proyecto_id, ):
-		rol = self.asignar_rol_usuario(user_id, rol_name, proyecto_id)
-		#Se obtiene los permisos que posee el rol
-		permisos_rol = DBSession.query(RolPermiso).\
-						filter(RolPermiso.rol_id == rol.rol_id)
+			#self.commit_transaction(can_commit)
 
-		#Se asocian los permisos de los roles a los proyectos
-		for permiso in permisos_rol :
-			rol_permiso_proyecto = RolPermisoProyecto()
+		return rol
 
-			rol_permiso_proyecto.rol_id = rol.rol_id
-			rol_permiso_proyecto.proyecto_id = proyecto_id
-			rol_permiso_proyecto.permiso_id = permiso.permiso_id
+	def usuario_has_rol(self,usuario_id, rol):
+		"""
+		Verifica si el usuario posee el rol especificado
 
-			DBSession.add(rol_permiso_proyecto)
+		@type  usuario_id    : Integer
+		@param usuario_id    : Identificador del usuario
 
-	def __get_usuarios_proyecto__(self, idproyecto, permiso_name='ver_proyecto'):
+		@type  rol_name      : String
+		@param rol_name      : Nombre del rol
+
+		@rtype  : RolUsuario
+		@return : la relacion entre el usuario y el rol.
+		"""
+		rol_usuario = DBSession.query(RolUsuario).\
+					filter(RolUsuario.usuario_id == usuario_id).\
+					filter(RolUsuario.rol_id == rol.rol_id).first()
+
+		#if len(rol_usurio)==0 :
+		#	return None
+		return rol_usuario
+
+	def commit_transaction(self, can_commit):
+		"""
+		Realiza commit de la transaccion
+
+		@type  can_commit  : Boolean
+		@param can_commit  : Variable de control de la transaccion
+		"""
+		if can_commit == True :
+			DBSession.flush()
+			transaction.commit()
+
+
+	def asignar_participante(self, usuario_id, cod_rol, proyecto_id ):
+		"""
+		Asigna un el rol al participante y de asociar los permisos del rol
+		al proyecto especificado
+
+		@type  usuario_id  : Integer
+		@param usuario_id  : Identificador del usuario
+
+		@type  cod_rol    : String
+		@param cod_rol    : Codigo del rol
+
+		@type  id_proyecto : Integer
+		@param id_proyecto : Identificador del proyecto al cual se va aplicar el rol
+		"""
+		#Se obtienel proyecto al cual se asociara al usuario
+		proyecto = DBSession.query(Proyecto).get(proyecto_id)
+		#se asocia el rol al proyecto
+		rol = self.asociar_rol_proyecto(cod_rol, proyecto)
+		#se asigna el rol al usuario
+		rol = self.asignar_rol_usuario(usuario_id, rol.codigo, proyecto_id)
+		#se hace commit de toda la transaccion
+		#self.commit_transaction(True)
+
+
+	def get_usuarios_by_permiso(self, proyecto_id, permiso_name='ver_proyecto'):
+		"""
+		Obtiene una lista de los usuarios que poseen el permiso especificado sobre
+		un proyecto.
+
+		@type  proyecto_id  : Integer
+		@param proyecto_id  : Identificador del proyecto al cual se va aplicar el rol
+
+		@type  permiso_name : String
+		@param permiso_name : Nombre del permiso
+
+		@rtype  : Usuario []
+		@return : Lista de usuarios que poseen el permiso sobre el proyecto
+		"""
 		usuarios = DBSession.query(Usuario).\
 					filter(RolUsuario.usuario_id == Usuario.usuario_id).\
 					filter(RolPermisoProyecto.rol_id == RolUsuario.rol_id).\
-					filter(RolPermisoProyecto.proyecto_id == idproyecto).\
+					filter(RolPermisoProyecto.proyecto_id == proyecto_id).\
 					filter(RolPermisoProyecto.permiso_id == Permiso.permiso_id).\
 					filter(Permiso.nombre == permiso_name)
+
 		return usuarios
 
-util = UtilController()
+	__get_usuario_proyectos__ = get_usuarios_by_permiso
+
+	def get_roles_by_proyectos(self,proyecto_id):
+		"""
+		Obtiene una lista de los roles que de un proyecto. Esta lista en el
+		caso de que el rol ya este asociado a un poryecto se anhade a la lista,
+		en el caso de que este no este asiciado se anhade el template.
+		De esta forma se obtinte una lista de roles cuyos nombres son distintos.
+
+		@type  proyecto_id  : Integer
+		@param proyecto_id  : Identificador del proyecto al cual se va aplicar el rol
+
+		@rtype  : Rol []
+		@return : Lista de roles de nombres distintos.
+		"""
+		#obtiene todos los templates
+		roles = DBSession.query(Rol).filter(Rol.is_template == True).all()
+		#en el casos de que un rol ya este asiciado a un poryecto no se
+		#muestra el template
+		for i in range(len(roles)) :
+			__rol = self.get_rol_by_codigo(roles[i].codigo+"_"+str(proyecto_id))
+			if __rol != None :
+				roles[i] = __rol
+		return roles
+
+util = SessionUtil()

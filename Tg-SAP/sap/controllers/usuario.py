@@ -49,16 +49,10 @@ class UsuarioContoller(RestController):
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('manage'))
 	def edit(self, id,**kw):
-		usuario =  DBSession.query(Usuario).get(id)
 		tmpl_context.widget = usuario_edit_form
-		kw['usuario_id'] = usuario.id_usuario
-		kw['user_name'] = usuario.username
-		kw['nombre'] = usuario.nombre
-		kw['_password'] = usuario.contrasenha
-		kw['email_address'] = usuario.mail
-		#kw['observacion'] = usuario.observacion
-		#kw['estado'] = usuario.estado
-		return dict(value=kw, header_file=header_file,modelname='Usuario')
+		kw['usuario_id'] = id
+		value = usuario_edit_filler.get_value(kw)
+		return dict(value=value, header_file=header_file,modelname='Usuario')
 
 	@validate(usuario_edit_form, error_handler=edit)
 	@expose()
@@ -66,13 +60,13 @@ class UsuarioContoller(RestController):
 		del kw['sprox_id']
 		usuario = Usuario(**kw)
 		DBSession.merge(usuario)
-		flash("El usuario "+usuario.__str__()+"ha sido modificado correctamente.")
+		flash("El usuario '"+usuario.nombre+"' ha sido modificado correctamente.")
 		redirect("/administracion/usuario/list")
 
 
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('manage'))
-	def list(self, **kw):
+	def get_all(self, **kw):
 		"""Lista todos los usuarios de la base de datos"""
 		tmpl_context.widget = usuario_table
 		value = usuario_filler.get_value()
@@ -83,5 +77,4 @@ class UsuarioContoller(RestController):
 	def post_delete(self, id_usuario, **kw):
 		DBSession.delete(DBSession.query(Usuario).get(id_usuario))
 		flash("El usuario ha sido "+ id_usuario +" eliminado correctamente.")
-		redirect("/usuario/list")
-
+		redirect("/usuario/")

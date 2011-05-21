@@ -66,7 +66,7 @@ base_config.sa_auth.post_logout_url = '/post_logout'
 
 #cambiando el nombre de los atributos
 base_config.sa_auth.translations.users = 'usuarios'
-base_config.sa_auth.translations.group_name = 'nombre'
+base_config.sa_auth.translations.group_name = 'codigo'
 base_config.sa_auth.translations.groups = 'roles'
 base_config.sa_auth.translations.permission_name = 'nombre'
 base_config.sa_auth.translations.permissions = 'permisos'

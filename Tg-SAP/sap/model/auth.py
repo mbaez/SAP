@@ -20,10 +20,10 @@ except ImportError:
 			 'Please install it. Example: easy_install hashlib')
 
 from sqlalchemy import Table, ForeignKey, Column
-from sqlalchemy.types import Unicode, Integer, DateTime
+from sqlalchemy.types import Unicode, Integer, DateTime, Boolean
 from sqlalchemy.orm import relation, synonym, mapper
 
-from sap.model import DeclarativeBase, metadata, DBSession
+from sap.model import DeclarativeBase, metadata, DBSession, model
 
 __all__ = ['Usuario', 'Rol', 'Permiso', 'RolPermisoProyecto', 'RolPermisoFase','RolUsuario', 'RolPermiso']
 
@@ -36,6 +36,7 @@ __all__ = ['Usuario', 'Rol', 'Permiso', 'RolPermisoProyecto', 'RolPermisoFase','
 rol_permiso_table = Table('rol_permiso', metadata,
 	Column('rol_id', Integer, ForeignKey('rol.rol_id',
 		onupdate="CASCADE", ondelete="CASCADE"),primary_key=True),
+
 	Column('permiso_id', Integer, ForeignKey('permiso.permiso_id',
 		onupdate="CASCADE", ondelete="CASCADE"),primary_key=True)
 )
@@ -43,8 +44,24 @@ rol_permiso_table = Table('rol_permiso', metadata,
 # This is the association table for the many-to-many relationship between
 # groups and members - this is, the memberships. It's required by repoze.what.
 usuario_rol_table = Table('usuario_rol', metadata,
-	Column('usuario_id', Integer, ForeignKey('usuario.usuario_id',onupdate="CASCADE", ondelete="CASCADE"), primary_key=True),
-	Column('rol_id', Integer, ForeignKey('rol.rol_id',onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+	Column('usuario_id', Integer, ForeignKey('usuario.usuario_id',
+			onupdate="CASCADE", ondelete="CASCADE"), primary_key=True),
+	Column('rol_id', Integer, ForeignKey('rol.rol_id',
+			onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+)
+
+#Relaciona a un rol y sus permisos a un proyecto
+#
+rol_permiso_proyecto_table = Table( 'rol_permiso_proyecto', metadata,
+
+	Column('rol_id', Integer, ForeignKey('rol.rol_id',
+		onupdate="CASCADE", ondelete="CASCADE"),primary_key=True),
+
+	Column('permiso_id', Integer, ForeignKey('permiso.permiso_id',
+		onupdate="CASCADE", ondelete="CASCADE"),primary_key=True),
+
+	Column ('proyecto_id', Integer,ForeignKey('proyecto.id_proyecto',
+			onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
 )
 
 class RolUsuario(object):
@@ -52,6 +69,11 @@ class RolUsuario(object):
 
 class RolPermiso(object):
 	pass
+
+class RolPermisoProyecto(object):
+	pass
+
+mapper(RolPermisoProyecto, rol_permiso_proyecto_table)
 
 mapper(RolUsuario, usuario_rol_table)
 
@@ -71,11 +93,15 @@ class Rol(DeclarativeBase):
 
 	rol_id = Column(Integer, autoincrement=True, primary_key=True)
 
-	nombre = Column(Unicode(16), unique=True, nullable=False)
+	codigo = Column(Unicode(16), unique=True, nullable=False)
+
+	nombre = Column(Unicode(50), nullable=False)
 
 	descripcion = Column(Unicode(255))
 
 	created = Column(DateTime, default=datetime.now)
+
+	is_template = Column (Boolean, default = False)
 
 	#{ Relations
 
@@ -234,7 +260,7 @@ class Permiso(DeclarativeBase):
 
 #}
 
-
+"""
 class RolPermisoProyecto(DeclarativeBase):
 
 	__tablename__ = 'rol_permiso_proyecto'
@@ -242,15 +268,13 @@ class RolPermisoProyecto(DeclarativeBase):
 	rol_id = Column('rol_id', Integer, ForeignKey('rol.rol_id',
 		onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
 
-
 	permiso_id = Column('permiso_id', Integer,
 		ForeignKey('permiso.permiso_id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
 
-
-	proyecto_id = Column ('id_proyecto', Integer,ForeignKey('proyecto.id_proyecto',
+	proyecto_id = Column ('proyecto_id', Integer,ForeignKey('proyecto.id_proyecto',
 						onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
 
-
+"""
 class RolPermisoFase(DeclarativeBase):
 
 	__tablename__ = 'rol_permiso_fase'

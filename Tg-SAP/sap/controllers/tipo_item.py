@@ -14,7 +14,7 @@ from sap.widgets.editform import *
 # imports del modelo
 from sap.model import *
 from tg import tmpl_context, redirect, validate
-#impot del checker de permisos
+#import del checker de permisos
 from sap.controllers.checker import *
 #import del controlador
 from tg.controllers import RestController
@@ -22,7 +22,7 @@ from tg.controllers import RestController
 class TipoItemController(RestController):
 
 	"""
-	Encargado de carga el widget para crear nuevas instancias, 
+	Encargado de carga el widget para crear nuevas instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
 	"""
 	@expose('sap.templates.new')
@@ -30,7 +30,7 @@ class TipoItemController(RestController):
 	def new(self, ifase, modelname, **kw):
 		tmpl_context.widget = new_tipo_item_form
 		return dict(value=kw, modelname= "TipoItem")
-	
+
 	"""
 	Evento invocado luego de un evento post en el form de crear
 	ecargado de persistir las nuevas instancias.
@@ -44,9 +44,9 @@ class TipoItemController(RestController):
 		tipo_item.fase = ifase
 		DBSession.add(tipo_item)
 		redirect("/proyectos")
-	
+
 	"""
-	Encargado de carga el widget para editar las instancias, 
+	Encargado de carga el widget para editar las instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de editar
 	"""
 	@expose('sap.templates.edit')
@@ -73,10 +73,10 @@ class TipoItemController(RestController):
 		DBSession.merge(tipo_item)
 		flash("El tipo de item ha sido modificado correctamente.")
 		redirect("/proyectos")
-	
+
 	"""
-	Encargado de cargar el widget de listado, pueden acceder unicamente 
-	los usuarios que posena el permiso de ver, este widget se encuentra 
+	Encargado de cargar el widget de listado, pueden acceder unicamente
+	los usuarios que posena el permiso de ver, este widget se encuentra
 	acompanhado de enlaces de editar y eliminar
 	"""
 	@expose('sap.templates.list')
@@ -91,8 +91,8 @@ class TipoItemController(RestController):
 		value = tipo_item_filler.get_value()
 		header_file = "tipo_item"
 		return dict(modelname='Fases',value=value)
-		
-	"""	
+
+	"""
 	Evento invocado desde el listado, se encarga de eliminar una instancia
 	de la base de datos.
 	"""

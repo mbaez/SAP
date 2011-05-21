@@ -46,9 +46,9 @@ class RootController(BaseController):
 	administracion = AdministracionController()
 
 	error = ErrorController()
-	
+
 	miproyecto = ProyectosController()
-	
+
 	@expose('sap.templates.index')
 	def index(self):
 		"""Handle the front-page."""
@@ -59,7 +59,7 @@ class RootController(BaseController):
 		"""Handle the 'about' page."""
 		return dict(page='about')
 	"""
-	Solamente el usuario con el permiso de modificacion puede visualizar 
+	Solamente el usuario con el permiso de modificacion puede visualizar
 	el link ver master.html
 	"""
 	@expose('sap.templates.authentication')
@@ -93,7 +93,7 @@ class RootController(BaseController):
 		"""
 		Redirect the user to the initially requested page on successful
 		authentication or redirect her back to the login page if login failed.
-		
+
 		"""
 		if not request.identity:
 			login_counter = request.environ['repoze.who.logins'] + 1
@@ -106,11 +106,11 @@ class RootController(BaseController):
 		"""
 		Redirect the user to the initially requested page on logout and say
 		goodbye as well.
-		
+
 		"""
 		#flash(_('We hope to see you soon!'))
 		redirect(url('/login'))
-	
+
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('ver_proyecto'))
 	def proyectos(self, **kw):
@@ -123,20 +123,7 @@ class RootController(BaseController):
 	"""
 	metodo para probar el calculo de impacto
 	"""
-	@expose('sap.templates.index')
-	def prueba(self):
+	@expose('sap.templates.prueba')
+	def prueba(self, **kw):
 		#contruye el grafo del proyecto 1 en este caso
-		grafo = item2.proyectGraphConstructor(1)
-		#construye el grafo de la fase 1 del proyecto 1
-		grafo2 = item2.faseGraphConstructor(1)
-		#construye el grafo de la fase 2 del proyecto 1
-		grafo3 = item2.faseGraphConstructor(2)
-		
-		impacto = item2.calcularImpacto(grafo, 2)
-		
-		flash("Grafo de la fase 1 " + str(grafo2)+\
-					" Grafo de la fase 2 "+ str(grafo3)+\
-					" Grafo del proyecto 1 "+ str(grafo)+\
-					" calculo de impacto del item 2 = "+ str(impacto))
-		
-		redirect('/')
+		return dict(value=kw)

@@ -12,19 +12,19 @@ from sap.controllers.usuario import UsuarioContoller
 from sap.controllers.proyecto import ProyectoController
 from sap.controllers.rol import RolController
 
-__all__ = ['RootController']
+
 
 
 class AdministracionController(BaseController):
 
 	usuario = UsuarioContoller()
-	
+
 	proyecto = ProyectoController()
-	
+
 	rol = RolController()
-	
+
 	@expose('sap.templates.administracion.index')
 	def index(self):
 		"""Handle the front-page."""
 		return dict(page='index')
-	
+

@@ -24,7 +24,7 @@ class FaseController(RestController):
 
 	item = ItemController()
 	"""
-	Encargado de carga el widget para crear nuevas instancias, 
+	Encargado de carga el widget para crear nuevas instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
 	"""
 	@expose('sap.templates.new')
@@ -33,7 +33,7 @@ class FaseController(RestController):
 		tmpl_context.widget = new_fase_form
 		header_file = "abstract"
 		return dict(value=kw, modelname= "Fase",header_file=header_file)
-	
+
 	"""
 	Evento invocado luego de un evento post en el form de crear
 	ecargado de persistir las nuevas instancias.
@@ -47,9 +47,9 @@ class FaseController(RestController):
 		fase.proyecto = idproyecto
 		DBSession.add(fase)
 		redirect("/miproyecto/ver/"+idproyecto)
-	
+
 	"""
-	Encargado de carga el widget para editar las instancias, 
+	Encargado de carga el widget para editar las instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de editar
 	"""
 	@expose('sap.templates.edit')
@@ -75,10 +75,10 @@ class FaseController(RestController):
 		DBSession.merge(fase)
 		flash("La fase '" + fase.nombre+ "'ha sido modificado correctamente.")
 		redirect("/miproyecto/fase/list")
-	
+
 	"""
-	Encargado de cargar el widget de listado, pueden acceder unicamente 
-	los usuarios que posena el permiso de ver, este widget se encuentra 
+	Encargado de cargar el widget de listado, pueden acceder unicamente
+	los usuarios que posena el permiso de ver, este widget se encuentra
 	acompanhado de enlaces de editar y eliminar
 	"""
 	@expose('sap.templates.list')
@@ -86,16 +86,16 @@ class FaseController(RestController):
 	def list(self, **kw):
 		"""
 		tmpl_context.widget = proyecto_table
-		
+
 		se obtiene la lista de los proyectos en los cuales pose el
 		permiso de ver_proyecto
-		
+
 		proyectos = checker.get_poyect_list('ver_proyecto')
 		value = proyecto_filler.get_value(proyectos)
 		"""
 		return dict(modelname='Fases')
-		
-	"""	
+
+	"""
 	Evento invocado desde el listado, se encarga de eliminar una instancia
 	de la base de datos.
 	"""
@@ -103,18 +103,18 @@ class FaseController(RestController):
 	def post_delete(self, id_fase, **kw):
 		DBSession.delete(DBSession.query(Fase).get(id_fase))
 		flash("La fase "+ id_proyecto + "ha sido eliminada correctamente.")
-		redirect("/miproyecto/fase/list")
-	
+		redirect("/miproyecto/fase/")
+
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('manage'))
-	def ver(self, idfase, **kw):
+	def get_all(self, idfase, **kw):
 		"""Lista todos los items de la base de datos"""
 		tmpl_context.widget = item_table
 		value = item_filler.get_value()
 		header_file = "fase"
 		new_url = "/miproyecto/fase/item/new/1"
 		return dict(modelname='Items',header_file=header_file, idfase=idfase, value=value, new_url=new_url)
-		
+
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('manage'))
 	def tipo_item(self, idfase, **kw):

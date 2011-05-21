@@ -32,6 +32,7 @@ class RolController(RestController):
 	def post(self, **kw):
 		del kw['sprox_id']
 		rol = Rol()
+		rol.codigo = kw['codigo']
 		rol.nombre = kw['nombre']
 		rol.descripcion = kw['descripcion']
 
@@ -45,40 +46,42 @@ class RolController(RestController):
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('manage'))
 	def edit(self, id,**kw):
-		rol =  DBSession.query(Rol).get(id)
 		tmpl_context.widget = rol_edit_form
-		kw['rol_id'] = rol.rol_id
-		kw['nombre'] = rol.nombre
-		kw['descripcion'] = rol.descripcion
-		kw['permisos'] = rol.permisos
-		return dict(value=kw, header_file=header_file, modelname='Rol')
+		kw['rol_id'] = id
+		value = rol_edit_filler.get_value(kw)
+		return dict(value=value, header_file=header_file, modelname='Rol')
 
 	@validate(rol_edit_form, error_handler=edit)
 	@expose()
 	def put(self, _method, **kw):
+		del kw['sprox_id']
 		rol = DBSession.query(Rol).get(int(kw['rol_id']))
-		rol.group_name = kw['nombre']
-		rol.display_name = kw['descripcion']
-		rol.permissions = []
-		for permiso in kw['permisos'] :
-			rol.permissions.append(DBSession.query(Permiso).get(permiso))
+		rol.nombre = kw['nombre']
+		rol.codigo = kw['codigo']
+		rol.descripcion = kw['descripcion']
+		rol.is_template = kw['is_template']
+		rol.permisos = []
+
+		for permiso_id in kw['permisos'] :
+			rol.permisos.append(DBSession.query(Permiso).get(permiso_id))
 
 		DBSession.merge(rol)
-		flash("El rol ha sido"+rol.display_name+" modificado correctamente.")
+		flash("El rol '"+rol.nombre+"' ha sido modificado correctamente.")
 		redirect("/administracion/rol/list")
 
 
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('manage'))
-	def list(self, **kw):
+	def get_all(self, **kw):
 		"""Lista todos los roles de la base de datos"""
 		tmpl_context.widget = rol_table
 		value = rol_filler.get_value()
-		return dict(modelname='Rol',header_file=header_file,value=value)
+		return dict(modelname='Rols',header_file=header_file,value=value,
+					new_url='new/')
 
 	@expose()
 	def post_delete(self, id_rol, **kw):
 		DBSession.delete(DBSession.query(Rol).get(id_rol))
 		flash("El rol ha sido "+ id_rol +" eliminado correctamente.")
-		redirect("/administracion/rol/list")
+		redirect("/administracion/rol/")
 

@@ -16,7 +16,7 @@ class SproxExtendedSelectShuttleField(ExtendedSelectShuttleField, PropertyMixin)
 	def update_params(self, d):
 		self._my_update_params(d)
 		super(SproxExtendedSelectShuttleField, self).update_params(d)
-		print d['options']
+
 
 class ExtendedSAWidgetSelector (SAWidgetSelector):
 	default_multiple_select_field_widget_type = SproxExtendedSelectShuttleField
@@ -36,16 +36,24 @@ class ExtendedTableFiller(TableFiller):
 	Representa el codigo html que representa a los enlaces de eidtar y
 	eliminar
 	'''
-	__action__ = 	"<a style= '##editstate##;' href='##id##/edit'>editar</a>"+\
-					"<div><form  style= '##deletestate##;' method='POST' action='##id##' class='button-to'>"+\
-					"<input type='hidden' name='_method' value='DELETE' ></input>"+\
-					"<input class='delete-button' onclick=\"return confirm('Are you sure?');\" "+\
-					"value='eliminar' type='submit' ></input>"+\
-					"</form>"+\
-					"</div>"
+	__action__ = 	"""
+					<a style= '##editstate##;' href='##id##/edit'>editar</a>
+					<div>
+						<form  style= '##deletestate##;' method='POST'
+								action='##id##' class='button-to'>
+							<input type='hidden' name='_method'
+								value='DELETE' ></input>
+							<input class='delete-button'
+								onclick="return confirm('Are you sure?');"
+								value='eliminar' type='submit' ></input>
+						</form>
+					</div>
+					"""
+
 	'''
 	Representa al usuario que se encuentra logeado en el sistema
 	'''
+	__possible_field_names__ = ['nombre','descripcion']
 
 	def get_value(self,entity_list=None, values=None, **kw):
 		if entity_list == None :

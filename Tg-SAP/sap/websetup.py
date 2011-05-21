@@ -42,16 +42,20 @@ def setup_app(command, conf, vars):
     model.DBSession.add(manager)
 
     group = model.Rol()
-    group.nombre = u'managers'
-    group.descripcion = u'Managers Group'
+    group.codigo = u'admin'
+    group.nombre = u'Administracion'
+    group.descripcion = u'Rol de Administracion'
+    group.is_template = True
 
     group.usuarios.append(manager)
 
     model.DBSession.add(group)
 
     group2 = model.Rol()
-    group2.nombre= u'lider'
-    group2.descripcion = u'Managers Group'
+    group2.codigo = u'lider'
+    group2.nombre = u'Lider'
+    group2.descripcion = u'Lider del Proyecto'
+    group2.is_template = True
 
     group2.usuarios.append(manager)
 

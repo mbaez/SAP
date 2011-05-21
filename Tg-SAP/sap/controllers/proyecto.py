@@ -42,7 +42,7 @@ class ProyectoController(RestController):
 	@validate(new_proyecto_form, error_handler=new)
 	@require(predicates.has_permission('crear_proyecto'))
 	@expose()
-	def post(self,modelname ,**kw):
+	def post(self,**kw):
 		del kw['sprox_id']
 		kw['lider'] = DBSession.query(Usuario).get(kw['lider'])
 		kw['estado'] = DBSession.query(EstadoProyecto).get(kw['estado'])
@@ -119,7 +119,7 @@ class ProyectoController(RestController):
 	"""
 	@expose('sap.templates.list')
 	@require( predicates.has_permission('manage'))
-	def listall(self, **kw):
+	def get_all(self, **kw):
 		tmpl_context.widget = proyecto_table
 		#se obtiene la lista de todos los proyectos
 		value = proyecto_filler.get_value()
@@ -137,4 +137,4 @@ class ProyectoController(RestController):
 				  filter(RolPermisoProyecto.proyecto_id == id_proyecto))
 		DBSession.delete(DBSession.query(Proyecto).get(id_proyecto))
 		flash("El proyecto ha sido "+ id_proyecto +" eliminado correctamente.")
-		redirect("/administracion/proyecto/list")
+		redirect("/administracion/proyecto/")

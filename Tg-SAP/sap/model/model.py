@@ -58,6 +58,7 @@ class Proyecto(DeclarativeBase):
 
 	descripcion = Column ('descripcion', VARCHAR(200))
 
+
 	def __str__(self):
 		return ' %s %s %s' % (self.nombre, self.nro_fases, self.descripcion)
 
@@ -115,6 +116,7 @@ class TipoItem(DeclarativeBase) :
 	descripcion = Column ('descripcion', VARCHAR(200))
 
 
+
 class AtributoTipoItem(DeclarativeBase):
 
 	__tablename__ = 'atributo_tipo_item'
@@ -125,6 +127,7 @@ class AtributoTipoItem(DeclarativeBase):
 	tipo_item = Column ('id_tipo_item', INTEGER,
 						ForeignKey ('tipo_item.id_tipo_item'),
 						nullable=False)
+	tipo_item_relacion = relation('TipoItem', backref='atributos')
 
 	nombre = Column ('nombre', VARCHAR(50), nullable=False)
 
