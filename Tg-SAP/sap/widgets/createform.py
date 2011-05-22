@@ -51,6 +51,15 @@ new_fase_form = NewFaseForm(DBSession)
 ####################################################
 # Widgets de los Items
 ####################################################
+class NewTipoItemForm(ExtendedAddRecordForm):
+	__model__ = TipoItem
+	__omit_fields__ = ['id_tipo_item', 'fase', 'atributos', 'items']
+
+new_tipo_item_form = NewTipoItemForm(DBSession)
+
+####################################################
+# Widgets de los Items
+####################################################
 class NewItemForm(ExtendedAddRecordForm):
 	__model__ = Item
 	__omit_fields__ = ['id_item', 'tipo_item', 'fase']

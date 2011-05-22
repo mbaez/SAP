@@ -66,6 +66,20 @@ fase_edit_form = RolEditForm(DBSession)
 ####################################################
 # Widgets de los Items
 ####################################################
+class TipoItemEditFiller(EditFormFiller):
+	__model__ = TipoItem
+
+tipo_item_edit_filler = TipoItemEditFiller(DBSession)
+
+class TipoItemEditForm(ExtendedEditableForm):
+	__model__ = TipoItem
+	__omit_fields__ = ['atributos', 'items']
+
+tipo_item_edit_form = TipoItemEditForm(DBSession)
+
+####################################################
+# Widgets de los Items
+####################################################
 class ItemEditFiller(EditFormFiller):
 	__model__ = Item
 

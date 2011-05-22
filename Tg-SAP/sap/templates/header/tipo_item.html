@@ -4,6 +4,7 @@
       xmlns:py="http://genshi.edgewall.org/"
       xmlns:xi="http://www.w3.org/2001/XInclude"
       py:strip="">
+      
 <py:def function="sub_header">
 <header class="content-header">
 	<nav>
@@ -12,12 +13,13 @@
 				py:if="tg.predicates.has_permission('manage')">
 				<a href="/proyectos">Inicio</a>
 			</li> 
-			 <li id="nav-dashboard" py:if="tg.predicates.has_permission('manage')" >
-				<a href="/miproyecto/fase/tipo_item/list/${idfase}">Tipos de Item</a>
+			<!-- <li id="nav-dashboard" py:if="tg.predicates.has_permission('manage')" >
+				<a href="/miproyecto/fase/tipo_item/${idfase}">Tipos de Item</a>
 			</li>
 			<li id="nav-agenda" py:if="tg.predicates.has_permission('manage')" >
 				<a href="${tg.url('/administracion/proyecto/listall')}">Historial de Items</a>
 			</li>
+			-->
 		</ul>
 	</nav>
 </header>

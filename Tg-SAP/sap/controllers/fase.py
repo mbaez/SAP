@@ -17,12 +17,15 @@ from tg import tmpl_context, redirect, validate
 #impot del checker de permisos
 from sap.controllers.checker import *
 from sap.controllers.item import *
+from sap.controllers.tipo_item import TipoItemController
 #import del controlador
 from tg.controllers import RestController
 
 class FaseController(RestController):
 
 	item = ItemController()
+	tipo_item = TipoItemController()
+	
 	"""
 	Encargado de carga el widget para crear nuevas instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
@@ -108,18 +111,11 @@ class FaseController(RestController):
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('manage'))
 	def get_all(self, idfase, **kw):
-		"""Lista todos los items de la base de datos"""
+		"""Lista todos los items de la fase"""
 		tmpl_context.widget = item_table
-		value = item_filler.get_value()
+		items = DBSession.query(Item).filter(Item.fase==idfase).all()
+		value = item_filler.get_value(items)
 		header_file = "fase"
 		new_url = "/miproyecto/fase/item/new/1"
 		return dict(modelname='Items',header_file=header_file, idfase=idfase, value=value, new_url=new_url)
 
-	@expose('sap.templates.list')
-	@require(predicates.has_permission('manage'))
-	def tipo_item(self, idfase, **kw):
-		"""Lista todos los items de la base de datos"""
-		tmpl_context.widget = tipo_item_table
-		value = tipo_item_filler.get_value()
-		header_file = "abstract"
-		return dict(modelname='TipoItems',header_file=header_file,value=value)

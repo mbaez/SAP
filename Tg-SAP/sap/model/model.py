@@ -127,6 +127,7 @@ class AtributoTipoItem(DeclarativeBase):
 	tipo_item = Column ('id_tipo_item', INTEGER,
 						ForeignKey ('tipo_item.id_tipo_item'),
 						nullable=False)
+
 	tipo_item_relacion = relation('TipoItem', backref='atributos')
 
 	nombre = Column ('nombre', VARCHAR(50), nullable=False)

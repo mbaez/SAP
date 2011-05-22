@@ -86,7 +86,7 @@ class FaseAdminTableFiller(ExtendedTableFiller):
 
 	def accion (self, obj):
 
-		accion = ', '.join(['<a href="/miproyecto/fase/ver/' +str(obj.id_fase)+'">ver</a>'])
+		accion = ', '.join(['<a href="/miproyecto/fase/get_all/' +str(obj.id_fase)+'">ver</a>'])
 		return accion.join(('<div>', '</div>'))
 
 fase_table = FaseAdminTable(DBSession);
@@ -122,9 +122,19 @@ item_filler = ItemTableFiller(DBSession);
 ####################################################
 class TipoItemTable(TableBase):
 	__model__ = TipoItem
+	__omit_fields__ = ['atributos','items', 'fase']
+	__xml_fields__ = ['accion']
+	__add_fields__ = {'accion':None}
 
-class TipoItemTableFiller(TableFiller):
+class TipoItemTableFiller(ExtendedTableFiller):
 	__model__ = TipoItem
+	__add_fields__ = {'accion':None}
+	
+	def accion (self, obj):
+		accion = ', '.join([self.__action__.replace('##id##/edit','/miproyecto/fase/tipo_item/##id##/edit').
+		replace('##id##', str(obj.id_tipo_item))])
+		#replace('##editstate##', predicates.has_permission('editar_tipo_item'))])
+		return accion.join(('<div>', '</div>'))
 
 tipo_item_table = TipoItemTable(DBSession);
 tipo_item_filler = TipoItemTableFiller(DBSession);

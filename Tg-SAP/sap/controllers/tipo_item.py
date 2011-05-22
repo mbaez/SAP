@@ -27,9 +27,11 @@ class TipoItemController(RestController):
 	"""
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('manage'))
-	def new(self, ifase, modelname, **kw):
+	def new(self, idfase, modelname, **kw):
 		tmpl_context.widget = new_tipo_item_form
-		return dict(value=kw, modelname= "TipoItem")
+		header_file='tipo_item'
+		return dict(value=kw, modelname= "TipoItem", idfase=idfase,
+										header_file=header_file)
 
 	"""
 	Evento invocado luego de un evento post en el form de crear
@@ -38,12 +40,13 @@ class TipoItemController(RestController):
 	@validate(new_tipo_item_form, error_handler=new)
 	@require(predicates.has_permission('manage'))
 	@expose()
-	def post(self, ifase, **kw):
+	def post(self, idfase, **kw):
 		del kw['sprox_id']
 		tipo_item = TipoItem(**kw)
-		tipo_item.fase = ifase
+		tipo_item.fase = idfase
 		DBSession.add(tipo_item)
-		redirect("/proyectos")
+		flash("El tipo de Item ha sido creado correctamente")
+		redirect('/miproyecto/fase/tipo_item/list/'+idfase)
 
 	"""
 	Encargado de carga el widget para editar las instancias,
@@ -56,9 +59,10 @@ class TipoItemController(RestController):
 		tmpl_context.widget = tipo_item_edit_form
 		kw['id_tipo_item'] = tipo_item.id_tipo_item
 		kw['fase'] = tipo_item.fase
-		kw['nombre'] = id_tipo_item.nombre
-		kw['descripcion'] = id_tipo_item.descripcion
-		return dict(value=kw, modelname='TipoItem')
+		kw['nombre'] = tipo_item.nombre
+		kw['descripcion'] = tipo_item.descripcion
+		header_file="tipo_item"
+		return dict(value=kw, modelname='TipoItem', header_file=header_file)
 
 	"""
 	Evento invocado luego de un evento post en el form de editar
@@ -72,7 +76,7 @@ class TipoItemController(RestController):
 		tipo_item = TipoItem(**kw)
 		DBSession.merge(tipo_item)
 		flash("El tipo de item ha sido modificado correctamente.")
-		redirect("/proyectos")
+		redirect('/miproyecto/fase/tipo_item/list/'+str(tipo_item.fase))
 
 	"""
 	Encargado de cargar el widget de listado, pueden acceder unicamente
@@ -81,16 +85,19 @@ class TipoItemController(RestController):
 	"""
 	@expose('sap.templates.list')
 	#@require( predicates.has_permission('ver_proyecto'))
-	def list(self, **kw):
+	def list(self, idfase, **kw):
 		'''
 		Lista todos tipos de items de la bd.
 		Se debe modificar para que liste solo los
 		de la fase actual
 		'''
 		tmpl_context.widget = tipo_item_table
-		value = tipo_item_filler.get_value()
+		tipo_items = DBSession.query(TipoItem).filter(TipoItem.fase==idfase).all()
+		value = tipo_item_filler.get_value(tipo_items)
 		header_file = "tipo_item"
-		return dict(modelname='Fases',value=value)
+		new_url = "/miproyecto/fase/tipo_item/"+idfase+"/new"
+		return dict(modelname='Tipo_items',value=value, header_file=header_file,
+												new_url=new_url,idfase=idfase)
 
 	"""
 	Evento invocado desde el listado, se encarga de eliminar una instancia
@@ -100,4 +107,4 @@ class TipoItemController(RestController):
 	def post_delete(self, id_tipo_item, **kw):
 		DBSession.delete(DBSession.query(TipoItem).get(id_tipo_item))
 		flash("El tipo de item "+ id_tipo_item + "ha sido eliminado correctamente.")
-		redirect("/proyectos")
+		redirect('/miproyecto/fase/tipo_item/list/'+id_tipo_item)

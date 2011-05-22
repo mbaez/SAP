@@ -17,7 +17,8 @@ __permisos__= ['ver_proyecto','crear_proyecto','editar_proyecto',
 				'crear_rol', 'eliminar_rol', 'editar_rol'
 				'ver_rol','crear_usuario', 'eliminar_usuario',
 				'editar_usuario', 'ver_usuario',
-				'crear_item', 'eliminar_item', 'editar_item']
+				'crear_item', 'eliminar_item', 'editar_item', 
+				'crear_tipo_item', 'eliminar_tipo_item', 'editar_tipo_item']
 
 #lista de tipos de relacion
 __relaciones__= ['padre_hijo','antecesor_sucesor']
