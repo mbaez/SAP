@@ -60,6 +60,16 @@ new_tipo_item_form = NewTipoItemForm(DBSession)
 ####################################################
 # Widgets de los Items
 ####################################################
+class NewAtributoForm(ExtendedAddRecordForm):
+	__model__ = AtributoTipoItem
+	__omit_fields__ = ['id', 'tipo_item_relacion', 'tipo_id', 'tipo_item']
+	__dropdown_field_names__ = {'tipo':'nombre'}
+	atras =  
+new_atributo_form = NewAtributoForm(DBSession)
+
+####################################################
+# Widgets de los Items
+####################################################
 class NewItemForm(ExtendedAddRecordForm):
 	__model__ = Item
 	__omit_fields__ = ['id_item', 'tipo_item', 'fase']

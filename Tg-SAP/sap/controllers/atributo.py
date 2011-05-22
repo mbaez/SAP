@@ -16,41 +16,41 @@ from sap.model import *
 from tg import tmpl_context, redirect, validate
 #import del checker de permisos
 from sap.controllers.checker import *
-from sap.controllers.atributo import AtributoController
 #import del controlador
 from tg.controllers import RestController
 
-class TipoItemController(RestController):
+class AtributoController(RestController):
 	
-	atributos = AtributoController()
 	"""
 	Encargado de carga el widget para crear nuevas instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
 	"""
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('manage'))
-	def new(self, idfase, modelname, **kw):
-		tmpl_context.widget = new_tipo_item_form
+	def new(self, idtipo, modelname, **kw):
+		tmpl_context.widget = new_atributo_form
 		header_file='tipo_item'
-		return dict(value=kw, modelname= "TipoItem", idfase=idfase,
+		return dict(value=kw, modelname= "Atributos del Tipo de Item", idtipo=idtipo,
 										header_file=header_file)
 
 	"""
 	Evento invocado luego de un evento post en el form de crear
 	ecargado de persistir las nuevas instancias.
 	"""
-	@validate(new_tipo_item_form, error_handler=new)
+	@validate(new_atributo_form, error_handler=new)
 	@require(predicates.has_permission('manage'))
 	@expose()
-	def post(self, idfase, **kw):
+	def post(self, idtipo, **kw):
 		del kw['sprox_id']
-		tipo_item = TipoItem(**kw)
-		tipo_item.fase = idfase
-		DBSession.add(tipo_item)
-		flash("El tipo de Item ha sido creado correctamente")
-		#traer el ultimo tipo insertado para pasarle su id al formulario de atributos
-		tipos=list(DBSession.query(TipoItem).order_by(TipoItem.id_tipo_item))
-		redirect('/miproyecto/fase/tipo_item/atributos/'+str(tipos[len(tipos)-1].id_tipo_item)+'/new')
+		atributo_tipo_item = AtributoTipoItem()
+		atributo_tipo_item.tipo_item = idtipo
+		atributo_tipo_item.nombre = kw['nombre']
+		atributo_tipo_item.tipo_id = kw['tipo']
+		DBSession.add(atributo_tipo_item)
+		flash("El Atributo del tipo de Item ha sido creado correctamente")
+		redirect('/miproyecto/fase/tipo_item/atributos/'+idtipo+'/new')
+
+
 	"""
 	Encargado de carga el widget para editar las instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de editar

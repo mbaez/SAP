@@ -102,13 +102,31 @@ def setup_app(command, conf, vars):
     fase2 = model.Fase()
     fase2.nombre = u'fase2'
     fase2.proyecto = 1
-
+    
     model.DBSession.add(fase2)
+    
+    tipo1 = model.TipoAtributo()
+    tipo1.nombre = u'Texto'
+    tipo1.descripcion = u'Contiene datos del tipo texto'
+    
+    tipo2 = model.TipoAtributo()
+    tipo2.nombre = u'Numerico'
+    tipo2.descripcion = u'Contiene datos del tipo numerico'
+    
+    tipo3 = model.TipoAtributo()
+    tipo3.nombre = u'Alfanumerico'
+    tipo3.descripcion = u'Contiene datos del tipo Alfanumerico'
+   
+    model.DBSession.add(tipo1)
+    model.DBSession.add(tipo2)
+    model.DBSession.add(tipo3)
+    
     model.DBSession.flush()
+    
     tipodeitem1 = model.TipoItem()
     tipodeitem1.fase = fase1.id_fase
     tipodeitem1.nombre = u'tipo1'
-
+    
     model.DBSession.add(tipodeitem1)
 
     tipodeitem2 = model.TipoItem()
@@ -191,6 +209,6 @@ def setup_app(command, conf, vars):
         rpf.rol_id = 1
 
         model.DBSession.add(rpf)
-
+    
     transaction.commit()
     print "Successfully setup"

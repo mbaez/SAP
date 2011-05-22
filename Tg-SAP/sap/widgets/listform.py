@@ -131,9 +131,11 @@ class TipoItemTableFiller(ExtendedTableFiller):
 	__add_fields__ = {'accion':None}
 	
 	def accion (self, obj):
+		html_widget = "<a href='/miproyecto/fase/tipo_item/##id##/edit'> + atributo</a>"
 		accion = ', '.join([self.__action__.replace('##id##/edit','/miproyecto/fase/tipo_item/##id##/edit').
 		replace('##id##', str(obj.id_tipo_item))])
 		#replace('##editstate##', predicates.has_permission('editar_tipo_item'))])
+		#accion = ', '.join()
 		return accion.join(('<div>', '</div>'))
 
 tipo_item_table = TipoItemTable(DBSession);
@@ -162,3 +164,22 @@ class ParticipantesFiller(ExtendedTableFiller):
 
 participantes_table = ParticipantesTable(DBSession);
 participantes_filler = ParticipantesFiller(DBSession);
+
+####################################################
+# Widgets de los atributos del tipo de item
+####################################################
+
+class AtributoTable(TableBase):
+	__model__ = AtributoTipoItem
+	#__omit_fields__ = ['lider_id','estado_id', 'id_proyecto' ,
+	#					'nro_fases', '__actions__'  ]
+	__xml_fields__ = ['accion']
+	__add_fields__ = {'accion':None}
+
+class AtributoTableFiller(ExtendedTableFiller):
+	__model__ = AtributoTipoItem
+	__add_fields__ = {'accion':None}
+
+	def accion (self, obj):
+		#accion = ', '.join(['<a href="/miproyecto/ver/' +str(obj.id_proyecto)+'">ver</a>'])
+		return accion.join(('<div>', '</div>'))
