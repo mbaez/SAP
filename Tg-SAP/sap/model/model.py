@@ -121,7 +121,7 @@ class AtributoTipoItem(DeclarativeBase):
 
 	__tablename__ = 'atributo_tipo_item'
 
-	id = Column ('id_atributo_tipo_item', INTEGER, autoincrement=True,
+	id_atributo_tipo_item = Column ('id_atributo_tipo_item', INTEGER, autoincrement=True,
 					primary_key=True)
 
 	tipo_item = Column ('id_tipo_item', INTEGER,

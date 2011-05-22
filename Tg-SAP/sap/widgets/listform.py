@@ -131,9 +131,9 @@ class TipoItemTableFiller(ExtendedTableFiller):
 	__add_fields__ = {'accion':None}
 	
 	def accion (self, obj):
-		html_widget = "<a href='/miproyecto/fase/tipo_item/##id##/edit'> + atributo</a>"
+		html_widget = "<a href='/miproyecto/fase/tipo_item/atributos/list/##id##'>ver atributos</a>"
 		accion = ', '.join([self.__action__.replace('##id##/edit','/miproyecto/fase/tipo_item/##id##/edit').
-		replace('##id##', str(obj.id_tipo_item))])
+		replace('##id##', str(obj.id_tipo_item))+ html_widget.replace('##id##',  str(obj.id_tipo_item))])
 		#replace('##editstate##', predicates.has_permission('editar_tipo_item'))])
 		#accion = ', '.join()
 		return accion.join(('<div>', '</div>'))
@@ -171,15 +171,10 @@ participantes_filler = ParticipantesFiller(DBSession);
 
 class AtributoTable(TableBase):
 	__model__ = AtributoTipoItem
-	#__omit_fields__ = ['lider_id','estado_id', 'id_proyecto' ,
-	#					'nro_fases', '__actions__'  ]
-	__xml_fields__ = ['accion']
-	__add_fields__ = {'accion':None}
+	__omit_fields__ = ['id_atributo_tipo_item', 'tipo_item_relacion', 'tipo_id', 'tipo_item']
 
 class AtributoTableFiller(ExtendedTableFiller):
 	__model__ = AtributoTipoItem
-	__add_fields__ = {'accion':None}
 
-	def accion (self, obj):
-		#accion = ', '.join(['<a href="/miproyecto/ver/' +str(obj.id_proyecto)+'">ver</a>'])
-		return accion.join(('<div>', '</div>'))
+atributo_table = AtributoTable(DBSession);
+atributo_filler = AtributoTableFiller(DBSession);

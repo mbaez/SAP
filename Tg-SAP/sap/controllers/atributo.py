@@ -88,20 +88,20 @@ class AtributoController(RestController):
 	"""
 	@expose('sap.templates.list')
 	#@require( predicates.has_permission('ver_proyecto'))
-	def list(self, idfase, **kw):
+	def list(self, idtipo, **kw):
 		'''
 		Lista todos tipos de items de la bd.
 		Se debe modificar para que liste solo los
 		de la fase actual
 		'''
-		tmpl_context.widget = tipo_item_table
-		tipo_items = DBSession.query(TipoItem).filter(TipoItem.fase==idfase).all()
-		value = tipo_item_filler.get_value(tipo_items)
+		tmpl_context.widget = atributo_table
+		atributos = DBSession.query(AtributoTipoItem).filter(AtributoTipoItem.tipo_item==idtipo).all()
+		value = atributo_filler.get_value(atributos)
 		header_file = "tipo_item"
-		new_url = "/miproyecto/fase/tipo_item/"+idfase+"/new"
-		return dict(modelname='Tipo_items',value=value, header_file=header_file,
-												new_url=new_url,idfase=idfase)
-
+		new_url = "/miproyecto/fase/tipo_item/atributos/"+idtipo+"/new"
+		return dict(modelname='Atributos',value=value, header_file=header_file,
+												new_url=new_url,idtipo=idtipo)
+		
 	"""
 	Evento invocado desde el listado, se encarga de eliminar una instancia
 	de la base de datos.
