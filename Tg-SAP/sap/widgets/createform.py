@@ -85,3 +85,5 @@ class NewParticipanteForm(ExtendedAddRecordForm):
 	__omit_fields__ = ['__actions__','nombre','descripcion','permisos', 'created']
 
 new_participante_form = NewParticipanteForm(DBSession)
+
+

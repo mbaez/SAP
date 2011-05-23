@@ -209,10 +209,10 @@ class RelacionItem(DeclarativeBase):
 
 	__tablename__ ='relacion_item'
 
-	id = Column ('id_item_actual', INTEGER, ForeignKey ('item.id_item'),
+	id_item_actual = Column ('id_item_actual', INTEGER, ForeignKey ('item.id_item'),
 				primary_key=True)
 
-	item_realcionado = Column ('id_item_relacionado', INTEGER,
+	id_item_relacionado = Column ('id_item_relacionado', INTEGER,
 				ForeignKey ('item.id_item'), primary_key=True)
 
 	relacion_parentesco = Column ('id_relacion_parentesco', INTEGER,

@@ -71,7 +71,62 @@ class ItemController(BaseController):
 		DBSession.merge(fase)
 		flash("La fase '" + fase.nombre+ "'ha sido modificado correctamente.")
 		redirect("/miproyecto/fase/list")
+	
+	@expose('sap.templates.list')
+	def relaciones(self, idfase, **kw):
+		#traer las relaciones de esta fase
+		items = DBSession.query(Item).filter(Item.fase==idfase)
+		items_id = []
+		for item in items:
+			items_id.append(item.id_item)
 
+		relaciones = list(DBSession.query(RelacionItem).\
+							filter(RelacionItem.id_item_actual.in_(items_id)).\
+							filter(RelacionItem.id_item_relacionado.in_(items_id)).\
+							all())
+		
+		tmpl_context.widget = relacion_table
+		#value2 = relacion_filler.get_value(relaciones)
+		#flash(value2)
+		value=[]
+		aux=[]
+		for relacion in relaciones:
+			if(relacion.relacion_parentesco==1):
+				aux=[{'relacion_parentesco': 'Padre - Hijo', 
+				'id_item_actual': relacion.id_item_actual,'id_item_relacionado': relacion.id_item_relacionado,
+				'accion': '<div><a href="/miproyecto/fase/item/borrarRelacion/'
+				+str(relacion.id_item_actual)+'/'+str(relacion.id_item_relacionado)+
+				'/'+idfase+'">Eliminar Relacion</a></div>'}]
+			else:
+				aux=[{'relacion_parentesco': 'Antecesor - Sucesor', 
+				'id_item_actual': relacion.id_item_actual,'id_item_relacionado': relacion.id_item_relacionado,
+				'accion': '<div><a href="/miproyecto/fase/item/borrarRelacion/'
+				+str(relacion.id_item_actual)+'/'+str(relacion.id_item_relacionado)+
+				'/'+idfase+'">Eliminar Relacion</a></div>'}]
+			value=value+aux
+		header_file = "abstract"
+		new_url = "/"
+		return dict(modelname='Relaciones',header_file=header_file, idfase=idfase, value=value, new_url=new_url)
+	
+	@expose()
+	def borrarRelacion(self, item1, item2, idfase, **kw):
+		DBSession.delete(DBSession.query(RelacionItem).\
+					filter(RelacionItem.id_item_actual==item1).\
+					filter(RelacionItem.id_item_relacionado==item2).\
+					one())
+		flash("Se ha eliminado la relacion: "+item1+" <--> "+item2)
+		redirect("/miproyecto/fase/item/relaciones/"+idfase)
+	
+	@expose('sap.templates.nueva_relacion')
+	def nuevaRelacion(self, **kw):
+		#widget = ExtendedItemField()
+		#widget.idfase=1
+		#tmpl_context.widget = widget
+		return dict()
+	
+	@expose()
+	def agregarRelacion(self, item1, item2, idfase, **kw):
+		return
 	"""
 	metodo que retorna el padres de un item.
 	parametros:
@@ -89,11 +144,11 @@ class ItemController(BaseController):
 		#hijo-padre es 1 se obtienen todas las relaciones de este tipo que
 		#tiene el item actual
 		relacion = DBSession.query(RelacionItem).\
-			filter(RelacionItem.item_realcionado==item.id_item).\
+			filter(RelacionItem.id_item_relacionado==item.id_item).\
 			filter(RelacionItem.relacion_parentesco==1).\
 			first()
 
-		padre = DBSession.query(Item).get(relacion.id)
+		padre = DBSession.query(Item).get(relacion.id_item_actual)
 		return padre
 
 	"""
@@ -139,12 +194,12 @@ class ItemController(BaseController):
 		que contengan a los items del proyecto
 		"""
 		relaciones = DBSession.query(RelacionItem).\
-						filter((RelacionItem.id).in_(itemsId)).\
+						filter((RelacionItem.id_item_actual).in_(itemsId)).\
 						all()
 
 		#Se añaden las aristas entre los items relacionados
 		for relacion in relaciones:
-			grafo.add_edge((relacion.id,relacion.item_realcionado))
+			grafo.add_edge((relacion.id_item_actual,relacion.id_item_relacionado))
 
 
 		return grafo
@@ -180,12 +235,12 @@ class ItemController(BaseController):
 
 		relaciones = DBSession.query(RelacionItem).\
 						filter(RelacionItem.relacion_parentesco==1).\
-						filter(RelacionItem.id.in_(itemsId)).\
+						filter(RelacionItem.id_item_actual.in_(itemsId)).\
 						all()
 
 		#Se añaden las aristas entre los items relacionados
 		for relacion in relaciones:
-			grafo.add_edge((relacion.id,relacion.item_realcionado))
+			grafo.add_edge((relacion.id_item_actual,relacion.id_item_relacionado))
 
 		return grafo
 
@@ -201,7 +256,7 @@ class ItemController(BaseController):
 	"""
 	def ciclo (self, nuevaRelacion, idfase):
 		grafo = graphConstructor(idfase)
-		grafo.add_edges(nuevaRelacion.id, nuevaRelacion.item_realcionado)
+		grafo.add_edges(nuevaRelacion.id_item_actual, nuevaRelacion.id_item_relacionado)
 		if(find_cycle(grafo)!= []):
 			return True
 		return False
@@ -303,8 +358,6 @@ class ItemController(BaseController):
 
 
 	"""
-    #def huerfano(grafo, idItem):
-item2 = ItemController()
 
 
 

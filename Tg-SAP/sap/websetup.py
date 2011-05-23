@@ -170,23 +170,23 @@ def setup_app(command, conf, vars):
     model.DBSession.flush()
 
     relacion1 = model.RelacionItem()
-    relacion1.id = 1
-    relacion1.item_realcionado = 2
+    relacion1.id_item_actual = 1
+    relacion1.id_item_relacionado = 2
     relacion1.relacion_parentesco = 1
 
     model.DBSession.add(relacion1)
 
     relacion2 = model.RelacionItem()
-    relacion2.id = 1
-    relacion2.item_realcionado = 11
+    relacion2.id_item_actual = 1
+    relacion2.id_item_relacionado = 11
     relacion2.relacion_parentesco = 2
 
     model.DBSession.add(relacion2)
 
 
     relacion3 = model.RelacionItem()
-    relacion3.id = 2
-    relacion3.item_realcionado = 5
+    relacion3.id_item_actual= 2
+    relacion3.id_item_relacionado = 5
     relacion3.relacion_parentesco = 1
 
     model.DBSession.add(relacion3)

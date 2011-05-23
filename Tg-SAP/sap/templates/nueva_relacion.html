@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+                    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:py="http://genshi.edgewall.org/"
+    xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="master.html" />
+<head>
+		<title>Nuevo Proyecto</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="/css/master.css" />
+</head>
+
+<body>
+	<header class="content-header">
+	<nav>
+		<ul>
+			<li id="nav-dashboard" class="first">
+				<a href="/proyectos">Inicio</a>
+			</li>
+		</ul>
+
+	</nav>
+	</header>
+	<head>
+		<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+		<title>Nueva Relacion</title>
+		</head>
+	<section class="login-box shade">
+	<h1>Nueva Relacion</h1>
+	<div>
+	<div style="float:left width: 80%">
+    <table border="0" cellspacing="0" cellpadding="2">
+		<tr id="lider.container" class="odd" title="">
+            <td class="labelcol">
+                <label id="lider.label" for="lider" class="fieldlabel">Item Antecesor</label>
+
+            </td>
+            <td class="fieldcol">
+                <select xmlns="http://www.w3.org/1999/xhtml" name="lider" class="propertysingleselectfield" id="lider">
+				<option value="1">hola</option><option value="" selected="selected">-----------</option>
+				</select>
+            </td>
+        </tr>
+        <tr id="estado.container" class="even" title="">
+            <td class="labelcol">
+				<label id="estado.label" for="estado" class="fieldlabel">Item Sucesor</label>
+            </td>
+            <td class="fieldcol">
+                <select xmlns="http://www.w3.org/1999/xhtml" name="estado" class="propertysingleselectfield" id="estado">
+				<option value="1"></option>hola2<option value="" selected="selected">-----------</option>
+				</select>
+            </td>
+        </tr>
+    </table>
+	</div>
+</div>
+</section>
+</body>
+</html>

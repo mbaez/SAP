@@ -178,3 +178,23 @@ class AtributoTableFiller(ExtendedTableFiller):
 
 atributo_table = AtributoTable(DBSession);
 atributo_filler = AtributoTableFiller(DBSession);
+
+####################################################
+# Widgets de las relaciones
+####################################################
+
+class RelacionTable(TableBase):
+	__model__ = RelacionItem
+	__omit_fields__ = ['__actions__']
+	__xml_fields__ = ['accion']
+	__add_fields__ = {'accion':None}
+	#__omit_fields__ = ['id_atributo_tipo_item', 'tipo_item_relacion', 'tipo_id', 'tipo_item']
+
+class RelacionTableFiller(ExtendedTableFiller):
+	__model__ = RelacionItem
+	__add_fields__ = {'accion':None}
+
+
+relacion_table = RelacionTable(DBSession);
+relacion_filler = RelacionTableFiller(DBSession);
+

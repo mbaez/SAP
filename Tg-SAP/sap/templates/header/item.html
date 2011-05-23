@@ -10,17 +10,8 @@
 		<ul> 
 			<li id="nav-dashboard" class="first" 
 				py:if="tg.predicates.has_permission('manage')">
-				<a href="/proyectos">Inicio</a>
+				<a href="/miproyecto/fase/item/relaciones">Administrar Relaciones</a>
 			</li> 
-			 <li id="nav-dashboard" py:if="tg.predicates.has_permission('manage')" >
-				<a href="/miproyecto/fase/tipo_item/list/${idfase}">Tipos de Item</a>
-			</li>
-			<li id="nav-agenda" py:if="tg.predicates.has_permission('manage')" >
-				<a href="${tg.url('/administracion/proyecto/listall')}">Historial de Items</a>
-			</li>
-			<li id="nav-agenda" py:if="tg.predicates.has_permission('manage')" >
-				<a href="/miproyecto/fase/item/relaciones/${idfase}">Administrar Relaciones</a>
-			</li>
 		</ul>
 	</nav>
 </header>

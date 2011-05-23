@@ -92,6 +92,17 @@ class ExtendedTableFiller(TableFiller):
 
 from sprox.widgets import PropertySingleSelectField
 
+class ExtendedItemField(PropertySingleSelectField):
+
+	idfase=0
+
+	def _my_update_params(self, d, nullable=False):
+		items = DBSession.query(Item).filter(Item.fase==self.idfase).all()
+		options = [(item.id_item, '%s' %(item.id_item))
+							for item in items]
+		d['options']= options
+		return d
+
 class ExtendedTipoItemField(PropertySingleSelectField):
 
 	idfase=0
