@@ -181,6 +181,7 @@ class Item(DeclarativeBase):
 	observacion = Column ('observacion', VARCHAR(100))
 
 
+
 class LineaBaseItem(DeclarativeBase):
 
 	__tablename__ = 'linea_base_item'
@@ -215,11 +216,14 @@ class RelacionItem(DeclarativeBase):
 	id_item_relacionado = Column ('id_item_relacionado', INTEGER,
 				ForeignKey ('item.id_item'), primary_key=True)
 
+
 	relacion_parentesco = Column ('id_relacion_parentesco', INTEGER,
 				ForeignKey('relacion_parentesco.id_relacion_parentesco'),
 				nullable=False)
-
-
+	#relaciones ficticias a la tabla parentesco. 
+	#Puse solo para que anden los combobox
+	item_1=relation('RelacionParentesco')
+	item_2=relation('RelacionParentesco')
 
 class Recurso(DeclarativeBase):
 
@@ -231,7 +235,6 @@ class Recurso(DeclarativeBase):
 	adjunto = Column ('adjunto', BYTEA, nullable = False)
 
 	observacion = Column ('observacion', VARCHAR(100))
-
 
 class TipoAtributo(DeclarativeBase):
 

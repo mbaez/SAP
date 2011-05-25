@@ -106,3 +106,58 @@ def find_cycle(graph):
 
     setrecursionlimit(recursionlimit)
     return []
+
+def cycle(graph):
+    
+    directed = True
+    
+    def find_cycle_to_ancestor(node, ancestor):
+        """
+        Find a cycle containing both node and ancestor.
+        """
+        path = []
+        while (node != ancestor):
+            if (node is None):
+                return []
+            path.append(node)
+            node = spanning_tree[node]
+        path.append(node)
+        path.reverse()
+        return path
+    
+    def dfs(node):
+        """
+        Depth-first search subfunction.
+        """
+        visited[node] = 1
+        # Explore recursively the connected component
+        for each in graph[node]:
+            if (cycle):
+                return
+            if (each not in visited):
+                spanning_tree[each] = node
+                dfs(each)
+            else:
+                if (directed or spanning_tree[node] != each):
+                    cycle.extend(find_cycle_to_ancestor(node, each))
+
+    recursionlimit = getrecursionlimit()
+    setrecursionlimit(max(len(graph.nodes())*2,recursionlimit))
+
+    visited = {}              # List for marking visited and non-visited nodes
+    spanning_tree = {}        # Spanning tree
+    cycle = []
+
+    # Algorithm outer-loop
+    for each in graph:
+        # Select a non-visited node
+        if (each not in visited):
+            spanning_tree[each] = None
+            # Explore node's connected component
+            dfs(each)
+            if (cycle):
+                setrecursionlimit(recursionlimit)
+                return cycle
+
+    setrecursionlimit(recursionlimit)
+    return []

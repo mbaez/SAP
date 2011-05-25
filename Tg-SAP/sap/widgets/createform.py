@@ -77,6 +77,7 @@ class NewItemForm(ExtendedAddRecordForm):
 	tipo_item_relacion = ExtendedTipoItemField
 
 new_item_form = NewItemForm(DBSession)
+
 ####################################################
 # Widgets de los Participantes
 ####################################################
@@ -86,4 +87,15 @@ class NewParticipanteForm(ExtendedAddRecordForm):
 
 new_participante_form = NewParticipanteForm(DBSession)
 
+####################################################
+# Widgets de las Relaciones
+####################################################
+class NewRelacionForm(ExtendedAddRecordForm):
+	__model__ = RelacionItem
+	__omit_fields__ = ['id_item_actual', 'id_item_relacionado', 'relacion_parentesco']
+	__dropdown_field_names__ = {'item1':'id_item', 'item2':'id_item'}
+	item_1 = ExtendedItemDeFaseField 
+	item_2 = ExtendedItemDeFaseSiguienteField
+
+new_relacion_form = NewRelacionForm(DBSession)
 

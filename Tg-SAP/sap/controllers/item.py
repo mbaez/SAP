@@ -18,8 +18,9 @@ from sap.widgets.editform import *
 from sap.lib.base import BaseController
 from sap.model import *
 from sap.model import DBSession, metadata
+from tg.controllers import RestController
 
-class ItemController(BaseController):
+class ItemController(RestController):
 
 	@expose('sap.templates.new')
 	#@require(predicates.has_permission('crear_item'))
@@ -33,7 +34,7 @@ class ItemController(BaseController):
 	Evento invocado luego de un evento post en el form de crear
 	ecargado de persistir las nuevas instancias.
 	"""
-	#@validate(new_item_form, error_handler=new)
+	@validate(new_item_form, error_handler=new)
 	#@require(predicates.has_permission('crear_item'))
 	@expose()
 	def post(self, idfase, **kw):
@@ -71,62 +72,7 @@ class ItemController(BaseController):
 		DBSession.merge(fase)
 		flash("La fase '" + fase.nombre+ "'ha sido modificado correctamente.")
 		redirect("/miproyecto/fase/list")
-	
-	@expose('sap.templates.list')
-	def relaciones(self, idfase, **kw):
-		#traer las relaciones de esta fase
-		items = DBSession.query(Item).filter(Item.fase==idfase)
-		items_id = []
-		for item in items:
-			items_id.append(item.id_item)
 
-		relaciones = list(DBSession.query(RelacionItem).\
-							filter(RelacionItem.id_item_actual.in_(items_id)).\
-							filter(RelacionItem.id_item_relacionado.in_(items_id)).\
-							all())
-		
-		tmpl_context.widget = relacion_table
-		#value2 = relacion_filler.get_value(relaciones)
-		#flash(value2)
-		value=[]
-		aux=[]
-		for relacion in relaciones:
-			if(relacion.relacion_parentesco==1):
-				aux=[{'relacion_parentesco': 'Padre - Hijo', 
-				'id_item_actual': relacion.id_item_actual,'id_item_relacionado': relacion.id_item_relacionado,
-				'accion': '<div><a href="/miproyecto/fase/item/borrarRelacion/'
-				+str(relacion.id_item_actual)+'/'+str(relacion.id_item_relacionado)+
-				'/'+idfase+'">Eliminar Relacion</a></div>'}]
-			else:
-				aux=[{'relacion_parentesco': 'Antecesor - Sucesor', 
-				'id_item_actual': relacion.id_item_actual,'id_item_relacionado': relacion.id_item_relacionado,
-				'accion': '<div><a href="/miproyecto/fase/item/borrarRelacion/'
-				+str(relacion.id_item_actual)+'/'+str(relacion.id_item_relacionado)+
-				'/'+idfase+'">Eliminar Relacion</a></div>'}]
-			value=value+aux
-		header_file = "abstract"
-		new_url = "/"
-		return dict(modelname='Relaciones',header_file=header_file, idfase=idfase, value=value, new_url=new_url)
-	
-	@expose()
-	def borrarRelacion(self, item1, item2, idfase, **kw):
-		DBSession.delete(DBSession.query(RelacionItem).\
-					filter(RelacionItem.id_item_actual==item1).\
-					filter(RelacionItem.id_item_relacionado==item2).\
-					one())
-		flash("Se ha eliminado la relacion: "+item1+" <--> "+item2)
-		redirect("/miproyecto/fase/item/relaciones/"+idfase)
-	
-	@expose('sap.templates.nueva_relacion')
-	def nuevaRelacion(self, **kw):
-		#widget = ExtendedItemField()
-		#widget.idfase=1
-		#tmpl_context.widget = widget
-		return dict()
-	
-	@expose()
-	def agregarRelacion(self, item1, item2, idfase, **kw):
-		return
 	"""
 	metodo que retorna el padres de un item.
 	parametros:
@@ -236,6 +182,7 @@ class ItemController(BaseController):
 		relaciones = DBSession.query(RelacionItem).\
 						filter(RelacionItem.relacion_parentesco==1).\
 						filter(RelacionItem.id_item_actual.in_(itemsId)).\
+						filter(RelacionItem.id_item_relacionado.in_(itemsId)).\
 						all()
 
 		#Se añaden las aristas entre los items relacionados
@@ -250,17 +197,14 @@ class ItemController(BaseController):
 	- nuevaRelacion tipo RelacionItem
 	- idfase tipo Integer
 	retorna
-		Boolean:
-			True si es que se forma un ciclo con la nueva relacion
-			False en caso contrario
+		List [] si no tiene ciclo
+		List [edges] los enlaces que forman el ciclo 
 	"""
-	def ciclo (self, nuevaRelacion, idfase):
-		grafo = graphConstructor(idfase)
-		grafo.add_edges(nuevaRelacion.id_item_actual, nuevaRelacion.id_item_relacionado)
-		if(find_cycle(grafo)!= []):
-			return True
-		return False
-
+	def ciclo (self, id1, id2, idfase):
+		grafo = self.faseGraphConstructor(idfase)
+		grafo.add_edge((id1,id2))
+		return cycle(grafo)  
+	
 	"""
 	metodo que calcula el impacto de la modificacion de un item
 	parametros:
@@ -355,9 +299,6 @@ class ItemController(BaseController):
 
 		TODO
 		no se si esto se aplica solo sobre items aprobados o que onda
-
-
 	"""
-
 
 

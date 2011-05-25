@@ -18,6 +18,7 @@ from tg import tmpl_context, redirect, validate
 from sap.controllers.checker import *
 from sap.controllers.item import *
 from sap.controllers.tipo_item import TipoItemController
+from sap.controllers.relacion import RelacionController
 #import del controlador
 from tg.controllers import RestController
 
@@ -25,7 +26,7 @@ class FaseController(RestController):
 
 	item = ItemController()
 	tipo_item = TipoItemController()
-	
+	relacion = RelacionController()
 	"""
 	Encargado de carga el widget para crear nuevas instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de crear

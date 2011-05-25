@@ -92,12 +92,30 @@ class ExtendedTableFiller(TableFiller):
 
 from sprox.widgets import PropertySingleSelectField
 
-class ExtendedItemField(PropertySingleSelectField):
+class ExtendedItemDeFaseField(PropertySingleSelectField):
 
 	idfase=0
 
 	def _my_update_params(self, d, nullable=False):
 		items = DBSession.query(Item).filter(Item.fase==self.idfase).all()
+		options = [(item.id_item, '%s' %(item.id_item))
+							for item in items]
+		d['options']= options
+		return d
+
+class ExtendedItemDeFaseSiguienteField(PropertySingleSelectField):
+
+	idfase=0
+
+	def _my_update_params(self, d, nullable=False):
+		items = DBSession.query(Item).filter(Item.fase==self.idfase).all()
+		fase_actual = DBSession.query(Fase).get(self.idfase)
+		proyectoid = fase_actual.proyecto
+		fase_siguiente = DBSession.query(Fase).filter(Fase.id_fase>self.idfase).\
+												filter(Fase.proyecto==proyectoid).\
+												order_by(Fase.id_fase).\
+												first() 
+		items = items + DBSession.query(Item).filter(Item.fase==fase_siguiente.id_fase).all() 
 		options = [(item.id_item, '%s' %(item.id_item))
 							for item in items]
 		d['options']= options

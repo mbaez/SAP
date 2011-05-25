@@ -185,10 +185,9 @@ atributo_filler = AtributoTableFiller(DBSession);
 
 class RelacionTable(TableBase):
 	__model__ = RelacionItem
-	__omit_fields__ = ['__actions__']
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
-	#__omit_fields__ = ['id_atributo_tipo_item', 'tipo_item_relacion', 'tipo_id', 'tipo_item']
+	__omit_fields__ = ['__actions__','item_1', 'item_2']
 
 class RelacionTableFiller(ExtendedTableFiller):
 	__model__ = RelacionItem
