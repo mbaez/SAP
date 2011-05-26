@@ -24,10 +24,10 @@ class ItemController(RestController):
 
 	@expose('sap.templates.new')
 	#@require(predicates.has_permission('crear_item'))
-	def new(self, idfase, **kw):
+	def new(self, idfase, modelname="", **kw):
 		new_item_form.tipo_item_relacion.idfase = idfase
 		tmpl_context.widget = new_item_form
-		header_file = "fase"
+		header_file = "abstract"
 		return dict(value=kw, idfase=idfase, modelname= "Item",header_file=header_file)
 
 	"""
@@ -37,13 +37,20 @@ class ItemController(RestController):
 	@validate(new_item_form, error_handler=new)
 	#@require(predicates.has_permission('crear_item'))
 	@expose()
-	def post(self, idfase, **kw):
+	def post(self, idfase, modelname='',**kw):
 		del kw['sprox_id']
-		item = Item(**kw)
+		item = Item()
+		item.descripcion=kw['descripcion'] 
+		item.complejidad=kw['complejidad']
+		item.prioridad=kw['prioridad']
+		item.observacion=kw['observacion']
 		item.fase = idfase
+		item.estado=1
+		item.tipo_item= kw['tipo_item_relacion']
+		item.version=1
 		DBSession.add(item)
 		flash("El item se ha creado correctamente")
-		redirect("/miproyecto/fase/ver/"+idfase)
+		redirect('/miproyecto/fase/get_all/'+idfase)
 
 	"""
 	Encargado de carga el widget para editar las instancias,
@@ -52,26 +59,31 @@ class ItemController(RestController):
 	@expose('sap.templates.edit')
 	#@require(predicates.has_permission('editar_fase'))
 	def edit(self, id,**kw):
-		fase =  DBSession.query(Fase).get(id)
-		tmpl_context.widget = fase_edit_form
-		kw['id_fase'] = fase.id_fase
-		kw['nombre'] = fase.nombre
-		kw['descripcion'] = fase.descripcion
-		return dict(value=kw, modelname='Fase')
+		item =  DBSession.query(Item).get(id)
+		tmpl_context.widget = item_edit_form
+		kw['id_item'] = item.id_item
+		kw['descripcion'] = item.descripcion
+		kw['complejidad'] = item.complejidad
+		kw['prioridad'] = item.prioridad
+		kw['observacion'] = item.observacion
+		header_file = "abstract"
+		return dict(value=kw, modelname='Item', header_file=header_file)
 
 	"""
 	Evento invocado luego de un evento post en el form de editar
 	encargado de persistir las modificaciones de las instancias.
 	"""
-	#@validate(fase_edit_form, error_handler=edit)
+	@validate(item_edit_form, error_handler=edit)
 	#@require(predicates.has_permission('editar_fase'))
 	@expose()
-	def put(self, _method, **kw):
+	def put(self, idfase, **kw):
 		del kw['sprox_id']
-		fase = Fase(**kw)
-		DBSession.merge(fase)
-		flash("La fase '" + fase.nombre+ "'ha sido modificado correctamente.")
-		redirect("/miproyecto/fase/list")
+		item = Item(**kw)
+		item.version=item.version+1
+		DBSession.merge(item)
+		item=DBSession.query(Item).get(item.id_item)
+		flash("El item id= " +str(item.id_item)+ " ha sido modificado correctamente.")
+		redirect('/miproyecto/fase/get_all/'+str(item.fase))
 
 	"""
 	metodo que retorna el padres de un item.

@@ -117,6 +117,6 @@ class FaseController(RestController):
 		items = DBSession.query(Item).filter(Item.fase==idfase).all()
 		value = item_filler.get_value(items)
 		header_file = "fase"
-		new_url = "/miproyecto/fase/item/new/1"
+		new_url = '/miproyecto/fase/item/'+idfase+'/new/'
 		return dict(modelname='Items',header_file=header_file, idfase=idfase, value=value, new_url=new_url)
 

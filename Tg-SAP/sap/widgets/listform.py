@@ -108,12 +108,22 @@ rol_filler = RolTableFiller(DBSession);
 ####################################################
 class ItemTable(TableBase):
 	__model__ = Item
-	__omit_fields__ = ['tipo_item','fase','id_item']
+	__omit_fields__ = ['tipo_item','fase','id_item','__actions__']
+	__xml_fields__ = ['accion']
+	__add_fields__ = {'accion':None}
 
-class ItemTableFiller(TableFiller):
+class ItemTableFiller(ExtendedTableFiller):
 	__model__ = Item
 	__omit_fields__ = ['tipo_item','fase','id_item']
+	__add_fields__ = {'accion':None}
 
+	def accion (self, obj):
+		accion = ', '.join([self.__action__.replace('##id##/edit', 
+		"/miproyecto/fase/item/##id##/edit").
+		replace('##id##', str(obj.id_item)).
+		replace('##editstate##', "").
+		replace('##deletestate##', "")])
+		return accion.join(('<div>', '</div>'))
 
 item_table = ItemTable(DBSession);
 item_filler = ItemTableFiller(DBSession);

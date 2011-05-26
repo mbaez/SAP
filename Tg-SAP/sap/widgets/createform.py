@@ -72,7 +72,8 @@ new_atributo_form = NewAtributoForm(DBSession)
 ####################################################
 class NewItemForm(ExtendedAddRecordForm):
 	__model__ = Item
-	__omit_fields__ = ['id_item', 'tipo_item', 'fase']
+	__omit_fields__ = ['__actions__','id_item', 'tipo_item', 'fase', 'version',
+	'estado']
 	__dropdown_field_names__ = {'tipo_item_relacion':'nombre'}
 	tipo_item_relacion = ExtendedTipoItemField
 
