@@ -7,6 +7,7 @@ from sap.controllers.checker import *
 
 from sap.model import *
 from sap.widgets.extended import ExtendedTableFiller
+from sap.widgets.decorator import *
 
 ####################################################
 # Widgets de los Usuarios
@@ -49,7 +50,7 @@ class ProyectoTableFiller(ExtendedTableFiller):
 		return ''
 
 proyecto_table = ProyectoTable(DBSession);
-proyecto_filler = ProyectoTableFiller(DBSession);
+#proyecto_filler = ProyectoTableFiller(DBSession);
 ####################################################
 # Widgets de los
 ####################################################
@@ -70,7 +71,7 @@ class ProyectoAdminTableFiller(ExtendedTableFiller):
 		return accion.join(('<div>', '</div>'))
 
 admin_proyecto_table = ProyectoAdminTable(DBSession);
-admin_proyecto_filler = ProyectoAdminTableFiller(DBSession);
+#admin_proyecto_filler = ProyectoAdminTableFiller(DBSession);
 ####################################################
 # Widgets de las Fases
 ####################################################
@@ -118,7 +119,7 @@ class ItemTableFiller(ExtendedTableFiller):
 	__add_fields__ = {'accion':None}
 
 	def accion (self, obj):
-		accion = ', '.join([self.__action__.replace('##id##/edit', 
+		accion = ', '.join([self.__action__.replace('##id##/edit',
 		"/miproyecto/fase/item/##id##/edit").
 		replace('##id##', str(obj.id_item)).
 		replace('##editstate##', "").
@@ -126,7 +127,7 @@ class ItemTableFiller(ExtendedTableFiller):
 		return accion.join(('<div>', '</div>'))
 
 item_table = ItemTable(DBSession);
-item_filler = ItemTableFiller(DBSession);
+#item_filler = ItemTableFiller(DBSession);
 ####################################################
 # Widgets de los Tipos de Items
 ####################################################
@@ -139,7 +140,7 @@ class TipoItemTable(TableBase):
 class TipoItemTableFiller(ExtendedTableFiller):
 	__model__ = TipoItem
 	__add_fields__ = {'accion':None}
-	
+
 	def accion (self, obj):
 		html_widget = "<a href='/miproyecto/fase/tipo_item/atributos/list/##id##'>ver atributos</a>"
 		accion = ', '.join([self.__action__.replace('##id##/edit','/miproyecto/fase/tipo_item/##id##/edit').
@@ -206,4 +207,17 @@ class RelacionTableFiller(ExtendedTableFiller):
 
 relacion_table = RelacionTable(DBSession);
 relacion_filler = RelacionTableFiller(DBSession);
+
+####################################################
+# Widgets Lineas Base
+####################################################
+class LineaBaseTable(TableBase):
+	__model__ = LineaBase
+
+class LineaBaseTableFiller(ExtendedTableFiller):
+	__model__ = LineaBase
+
+linea_base_table = LineaBaseTable(DBSession);
+linea_base_filler = LineaBaseTableFiller(DBSession);
+
 

@@ -7,9 +7,6 @@ from sap.lib.base import BaseController
 from sap.model import DBSession, metadata
 
 from tg import tmpl_context, redirect, validate
-"""
-
-"""
 
 from sap.model import *
 
@@ -366,5 +363,40 @@ class SessionUtil() :
 			if __rol != None :
 				roles[i] = __rol
 		return roles
+
+	def audit_item(self, item):
+		"""
+		Registra los cambios realizados al item determinado en el historial
+		se persiste los valore del item y su atributos en el historial.
+
+		@type  item  : Integer
+		@param item  : Identificador del proyecto al cual se va aplicar el rol
+		"""
+		historial = HistorialItem()
+
+		historial.id_item = item.id_item
+		historial.nombre = item.nombre
+		historial.estado = item.estado
+		historial.tipo_item = item.tipo_item
+		historial.fase = item.fase
+		historial.version = item.version
+		historial.prioridad = item.prioridad
+		historial.complejidad = item.complejidad
+		historial.descripcion = item.descripcion
+		historial.observacion = item.observacion
+		#historial de detalles
+		detalles = DBSession.query(DetalleItem).\
+									filter(DetalleItem.id_item==item.id_item).\
+									all()
+		for detalle in detalles:
+			historial_detalle = HistorialDetalleItem()
+			historial_detalle.id_detalle = detalle.id_detalle
+			historial_detalle.id_item = detalle.id_item
+			historial_detalle.recurso = detalle.recurso
+			historial_detalle.valor = detalle.valor
+			historial.detalles.append(historial_detalle)
+
+		DBSession.add(historial)
+
 
 util = SessionUtil()

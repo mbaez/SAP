@@ -20,7 +20,11 @@ from sap.controllers.item import *
 
 class RelacionController(RestController):
 	
+	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
+	'idfase':'','permiso':''}
+
 	@expose('sap.templates.new')
+	@require(predicates.has_permission('editar_item'))
 	def new(self, idfase, modelname='', **kw):
 		"""
 		dentro del form un combo trae los items de la fase actual
@@ -29,14 +33,18 @@ class RelacionController(RestController):
 		new_relacion_form.item_1.idfase=idfase
 		new_relacion_form.item_2.idfase=idfase
 		tmpl_context.widget = new_relacion_form
-		header_file = "abstract"
-		return dict(value=kw, idfase=idfase, modelname= "Relacion",header_file=header_file)
+		self.params['header_file'] = "abstract"
+		self.params['idfase'] = idfase
+		self.params['modelname'] = "Relacion"
+		self.params['permiso'] = 'editar_item'
+		return dict(value=kw, params=self.params)
 	"""
 	Evento invocado luego de un evento post en el form de crear
 	ecargado de persistir las nuevas instancias.
 	"""
 	@validate(new_relacion_form, error_handler=new)
 	@expose()
+	@require(predicates.has_permission('editar_item'))
 	def post(self, idfase, modelname='',**kw):
 		del kw['sprox_id']
 		"""
@@ -73,6 +81,7 @@ class RelacionController(RestController):
 		redirect("/miproyecto/fase/relacion/list/"+idfase)
 
 	@expose()
+	@require(predicates.has_permission('editar_item'))
 	def borrarRelacion(self, item1, item2, idfase, **kw):
 		DBSession.delete(DBSession.query(RelacionItem).\
 					filter(RelacionItem.id_item_actual==item1).\
@@ -82,6 +91,7 @@ class RelacionController(RestController):
 		redirect("/miproyecto/fase/relacion/list/"+idfase)
 
 	@expose('sap.templates.list')
+	@require(predicates.has_permission('editar_item'))
 	def list(self, idfase, **kw):
 		items = DBSession.query(Item).filter(Item.fase==idfase)
 		items_id = []
@@ -116,6 +126,9 @@ class RelacionController(RestController):
 				+str(rel.id_item_actual)+'/'+str(rel.id_item_relacionado)+
 				'/'+idfase+'">Eliminar Relacion</a></div>'}]
 			value=value+aux
-		header_file = "abstract"
-		new_url = '/miproyecto/fase/relacion/'+idfase+'new/'
-		return dict(modelname='Relaciones',header_file=header_file, idfase=idfase, value=value, new_url=new_url)
+		self.params['header_file'] = "abstract"
+		self.params['new_url'] = '/miproyecto/fase/relacion/'+idfase+'new/'
+		self.params['idfase'] = idfase
+		self.params['modelname'] = "Relaciones" 
+		self.params['permiso'] = 'editar_item'
+		return dict(value=kw, params=self.params)

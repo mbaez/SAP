@@ -5,7 +5,7 @@ Contien los modelos de las tablas correspondientes al proyecto SAP
 """
 
 from sqlalchemy import *
-from sqlalchemy.orm import mapper, relation, relationship
+from sqlalchemy.orm import relation, synonym, mapper
 from sqlalchemy import Table, ForeignKey, Column
 from sqlalchemy.types import Integer, Unicode
 from sqlalchemy.dialects.postgresql import *
@@ -135,8 +135,8 @@ class AtributoTipoItem(DeclarativeBase):
 	tipo_id = Column ('tipo_atributo', INTEGER,
 						ForeignKey ('tipo_atributo.id_tipo_atributo'),
 						nullable=False)
-						
-	tipo = relation('TipoAtributo', backref='atributos') 
+
+	tipo = relation('TipoAtributo', backref='atributos')
 
 
 
@@ -160,6 +160,8 @@ class Item(DeclarativeBase):
 	estado = Column ('id_estado_item', INTEGER,
 						ForeignKey('estado_item.id_estado_item'),
 						nullable=False)
+
+	nombre = Column ('nombre', VARCHAR(50))
 
 	tipo_item = Column ('id_tipo_item', INTEGER,
 						ForeignKey ('tipo_item.id_tipo_item'),
@@ -220,7 +222,7 @@ class RelacionItem(DeclarativeBase):
 	relacion_parentesco = Column ('id_relacion_parentesco', INTEGER,
 				ForeignKey('relacion_parentesco.id_relacion_parentesco'),
 				nullable=False)
-	#relaciones ficticias a la tabla parentesco. 
+	#relaciones ficticias a la tabla parentesco.
 	#Puse solo para que anden los combobox
 	item_1=relation('RelacionParentesco')
 	item_2=relation('RelacionParentesco')
@@ -266,3 +268,58 @@ class DetalleItem(DeclarativeBase):
 				ForeignKey('recurso.id_recurso'), nullable=False)
 
 	valor = Column('valor', VARCHAR(200))
+
+
+###############################################################################
+# Tablas de historial/auditoria
+###############################################################################
+
+class HistorialItem(DeclarativeBase):
+
+	__tablename__ = 'historial_item'
+
+	id_historial = Column ('id_historial_item', INTEGER, autoincrement=True,
+						primary_key = True)
+
+	id_item = Column ('id_item', INTEGER, nullable=False)
+
+	nombre = Column ('nombre', VARCHAR(200),unique=True)
+
+	estado = Column ('id_estado_item', INTEGER, nullable=False)
+
+	tipo_item = Column ('id_tipo_item', INTEGER, nullable=False)
+
+
+	fase = Column ('id_fase', INTEGER, nullable=False)
+
+	version = Column ('version', INTEGER, nullable=False)
+
+	prioridad = Column ('prioridad', INTEGER, nullable=False)
+
+	complejidad = Column ('complejidad', INTEGER, nullable=False)
+
+	descripcion = Column ('descripcion', VARCHAR(200))
+
+	observacion = Column ('observacion', VARCHAR(100))
+
+
+class HistorialDetalleItem(DeclarativeBase):
+	__tablename__ = 'historial_detalle_item'
+
+	id_historial_detalle = Column ('id_historial_detalle', INTEGER,
+							autoincrement=True, primary_key = True)
+
+	id_historial = Column ('id_historial_item', INTEGER,
+				ForeignKey('historial_item.id_historial_item'))
+
+	items = relation("HistorialItem", backref="detalles")
+
+	id_detalle = Column ('id_detalle', INTEGER, nullable=False)
+
+	id_item = Column ('id_item', INTEGER, nullable=False)
+
+	recurso = Column ('id_recurso', INTEGER)
+
+	valor = Column('valor', VARCHAR(200))
+
+

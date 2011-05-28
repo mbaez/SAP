@@ -1,3 +1,8 @@
+"""
+27-05-11
+cambiar los pasos de parametros a params[]
+modifacion de metodos edit, delete, new, list
+"""
 # -*- coding: utf-8 -*-
 
 from tg import expose, flash, require, url, request, redirect
@@ -21,24 +26,28 @@ from tg.controllers import RestController
 
 class AtributoController(RestController):
 	
+	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
+	'idtipo':'','permiso':''}
+
 	"""
 	Encargado de carga el widget para crear nuevas instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
 	"""
 	@expose('sap.templates.new')
-	@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('crear_tipo_item'))
 	def new(self, idtipo, modelname, **kw):
 		tmpl_context.widget = new_atributo_form
-		header_file='tipo_item'
-		return dict(value=kw, modelname= "Atributos del Tipo de Item", idtipo=idtipo,
-										header_file=header_file)
+		self.params['modelname'] = "Atributos del Tipo de Item"
+		self.params['idtipo'] = idtipo
+		self.params['header_file'] = 'tipo_item'
+		return dict(value=kw, params=self.params)
 
 	"""
 	Evento invocado luego de un evento post en el form de crear
 	ecargado de persistir las nuevas instancias.
 	"""
 	@validate(new_atributo_form, error_handler=new)
-	@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('crear_tipo_item'))
 	@expose()
 	def post(self, idtipo, **kw):
 		del kw['sprox_id']
@@ -56,28 +65,28 @@ class AtributoController(RestController):
 	solo tienen acceso aquellos usuarios que posean el premiso de editar
 	"""
 	@expose('sap.templates.edit')
-	#@require(predicates.has_permission('editar_fase'))
+	@require(predicates.has_permission('editar_tipo_item'))
 	def edit(self, id,**kw):
-		tipo_item =  DBSession.query(TipoItem).get(id)
+		atributo_tipo_item = DBSession.query(AtributoTipoItem).get(id)
 		tmpl_context.widget = tipo_item_edit_form
-		kw['id_tipo_item'] = tipo_item.id_tipo_item
-		kw['fase'] = tipo_item.fase
-		kw['nombre'] = tipo_item.nombre
-		kw['descripcion'] = tipo_item.descripcion
-		header_file="tipo_item"
-		return dict(value=kw, modelname='TipoItem', header_file=header_file)
+		kw['nombre'] = atributo_tipo_item.nombre
+		kw['tipo'] = atributo_tipo_item.tipo
+		self.params['header_file'] = "tipo_item"
+		self.params['modelname'] = "Tipo de Item"
+		return dict(value=kw, params=self.params)
 
 	"""
 	Evento invocado luego de un evento post en el form de editar
 	encargado de persistir las modificaciones de las instancias.
 	"""
 	@validate(tipo_item_edit_form, error_handler=edit)
-	#@require(predicates.has_permission('editar_fase'))
+	@require(predicates.has_permission('editar_tipo_item'))
 	@expose()
 	def put(self, _method, **kw):
 		del kw['sprox_id']
-		tipo_item = TipoItem(**kw)
-		DBSession.merge(tipo_item)
+		atributo = AtributoTipoItem(**kw)
+		DBSession.merge(atributo)
+		tipo_item = DBSession.query(TipoItem).get(atributo.id_tipo_item)
 		flash("El tipo de item ha sido modificado correctamente.")
 		redirect('/miproyecto/fase/tipo_item/list/'+str(tipo_item.fase))
 
@@ -87,27 +96,27 @@ class AtributoController(RestController):
 	acompanhado de enlaces de editar y eliminar
 	"""
 	@expose('sap.templates.list')
-	#@require( predicates.has_permission('ver_proyecto'))
+	@require( predicates.has_permission('editar_tipo_item'))
 	def list(self, idtipo, **kw):
-		'''
-		Lista todos tipos de items de la bd.
-		Se debe modificar para que liste solo los
-		de la fase actual
-		'''
 		tmpl_context.widget = atributo_table
-		atributos = DBSession.query(AtributoTipoItem).filter(AtributoTipoItem.tipo_item==idtipo).all()
+		atributos = DBSession.query(AtributoTipoItem).\
+							filter(AtributoTipoItem.tipo_item==idtipo).\
+							all()
 		value = atributo_filler.get_value(atributos)
-		header_file = "tipo_item"
-		new_url = "/miproyecto/fase/tipo_item/atributos/"+idtipo+"/new"
-		return dict(modelname='Atributos',value=value, header_file=header_file,
-												new_url=new_url,idtipo=idtipo)
+		self.params['header_file'] = "tipo_item"
+		self.params['modelname'] = "Atributos"
+		self.params['permiso'] = "crear_tipo_item"
+		self.params['new_url'] = "/miproyecto/fase/tipo_item/atributos/"+idtipo+"/new"
+		return dict(value=value, params=self.params)
 		
 	"""
 	Evento invocado desde el listado, se encarga de eliminar una instancia
 	de la base de datos.
 	"""
 	@expose()
-	def post_delete(self, id_tipo_item, **kw):
-		DBSession.delete(DBSession.query(TipoItem).get(id_tipo_item))
-		flash("El tipo de item "+ id_tipo_item + "ha sido eliminado correctamente.")
-		redirect('/miproyecto/fase/tipo_item/list/'+id_tipo_item)
+	def post_delete(self, id, **kw):
+		atributo = DBSession.query(AtributoTipoItem).get(id)
+		id_tipo_item = atributo.id_tipo_item
+		DBSession.delete(atributo)
+		flash("El atributo "+ id + "ha sido eliminado correctamente.")
+		redirect('/miproyecto/fase/tipo_item/atributos/list/'+id_tipo_item)

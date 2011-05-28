@@ -43,9 +43,9 @@ class ExtendedTableFiller(TableFiller):
 								action='##id##' class='button-to'>
 							<input type='hidden' name='_method'
 								value='DELETE' ></input>
-							<input class='delete-button'
+							<a class='delete-button'
 								onclick="return confirm('Are you sure?');"
-								value='eliminar' type='submit' ></input>
+								value='eliminar' type='submit' ></a>
 						</form>
 					</div>
 					"""
@@ -114,8 +114,8 @@ class ExtendedItemDeFaseSiguienteField(PropertySingleSelectField):
 		fase_siguiente = DBSession.query(Fase).filter(Fase.id_fase>self.idfase).\
 												filter(Fase.proyecto==proyectoid).\
 												order_by(Fase.id_fase).\
-												first() 
-		items = items + DBSession.query(Item).filter(Item.fase==fase_siguiente.id_fase).all() 
+												first()
+		items = items + DBSession.query(Item).filter(Item.fase==fase_siguiente.id_fase).all()
 		options = [(item.id_item, '%s' %(item.id_item))
 							for item in items]
 		d['options']= options
@@ -131,4 +131,3 @@ class ExtendedTipoItemField(PropertySingleSelectField):
 							for tipo_item in tipo_items]
 		d['options']= options
 		return d
-

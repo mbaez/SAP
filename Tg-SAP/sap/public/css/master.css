@@ -2153,14 +2153,27 @@ p.kleur{
  *##############################################
  */
 
+#edit-row{
+	background: url(../img/icons/document_edit_small.png)no-repeat left center
+	height: 4px;
+	width:76px;
+	display: block;
+	#padding: 0 0 0 20px;
+	text-transform: capitalize;
+}
+input[type="delete"], .button {
+	background: url(../img/icons/notification_error.png) no-repeat right center;
+	height: 4px;
+	width:76px;
+	border: 0px inset gray
+	display: block;
+	#padding: 0 0 0 20px;
+	text-transform: capitalize;
+}
 
 .filter{
 	width: 98%;
 }
-
-/*#filter_0{
-	visibility: hidden;
-}*/
 
 #flash, .notice {
 	font-size:120%;

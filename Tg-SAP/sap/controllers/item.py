@@ -22,25 +22,34 @@ from tg.controllers import RestController
 
 class ItemController(RestController):
 
+	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
+	'idfase':'','permiso':''}
+
 	@expose('sap.templates.new')
-	#@require(predicates.has_permission('crear_item'))
+	@require(predicates.has_permission('crear_item'))
 	def new(self, idfase, modelname="", **kw):
 		new_item_form.tipo_item_relacion.idfase = idfase
 		tmpl_context.widget = new_item_form
 		header_file = "abstract"
-		return dict(value=kw, idfase=idfase, modelname= "Item",header_file=header_file)
+		self.params['title'] = 'Nuevo Item'
+		self.params['modelname'] = 'Item'
+		self.params['header_file'] = 'abstract'
+		self.params['new_url'] = '/administracion/miproyecto/fase/item/'+idfase+'/new'
+		self.params['permiso'] = 'crear_item'
+		self.params['idfase'] = idfase
+		return dict(value=kw, params=self.params)
 
 	"""
 	Evento invocado luego de un evento post en el form de crear
 	ecargado de persistir las nuevas instancias.
 	"""
 	@validate(new_item_form, error_handler=new)
-	#@require(predicates.has_permission('crear_item'))
+	@require(predicates.has_permission('crear_item'))
 	@expose()
 	def post(self, idfase, modelname='',**kw):
 		del kw['sprox_id']
 		item = Item()
-		item.descripcion=kw['descripcion'] 
+		item.descripcion=kw['descripcion']
 		item.complejidad=kw['complejidad']
 		item.prioridad=kw['prioridad']
 		item.observacion=kw['observacion']
@@ -57,7 +66,7 @@ class ItemController(RestController):
 	solo tienen acceso aquellos usuarios que posean el premiso de editar
 	"""
 	@expose('sap.templates.edit')
-	#@require(predicates.has_permission('editar_fase'))
+	@require(predicates.has_permission('editar_item'))
 	def edit(self, id,**kw):
 		item =  DBSession.query(Item).get(id)
 		tmpl_context.widget = item_edit_form
@@ -66,22 +75,30 @@ class ItemController(RestController):
 		kw['complejidad'] = item.complejidad
 		kw['prioridad'] = item.prioridad
 		kw['observacion'] = item.observacion
-		header_file = "abstract"
-		return dict(value=kw, modelname='Item', header_file=header_file)
+		self.params['modelname'] = 'Item'
+		self.params['header_file'] = 'abstract'
+		return dict(value=kw, params=self.params)
 
 	"""
 	Evento invocado luego de un evento post en el form de editar
 	encargado de persistir las modificaciones de las instancias.
 	"""
 	@validate(item_edit_form, error_handler=edit)
-	#@require(predicates.has_permission('editar_fase'))
+	@require(predicates.has_permission('editar_item'))
 	@expose()
 	def put(self, idfase, **kw):
-		del kw['sprox_id']
-		item = Item(**kw)
-		item.version=item.version+1
+		item =  DBSession.query(Item).get(int(kw['id_item']))
+		# Se registra en el historial el item antes de ser modificado
+		util.audit_item(item)
+		# Se modifica el item
+		item.descripcion=kw['descripcion']
+		item.complejidad = kw['complejidad']
+		item.prioridad = kw['prioridad']
+		item.observacion = kw['observacion']
+		item.version=int(item.version) + 1
+		#Se persiste el item
 		DBSession.merge(item)
-		item=DBSession.query(Item).get(item.id_item)
+
 		flash("El item id= " +str(item.id_item)+ " ha sido modificado correctamente.")
 		redirect('/miproyecto/fase/get_all/'+str(item.fase))
 
@@ -210,13 +227,13 @@ class ItemController(RestController):
 	- idfase tipo Integer
 	retorna
 		List [] si no tiene ciclo
-		List [edges] los enlaces que forman el ciclo 
+		List [edges] los enlaces que forman el ciclo
 	"""
 	def ciclo (self, id1, id2, idfase):
 		grafo = self.faseGraphConstructor(idfase)
 		grafo.add_edge((id1,id2))
-		return cycle(grafo)  
-	
+		return cycle(grafo)
+
 	"""
 	metodo que calcula el impacto de la modificacion de un item
 	parametros:

@@ -49,6 +49,8 @@ class RootController(BaseController):
 
 	miproyecto = ProyectosController()
 
+	params = {'title':'','header_file':'','modelname':'', 'new_url':'','permiso':''}
+
 	@expose('sap.templates.index')
 	def index(self):
 		"""Handle the front-page."""
@@ -117,9 +119,13 @@ class RootController(BaseController):
 		tmpl_context.widget = admin_proyecto_table
 		proyectos = checker.get_poyect_list('ver_proyecto')
 		value = admin_proyecto_filler.get_value(proyectos)
-		header_file="administracion"
 		new_url = "/administracion/proyecto/new"
-		return dict(modelname='Proyectos', header_file=header_file, new_url=new_url, value=value)
+		self.params['title'] = 'Titulo'
+		self.params['modelname'] = 'Proyectos'
+		self.params['header_file'] = 'administracion'
+		self.params['new_url'] = '/administracion/proyecto/new'
+		self.params['permiso'] = 'crear_proyecto'
+		return dict(value=value, params = self.params)
 	"""
 	metodo para probar el calculo de impacto
 	"""

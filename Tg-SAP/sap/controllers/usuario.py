@@ -22,6 +22,7 @@ from tg.controllers import RestController
 
 header_file="administracion"
 
+
 class UsuarioContoller(RestController):
 	"""
 	prueba de abm y de visibilidad de datos en el template master.html
@@ -31,20 +32,27 @@ class UsuarioContoller(RestController):
 	anotados con @require(predicates.has_permission('manage')) esto es para que
 	no se pueda acceder a al formulario atravez de la url.
 	"""
+	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
+	'idfase':'','permiso':''}
+	
 	@expose('sap.templates.new')
-	@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('crear_usuario'))
 	def new(self, modelname='',**kw):
 		tmpl_context.widget = new_usuario_form
-		return dict(value=kw,header_file=header_file, modelname='Usuario')
+		self.params['title'] = 'Nuevo usuario'
+		self.params['modelname'] = 'Usuario'
+		self.params['header_file'] = 'administracion'
+		return dict(value=kw,params=self.params)
 
 	@validate(new_usuario_form, error_handler=new)
 	@expose()
+	@require(predicates.has_permission('crear_usuario'))
 	def post(self, modelname='', **kw):
 		del kw['sprox_id']
 		usuario = Usuario(**kw)
 		DBSession.add(usuario)
 		flash("El usuario ha sido creado correctamente.")
-		redirect("/administracion/usuario/list")
+		redirect("/administracion/usuario/get_all")
 
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('manage'))
@@ -52,7 +60,10 @@ class UsuarioContoller(RestController):
 		tmpl_context.widget = usuario_edit_form
 		kw['usuario_id'] = id
 		value = usuario_edit_filler.get_value(kw)
-		return dict(value=value, header_file=header_file,modelname='Usuario')
+		self.params['title'] = 'Titulo'
+		self.params['modelname'] = 'Usuario'
+		self.params['header_file'] = 'administracion'
+		return dict(value=value,params=self.params)
 
 	@validate(usuario_edit_form, error_handler=edit)
 	@expose()
@@ -61,7 +72,7 @@ class UsuarioContoller(RestController):
 		usuario = Usuario(**kw)
 		DBSession.merge(usuario)
 		flash("El usuario '"+usuario.nombre+"' ha sido modificado correctamente.")
-		redirect("/administracion/usuario/list")
+		redirect("/administracion/usuario/get_all")
 
 
 	@expose('sap.templates.list')
@@ -70,11 +81,15 @@ class UsuarioContoller(RestController):
 		"""Lista todos los usuarios de la base de datos"""
 		tmpl_context.widget = usuario_table
 		value = usuario_filler.get_value()
-		new_url = "/administracion/usuario/new"
-		return dict(modelname='Usuarios',header_file=header_file,new_url=new_url,value=value)
+		self.params['title'] = 'Titulo'
+		self.params['modelname'] = 'Usuario'
+		self.params['header_file'] = 'administracion'
+		self.params['permiso'] = 'crear_usuario'
+		self.params['new_url'] = '/administracion/usuario/new'
+		return dict(value=value,params=self.params)
 
 	@expose()
 	def post_delete(self, id_usuario, **kw):
 		DBSession.delete(DBSession.query(Usuario).get(id_usuario))
 		flash("El usuario ha sido "+ id_usuario +" eliminado correctamente.")
-		redirect("/usuario/")
+		redirect("/administracion/usuario/get_all")

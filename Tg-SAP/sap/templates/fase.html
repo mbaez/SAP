@@ -5,7 +5,7 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <xi:include href="master.html" />
-<xi:include href="header/proyecto.html" />
+<xi:include href="header/fase.html" />
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
 	<link type="text/css" href="${tg.url('/css/redmond/jquery-ui-1.8.13.custom.css')}" rel="stylesheet" />
@@ -21,40 +21,41 @@
 		<aside id="dashboard-sidebar">
 			<div class="project-info">
 				<h4>Proyecto info
-					<span><a class="edit-project"
-						href = "/administracion/proyecto/${params['proyecto'].id_proyecto}/edit">Edit</a>
-					</span></h4>
+					<span>
+						<a class="edit-project" >Edit</a>
+					</span>
+				</h4>
 				<h5>Nombre </h5>
 				<p></p>
-				<p>${params['proyecto'].nombre}</p>
+
 				<p></p>
 				<h5>Descripcion </h5>
 				<div id="selected-tags">
 				</div>
 				<p></p>
-				<p> ${params['proyecto'].descripcion} </p>
+
 				<p></p>
 			</div>
 			<div class="project-info">
 				<h4>Participantes
 					<span>
-						<a href="/miproyecto/participantes/${params['proyecto'].id_proyecto}" class="add-member">A&ntilde;adir</a>
+						<a class="add-member">A&ntilde;adir</a>
 					</span>
 				</h4>
 				<ul id="team">
 
-					<li py:for="usuario in params['usuarios']">
+					<!--li py:for="usuario in usuarios">
 						<img src="/img/saved_resource" alt="">${usuario.user_name}
 							<div class="member-edit">
 								<a>Delete</a>
 							</div>
 						</img>
-					</li>
+					</li-->
 
 				</ul>
 			</div>
 		</aside>
-		<h2> ${params['text_header']}</h2>
+		<h2> text_header</h2>
 		<br/>
 		<br/>
 		<div style="float:left; width: 60%">
@@ -64,5 +65,3 @@
 
 </body>
 </html>
-
-

@@ -19,14 +19,19 @@ from sap.controllers.checker import *
 from sap.controllers.item import *
 from sap.controllers.tipo_item import TipoItemController
 from sap.controllers.relacion import RelacionController
+from sap.controllers.linea_base import LineaBaseController
 #import del controlador
 from tg.controllers import RestController
 
 class FaseController(RestController):
+	
+	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
+	'idfase':'','permiso':''}
 
 	item = ItemController()
 	tipo_item = TipoItemController()
 	relacion = RelacionController()
+	linea_base = LineaBaseController()
 	"""
 	Encargado de carga el widget para crear nuevas instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
@@ -36,14 +41,18 @@ class FaseController(RestController):
 	def new(self, idproyecto, modelname, **kw):
 		tmpl_context.widget = new_fase_form
 		header_file = "abstract"
-		return dict(value=kw, modelname= "Fase",header_file=header_file)
+		self.params['title'] = 'Nueva Fase'
+		self.params['modelname'] = 'Fase'
+		self.params['header_file'] = 'abstract'
+		self.params['permiso'] = 'crear_fase'
+		return dict(value=kw, params = self.params)
 
 	"""
 	Evento invocado luego de un evento post en el form de crear
 	ecargado de persistir las nuevas instancias.
 	"""
 	@validate(new_fase_form, error_handler=new)
-	@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('editar_fase'))
 	@expose()
 	def post(self, idproyecto, **kw):
 		del kw['sprox_id']
@@ -57,21 +66,22 @@ class FaseController(RestController):
 	solo tienen acceso aquellos usuarios que posean el premiso de editar
 	"""
 	@expose('sap.templates.edit')
-	#@require(predicates.has_permission('editar_fase'))
+	@require(predicates.has_permission('editar_fase'))
 	def edit(self, id,**kw):
 		fase =  DBSession.query(Fase).get(id)
 		tmpl_context.widget = fase_edit_form
 		kw['id_fase'] = fase.id_fase
 		kw['nombre'] = fase.nombre
 		kw['descripcion'] = fase.descripcion
-		return dict(value=kw, modelname='Fase')
+		self.params['modelname'] = 'Fase'
+		return dict(value=kw, params = self.params)
 
 	"""
 	Evento invocado luego de un evento post en el form de editar
 	encargado de persistir las modificaciones de las instancias.
 	"""
 	@validate(fase_edit_form, error_handler=edit)
-	#@require(predicates.has_permission('editar_fase'))
+	@require(predicates.has_permission('editar_fase'))
 	@expose()
 	def put(self, _method, **kw):
 		del kw['sprox_id']
@@ -97,6 +107,7 @@ class FaseController(RestController):
 		proyectos = checker.get_poyect_list('ver_proyecto')
 		value = proyecto_filler.get_value(proyectos)
 		"""
+		self.params['modelname'] = 'Fases'
 		return dict(modelname='Fases')
 
 	"""
@@ -109,14 +120,18 @@ class FaseController(RestController):
 		flash("La fase "+ id_proyecto + "ha sido eliminada correctamente.")
 		redirect("/miproyecto/fase/")
 
-	@expose('sap.templates.list')
+	@expose('sap.templates.fase')
 	@require(predicates.has_permission('manage'))
 	def get_all(self, idfase, **kw):
 		"""Lista todos los items de la fase"""
 		tmpl_context.widget = item_table
 		items = DBSession.query(Item).filter(Item.fase==idfase).all()
 		value = item_filler.get_value(items)
-		header_file = "fase"
-		new_url = '/miproyecto/fase/item/'+idfase+'/new/'
-		return dict(modelname='Items',header_file=header_file, idfase=idfase, value=value, new_url=new_url)
+		self.params['title'] = 'Titulo'
+		self.params['modelname'] = 'Items'
+		self.params['header_file'] = 'fase'
+		self.params['permiso'] = 'crear_item'
+		self.params['idfase'] = idfase
+		self.params['new_url'] = '/miproyecto/fase/item/'+idfase+'/new/'
+		return dict(value=value, params = self.params)
 

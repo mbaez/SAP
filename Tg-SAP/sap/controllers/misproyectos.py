@@ -21,9 +21,12 @@ class ProyectosController(RestController):
 
 	fase = FaseController()
 	_current_proyect = None
-
+	
+	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
+	'idfase':'','permiso':''}
+	
 	@expose('sap.templates.miproyecto')
-	#@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('ver_proyecto'))
 	def ver(self, idproyecto):
 		tmpl_context.widget = fase_table
 		"""
@@ -31,18 +34,28 @@ class ProyectosController(RestController):
 		tiene permisos de 'ver' y que pertenecen al proyecto que
 		selecciono
 		"""
+
+		"""
+		listar todas las fases y mostrar unicamente el link de ver en aquellas
+		fases en los que posee permisos.
+		"""
+
 		fases = checker.get_fases_by_proyecto_list(idproyecto, 'ver_fase')
 		value = fase_filler.get_value(fases)
 
 		proyecto = self._get_current_proyect(idproyecto)
 		usuarios = util.get_usuarios_by_permiso(idproyecto)
 		text_header='Listado de Fases del Proyecto'
-
-		return dict(modelname='Fases', idproyecto=idproyecto,
-						proyecto=proyecto, usuarios=usuarios,
-						text_header=text_header,value=value)
+		
+		self.params['modelname'] = 'Fases'
+		self.params['text_header'] = 'Listado de Fases del Proyecto'
+		self.params['idproyecto'] = idproyecto
+		self.params['proyecto'] = proyecto
+		self.params['usuarios'] = usuarios
+		return dict(value=value, params=self.params)
 
 	@expose('sap.templates.miproyecto')
+	@require(predicates.has_permission('administrar_participantes'))
 	def participantes(self, idproyecto , **kw):
 
 		proyecto = self._get_current_proyect(idproyecto)
@@ -52,16 +65,16 @@ class ProyectosController(RestController):
 
 		roles = util.get_roles_by_proyectos(idproyecto)
 		value = participantes_filler.get_value(roles)
-
-		text_header='Lista de roles'
-
-		return dict(modelname='Participantes', proyecto=proyecto,
-					text_header = text_header,
-					usuarios=usuarios, value=value)
+		
+		self.params['modelname'] = 'Participantes'
+		self.params['text_header'] = 'Lista de roles'
+		self.params['proyecto'] = proyecto
+		self.params['usuarios'] = usuarios
+		return dict(value=value, params=self.params)
 
 	@expose('sap.templates.edit')
-	@require(predicates.has_permission('manage'))
-	def edit(self, id,**kw):
+	@require(predicates.has_permission('administrar_participantes'))
+	def asignar_participante(self, id,**kw):
 		tmpl_context.widget = rol_usuario_edit_form
 		kw['rol_id'] = id
 
@@ -69,11 +82,14 @@ class ProyectosController(RestController):
 
 		proyecto = self._get_current_proyect()
 		usuarios = util.get_usuarios_by_permiso(proyecto.id_proyecto)
+		
+		self.params['modelname'] = 'Rol'
+		self.params['header_file'] = 'proyecto'
+		return dict(value=value, params=self.params)
 
-		return dict(value=value, modelname='Rol', header_file='proyecto')
-
-	@validate(rol_usuario_edit_form, error_handler=edit)
+	@validate(rol_usuario_edit_form, error_handler=asignar_participante)
 	@expose()
+	@require(predicates.has_permission('administrar_participantes'))
 	def put(self, id, **kw):
 		rol = DBSession.query(Rol).get(int(kw['rol_id']))
 

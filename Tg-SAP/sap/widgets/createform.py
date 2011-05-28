@@ -6,6 +6,7 @@ from sprox.formbase import AddRecordForm
 from sap.model import *
 from sprox.widgets import *
 from sap.widgets.extended import *
+
 ##Form definition
 
 ####################################################
@@ -100,3 +101,17 @@ class NewRelacionForm(ExtendedAddRecordForm):
 
 new_relacion_form = NewRelacionForm(DBSession)
 
+from tw.forms.datagrid import DataGrid
+from tw.forms.fields import CheckBox
+####################################################
+# Widgets para creacion de Lineas Base
+####################################################
+class NewLineaBaseForm(AddRecordForm):
+	__model__ = LineaBase
+	miCheckBox = CheckBox("ddd")
+
+new_linea_base_form = NewLineaBaseForm()
+#fields = new_linea_base_form._do_get_disabled_fields()
+#atributo = TextField("HOla")
+#fields.append(atributo)
+#new_linea_base_form.__fields__.append(atributo)

@@ -21,19 +21,29 @@ from tg.controllers import RestController
 
 import transaction
 
-header_file="administracion"
-new_url="/administracion/proyecto/new"
+header_file = "administracion"
+new_url = "/administracion/proyecto/new"
 
 class ProyectoController(RestController):
 	"""
 	Encargado de carga el widget para crear nuevas instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
 	"""
+	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
+	'idfase':'','permiso':''}
+	
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_proyecto'))
 	def new(self, modelname='',**kw):
 		tmpl_context.widget = new_proyecto_form
-		return dict(value=kw,header_file=header_file,modelname='Proyecto')
+		self.params['title'] = 'Nuevo Proyecto'
+		self.params['modelname'] = 'Proyecto'
+		self.params['header_file'] = 'abstract'
+		self.params['permiso'] = 'crear_proyecto'
+		self.params['modelname'] = 'Proyecto'
+		self.params['header_file'] = 'abstract'
+		self.params['permiso'] = 'crear_proyecto'
+		return dict(value=kw, params=self.params)
 
 	"""
 	Evento invocado luego de un evento post en el form de crear
@@ -74,7 +84,10 @@ class ProyectoController(RestController):
 		kw['estado_id'] = proyecto.estado_id
 		kw['nro_fases'] = proyecto.nro_fases
 		kw['descripcion'] = proyecto.descripcion
-		return dict(value=kw, header_file=header_file, modelname='Proyecto')
+		self.params['modelname'] = 'Proyecto'
+		self.params['header_file'] = 'abstract'
+		self.params['permiso'] = 'editar_proyecto'
+		return dict(value=kw, params=self.params)
 
 	"""
 	Evento invocado luego de un evento post en el form de editar
@@ -110,21 +123,29 @@ class ProyectoController(RestController):
 		'''
 		proyectos = checker.get_poyect_list('ver_proyecto')
 		value = proyecto_filler.get_value(proyectos)
-
-		return dict(modelname='Proyectos',header_file=header_file,
-					new_url=new_url,value=value)
+		
+		self.params['title'] = 'Editar Proyecto'
+		self.params['modelname'] = 'Proyectos'
+		self.params['header_file'] = 'abstract'
+		self.params['new_url'] = '/administracion/proyecto/new'
+		self.params['permiso'] = 'ver_proyecto'
+		return dict(value=value, params=self.params)
 
 	"""
 	metodo para listar todos los proyectos al administrador
 	"""
 	@expose('sap.templates.list')
-	@require( predicates.has_permission('manage'))
+	@require( predicates.has_permission('ver_proyecto'))
 	def get_all(self, **kw):
 		tmpl_context.widget = proyecto_table
 		#se obtiene la lista de todos los proyectos
 		value = proyecto_filler.get_value()
-		return dict(modelname='Proyectos',header_file=header_file,
-					new_url=new_url,value=value)
+		self.params['title'] = 'Editar Proyecto'
+		self.params['modelname'] = 'Proyectos'
+		self.params['header_file'] = 'abstract'
+		self.params['new_url'] = '/administracion/proyecto/new'
+		self.params['permiso'] = 'ver_proyecto'
+		return dict(value=value, params=self.params)
 
 
 	"""

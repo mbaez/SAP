@@ -106,3 +106,16 @@ class RolUsuarioEditForm(ExtendedEditableForm):
 						 '_permisos','_proyectos','is_template', 'roles_permisos']
 
 rol_usuario_edit_form = RolUsuarioEditForm(DBSession)
+
+###################################################
+# Widgets de los Roles
+####################################################
+class LineaBaseEditFiller(EditFormFiller):
+	__model__ = LineaBase
+
+linea_base_edit_filler = LineaBaseEditFiller(DBSession)
+
+class LineaBaseEditForm(ExtendedEditableForm):
+	__model__ = LineaBase
+
+linea_base_edit_form = LineaBaseEditForm(DBSession)

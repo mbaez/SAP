@@ -5,15 +5,15 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <xi:include href="master.html" />
-<xi:include href="header/${header_file}.html" />
+<xi:include href="header/${params['header_file']}.html" />
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-  <title>Editar ${modelname}</title>
+  <title>Editar ${params['modelname']}</title>
 </head>
 
 <body>
 	${sub_header()}
-<h1>Editar ${modelname}</h1>
+<h1>Editar ${params['modelname']}</h1>
 
 <div>
 	<div style="float:left width: 80%">

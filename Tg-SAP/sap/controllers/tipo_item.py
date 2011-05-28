@@ -23,24 +23,27 @@ from tg.controllers import RestController
 class TipoItemController(RestController):
 	
 	atributos = AtributoController()
+	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
+	'idfase':'','permiso':''}
 	"""
 	Encargado de carga el widget para crear nuevas instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
 	"""
 	@expose('sap.templates.new')
-	@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('crear_tipo_item'))
 	def new(self, idfase, modelname, **kw):
 		tmpl_context.widget = new_tipo_item_form
-		header_file='tipo_item'
-		return dict(value=kw, modelname= "TipoItem", idfase=idfase,
-										header_file=header_file)
+		self.params['modelname'] = "Tipo de Item"
+		self.params['header_file'] = 'tipo_item'
+		self.params['idfase'] = idfase
+		return dict(value=kw, params=self.params)
 
 	"""
 	Evento invocado luego de un evento post en el form de crear
 	ecargado de persistir las nuevas instancias.
 	"""
 	@validate(new_tipo_item_form, error_handler=new)
-	@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('crear_tipo_item'))
 	@expose()
 	def post(self, idfase, **kw):
 		del kw['sprox_id']
@@ -56,7 +59,7 @@ class TipoItemController(RestController):
 	solo tienen acceso aquellos usuarios que posean el premiso de editar
 	"""
 	@expose('sap.templates.edit')
-	#@require(predicates.has_permission('editar_fase'))
+	@require(predicates.has_permission('editar_tipo_item'))
 	def edit(self, id,**kw):
 		tipo_item =  DBSession.query(TipoItem).get(id)
 		tmpl_context.widget = tipo_item_edit_form
@@ -64,15 +67,16 @@ class TipoItemController(RestController):
 		kw['fase'] = tipo_item.fase
 		kw['nombre'] = tipo_item.nombre
 		kw['descripcion'] = tipo_item.descripcion
-		header_file="tipo_item"
-		return dict(value=kw, modelname='TipoItem', header_file=header_file)
+		self.params['modelname'] = "Tipo de Item"
+		self.params['header_file'] = 'tipo_item'
+		return dict(value=kw, params=self.params)
 
 	"""
 	Evento invocado luego de un evento post en el form de editar
 	encargado de persistir las modificaciones de las instancias.
 	"""
 	@validate(tipo_item_edit_form, error_handler=edit)
-	#@require(predicates.has_permission('editar_fase'))
+	@require(predicates.has_permission('editar_tipo_item'))
 	@expose()
 	def put(self, _method, **kw):
 		del kw['sprox_id']
@@ -87,7 +91,7 @@ class TipoItemController(RestController):
 	acompanhado de enlaces de editar y eliminar
 	"""
 	@expose('sap.templates.list')
-	#@require( predicates.has_permission('ver_proyecto'))
+	@require( predicates.has_permission('editar_tipo_item'))
 	def list(self, idfase, **kw):
 		'''
 		Lista todos tipos de items de la bd.
@@ -97,10 +101,13 @@ class TipoItemController(RestController):
 		tmpl_context.widget = tipo_item_table
 		tipo_items = DBSession.query(TipoItem).filter(TipoItem.fase==idfase).all()
 		value = tipo_item_filler.get_value(tipo_items)
-		header_file = "tipo_item"
 		new_url = "/miproyecto/fase/tipo_item/"+idfase+"/new"
-		return dict(modelname='Tipo_items',value=value, header_file=header_file,
-												new_url=new_url,idfase=idfase)
+		self.params['modelname'] = "Tipos de Items"
+		self.params['header_file'] = 'tipo_item'
+		self.params['new_url'] = "/miproyecto/fase/tipo_item/"+idfase+"/new"
+		self.params['idfase'] = idfase
+		self.params['permiso'] = 'crear_tipo_item'
+		return dict(value=value, params=self.params)
 
 	"""
 	Evento invocado desde el listado, se encarga de eliminar una instancia
