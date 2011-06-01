@@ -133,7 +133,8 @@ item_table = ItemTable(DBSession);
 ####################################################
 class TipoItemTable(TableBase):
 	__model__ = TipoItem
-	__omit_fields__ = ['atributos','items', 'fase']
+	__omit_fields__ = ['atributos','items', 
+						'id_tipo_item', 'fase','__actions__']
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
 

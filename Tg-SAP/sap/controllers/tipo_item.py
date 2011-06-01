@@ -118,3 +118,80 @@ class TipoItemController(RestController):
 		DBSession.delete(DBSession.query(TipoItem).get(id_tipo_item))
 		flash("El tipo de item "+ id_tipo_item + "ha sido eliminado correctamente.")
 		redirect('/miproyecto/fase/tipo_item/list/'+id_tipo_item)
+
+	"""
+	importar items
+	"""
+	@expose('sap.templates.list')
+	@require( predicates.has_permission('editar_tipo_item'))
+	def importar(self, idfase, **kw):
+		"""
+		Recuperar de la BD todas a las fases del proyecto actual  
+		"""
+		fase = DBSession.query(Fase).get(idfase)
+		fases = DBSession.query(Fase).filter(Fase.proyecto!=fase.proyecto).\
+										all()
+		
+		"""
+		Copiar los ids de las fases a una lista
+		"""
+		fases_id = []
+		for fase in fases: 
+			fases_id.append(fase.id_fase)
+		
+		"""
+		Se obtinene de la BD todos aquellos items que no sean de ninguna 
+		de las fases de este proyecto
+		""" 
+		tmpl_context.widget = tipo_item_table
+		tipo_items = DBSession.query(TipoItem).\
+								filter(TipoItem.fase.in_(fases_id)).all()
+		"""
+		El value para la tabla son los items de las otras fases
+		con un action que redirija "importarEsteItem"
+		"""
+		value=[]
+		aux=[]
+		for tipo in tipo_items:
+			aux=[{'nombre': tipo.nombre, 'descripcion': tipo.descripcion,
+			'accion': '<div><a href="/miproyecto/fase/tipo_item/importar_este_tipo/'
+			+str(tipo.id_tipo_item)+'/'+idfase+'">Importar este Item</a></div>'}]
+			value=value+aux
+		self.params['header_file'] = "tipo_item"
+		self.params['new_url'] = '/'
+		self.params['idfase'] = idfase
+		self.params['modelname'] = "Tipos de Items de Otros Proyectos" 
+		self.params['permiso'] = 'NO SE MUESTRA EL BOTON NUEVO'
+		return dict(value=value, params=self.params)
+	
+	@require( predicates.has_permission('editar_tipo_item'))
+	@expose()
+	def importar_este_tipo(self, idtipo, idfase):
+		"""
+		Se obtiene de la BD el tipo de item y sus atributos
+		"""
+		tipo = DBSession.query(TipoItem).get(idtipo)
+		atributos = DBSession.query(AtributoTipoItem).\
+						filter(AtributoTipoItem.tipo_item==tipo.id_tipo_item)
+		"""
+		Se settean los valores de la copia
+		El nuevo tipo de item (copia_tipo )pertenecera a esta fase ahora
+		"""
+		copia_tipo = TipoItem()
+		copia_tipo.nombre = tipo.nombre
+		copia_tipo.descripcion = tipo.descripcion
+		copia_tipo.fase = idfase
+		
+		"""
+		Se settean los valores para cada copia_atributo
+		
+		for atributo in atributos:
+			copia_atributo = AtributoTipoItem()
+			copia_atributo.nombre = atributo.nombre
+			copia_atributo.tipo_id = atributo.tipo_id
+			copia_tipo.atributos.append(copia_atributo)
+		"""
+		DBSession.add(copia_tipo)
+		flash("El tipo de item "+str(tipo.nombre)+
+										" pertenece ahora a esta fase")
+		redirect("/miproyecto/fase/tipo_item/importar/"+str(idfase))

@@ -193,3 +193,49 @@ def read_hypergraph(string):
         for each_edge in each_node.getElementsByTagName("link"):
             hgr.link(str(each_node.getAttribute('id')), str(each_edge.getAttribute('to')))
     return hgr
+
+"""
+nuevo metodo 
+"""
+def write_2(G):
+    """
+    Return a string specifying the given graph as a XML document.
+    
+    @type  G: graph
+    @param G: Graph.
+
+    @rtype:  string
+    @return: String specifying the graph as a XML document.
+    """
+    
+    # Document root
+    grxml = Document()
+    grxmlr = grxml.createElement('digraph')
+    grxml.appendChild(grxmlr)
+
+    # Each node...
+    for each_node in G.nodes():
+        node = grxml.createElement('node')
+        node.setAttribute('id', str(each_node))
+        grxmlr.appendChild(node)
+        for each_attr in G.node_attributes(each_node):
+            attr = grxml.createElement('attribute')
+            attr.setAttribute('attr', each_attr[0])
+            attr.setAttribute('value', each_attr[1])
+            node.appendChild(attr)
+
+    # Each edge...
+    for edge_from, edge_to in G.edges():
+        edge = grxml.createElement('edge')
+        edge.setAttribute('from', str(edge_from))
+        edge.setAttribute('to', str(edge_to))
+        edge.setAttribute('wt', str(G.edge_weight((edge_from, edge_to))))
+        edge.setAttribute('label', str(G.edge_label((edge_from, edge_to))))
+        grxmlr.appendChild(edge)
+        for attr_name, attr_value in G.edge_attributes((edge_from, edge_to)):
+            attr = grxml.createElement('attribute')
+            attr.setAttribute('attr', attr_name)
+            attr.setAttribute('value', attr_value)
+            edge.appendChild(attr)
+
+    return grxml.toprettyxml()

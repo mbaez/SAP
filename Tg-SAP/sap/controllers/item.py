@@ -9,6 +9,16 @@ from repoze.what import predicates
 #import de la libreria de grafo
 from sap.lib.pygraph.classes.digraph import *
 from sap.lib.pygraph.algorithms.cycles import *
+from sap.lib.pygraph.readwrite.dot import write
+
+# Import graphviz
+import sys
+sys.path.append('..')
+sys.path.append('/usr/lib/graphviz/python/')
+sys.path.append('/usr/lib64/graphviz/python/')
+import gv
+
+from pygraphviz import *
 
 #import de widgets
 from sap.widgets.createform import *
@@ -231,6 +241,8 @@ class ItemController(RestController):
 	"""
 	def ciclo (self, id1, id2, idfase):
 		grafo = self.faseGraphConstructor(idfase)
+		if(grafo.has_edge((id1,id2))):
+			return []
 		grafo.add_edge((id1,id2))
 		return cycle(grafo)
 
@@ -329,5 +341,11 @@ class ItemController(RestController):
 		TODO
 		no se si esto se aplica solo sobre items aprobados o que onda
 	"""
-
-
+	@expose('sap.templates.grafico')
+	def dibujarGrafo(self):
+		grafo = self.faseGraphConstructor(1)
+		dot = write(grafo)
+		gvv = gv.readstring(dot)
+		gv.layout(gvv,'dot')
+		gv.render(gvv,'svg',"fase.svg")
+		return dict()

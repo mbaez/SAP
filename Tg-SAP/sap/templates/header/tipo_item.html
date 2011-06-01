@@ -17,7 +17,7 @@
 				<a href="/miproyecto/fase/tipo_item/${idfase}">Tipos de Item</a>
 			</li>-->
 			<li id="nav-agenda" py:if="tg.predicates.has_permission('manage')" >
-				<a href="${tg.url('/administracion/proyecto/listall')}">Importar Tipos de Item</a>
+				<a href="/miproyecto/fase/tipo_item/importar/${params['idfase']}">Importar Tipos de Item</a>
 			</li>
 			
 		</ul>

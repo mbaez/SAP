@@ -76,7 +76,7 @@ class RelacionController(RestController):
 		else:
 			relacion.relacion_parentesco=2
 		
-		DBSession.add(relacion)
+		DBSession.merge(relacion)
 		flash("La relacion se ha creado correctamente")
 		redirect("/miproyecto/fase/relacion/list/"+idfase)
 
@@ -127,8 +127,8 @@ class RelacionController(RestController):
 				'/'+idfase+'">Eliminar Relacion</a></div>'}]
 			value=value+aux
 		self.params['header_file'] = "abstract"
-		self.params['new_url'] = '/miproyecto/fase/relacion/'+idfase+'new/'
+		self.params['new_url'] = '/miproyecto/fase/relacion/'+idfase+'/new/'
 		self.params['idfase'] = idfase
 		self.params['modelname'] = "Relaciones" 
 		self.params['permiso'] = 'editar_item'
-		return dict(value=kw, params=self.params)
+		return dict(value=value, params=self.params)
