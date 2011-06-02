@@ -12,6 +12,13 @@ from sap.model import *
 
 import transaction
 
+"""Modulo que contiene un conjunto de metodos de uso frecuente
+
+   :author: Maximiniliano Baez Gonzalez
+   :mail: mxbg.py@gmail.com
+   :version: 0.1
+"""
+
 class SessionChecker():
 
 	def check_proyecto_permiso(self, id_proyecto, permiso_name,nuleable=False):
@@ -224,6 +231,40 @@ class SessionUtil() :
 
 		return rol
 
+	def asociar_rol_fase(self, cod_rol, fase_id):
+		"""
+		Asocia los permisos rol con una fase, asi los usuarios que posean
+		el rol estaran asociados a la fase.
+
+		@type  cod_rol   : String
+		@param cod_rol   : Codigo del rol
+
+		@type  fase_id   : Integer
+		@param fase_id   : Identificador de la fase
+
+		@rtype  : Rol
+		@return : El rol que es aplicado a la fase.
+		"""
+
+		rol = self.get_rol_by_codigo(cod_rol)
+
+		#Se obtienen los permisos del template
+		permisos_rol = DBSession.query(Permiso).\
+						filter(RolPermiso.permiso_id == Permiso.permiso_id).\
+						filter(RolPermiso.rol_id == rol.rol_id)
+
+		#Se se asocian el rol con la fase
+		for permiso in permisos_rol:
+
+			rpf = RolPermisoFase()
+			rpf.fase_id = fase_id
+			rpf.rol_id = rol.rol_id
+			rpf.permiso_id = permiso.permiso_id
+			#Asocia el rol con los permisos y la fase
+			DBSession.add(rpf)
+
+		return rol
+
 	def asignar_rol_usuario(self,usuario_id , cod_rol, id_proyecto, can_commit=True):
 		"""
 		Asigna un rol asociado a un proyecto al usuario determinado.
@@ -386,8 +427,8 @@ class SessionUtil() :
 		historial.observacion = item.observacion
 		#historial de detalles
 		detalles = DBSession.query(DetalleItem).\
-									filter(DetalleItem.id_item==item.id_item).\
-									all()
+					filter(DetalleItem.id_item==item.id_item).\
+					all()
 		for detalle in detalles:
 			historial_detalle = HistorialDetalleItem()
 			historial_detalle.id_detalle = detalle.id_detalle
@@ -395,8 +436,31 @@ class SessionUtil() :
 			historial_detalle.recurso = detalle.recurso
 			historial_detalle.valor = detalle.valor
 			historial.detalles.append(historial_detalle)
-
+		
+		#Obtener las relaciones
+		relaciones = DBSession.query(RelacionItem).\
+					filter(RelacionItem.id_item_actual==item.id_item or
+						RelacionItem.id_item_relacionado==item.id_item).\
+						all()
+		
+		for relacion in relaciones: 
+			historial_relacion = HistorialRelacion()
+			historial_relacion.id_item_1 = relacion.id_item_actual
+			historial_relacion.id_item_2 = relacion.id_item_relacionado
+			historial_relacion.id_tipo_relacion = relacion.relacion_parentesco
+			historial.relaciones.append(historial_relacion)		
+		
 		DBSession.add(historial)
+
+	def get_aprobados_sin_lineas (self, idfase):
+		#lista de items aprobados de la fase. Suponiendo que el id del estado "aprobado"
+		#sea 1
+		itemsAprobados = DBSession.query(Item).filter(Item.fase==idfase).\
+												filter(Item.estado==1).\
+												filter(Item.linea_base==None).\
+												all()
+		return itemsAprobados
+
 
 
 util = SessionUtil()

@@ -89,19 +89,6 @@ class EstadoLineaBase(DeclarativeBase):
 	nombre = Column ('nombre', VARCHAR(50), nullable=False)
 
 
-class LineaBase (DeclarativeBase):
-
-	__tablename__ = 'linea_base'
-
-	id_linea_base = Column ('id_linea_base', INTEGER, autoincrement=True,
-								primary_key=True)
-
-	estado = Column ('id_estado_lineabase',INTEGER,
-				ForeignKey('estado_linea_base.id_estado_linea_base'))
-
-	fase = Column ('id_fase', INTEGER, ForeignKey ('fase.id_fase'))
-
-
 class TipoItem(DeclarativeBase) :
 
 	__tablename__ = 'tipo_item'
@@ -109,6 +96,8 @@ class TipoItem(DeclarativeBase) :
 	id_tipo_item = Column ('id_tipo_item', INTEGER, autoincrement=True,
 							primary_key=True)
 
+	codigo = Column ('codigo', VARCHAR(50), unique = True, nullable = False)
+	
 	fase = Column ('id_fase', INTEGER, ForeignKey ('fase.id_fase'))
 
 	nombre = Column ('nombre', VARCHAR(50), nullable=False)
@@ -160,7 +149,11 @@ class Item(DeclarativeBase):
 	estado = Column ('id_estado_item', INTEGER,
 						ForeignKey('estado_item.id_estado_item'),
 						nullable=False)
-
+	
+	estado_actual = relation('EstadoItem', backref = 'items')
+	
+	codigo = Column ('codigo', VARCHAR(50), unique = True, nullable = False)
+	
 	nombre = Column ('nombre', VARCHAR(50))
 
 	tipo_item = Column ('id_tipo_item', INTEGER,
@@ -180,6 +173,9 @@ class Item(DeclarativeBase):
 
 	descripcion = Column ('descripcion', VARCHAR(200))
 
+	id_linea_base = Column ('id_linea_base', INTEGER,
+					ForeignKey('linea_base.id_linea_base'))
+
 	observacion = Column ('observacion', VARCHAR(100))
 
 
@@ -188,7 +184,7 @@ class LineaBaseItem(DeclarativeBase):
 
 	__tablename__ = 'linea_base_item'
 
-	id = Column ('id_item', INTEGER,
+	id_item = Column ('id_item', INTEGER,
 				ForeignKey('item.id_item'), primary_key=True)
 
 	linea_base = Column ('id_linea_base', INTEGER,
@@ -256,6 +252,7 @@ class TipoAtributo(DeclarativeBase):
 
 
 class DetalleItem(DeclarativeBase):
+
 	__tablename__ = 'detalle_item'
 
 	id_item = Column ('id_item', INTEGER, ForeignKey ('item.id_item'),
@@ -268,6 +265,22 @@ class DetalleItem(DeclarativeBase):
 				ForeignKey('recurso.id_recurso'), nullable=False)
 
 	valor = Column('valor', VARCHAR(200))
+	
+class LineaBase (DeclarativeBase):
+
+	__tablename__ = 'linea_base'
+
+	id_linea_base = Column ('id_linea_base', INTEGER, autoincrement=True,
+								primary_key=True)
+	
+	codigo = Column ('codigo', VARCHAR(50), unique = True, nullable = False)
+				
+	estado = Column ('id_estado_lineabase',INTEGER,
+				ForeignKey('estado_linea_base.id_estado_linea_base'))
+
+	fase = Column ('id_fase', INTEGER, ForeignKey ('fase.id_fase'))
+
+	items = relation(Item, backref='linea_base')
 
 
 ###############################################################################
@@ -322,4 +335,19 @@ class HistorialDetalleItem(DeclarativeBase):
 
 	valor = Column('valor', VARCHAR(200))
 
+class HistorialRelacion(DeclarativeBase):
+	__tablename__ = 'historial_relacion'
 
+	id_historial_relacion = Column ('id_historial_relacion', INTEGER,
+							autoincrement=True, primary_key = True)
+
+	id_historial = Column ('id_historial_item', INTEGER,
+				ForeignKey('historial_item.id_historial_item'))
+
+	items = relation("HistorialItem", backref="relaciones")
+
+	id_item_1 = Column ('id_item_1', INTEGER, nullable=False)
+
+	id_item_2 = Column ('id_item_2', INTEGER, nullable=False)
+
+	id_tipo_relacion = Column ('id_tipo_relacion', INTEGER, nullable=False)

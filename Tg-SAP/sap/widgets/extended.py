@@ -15,6 +15,10 @@ class ExtendedSelectShuttleField(DojoSelectShuttleField):
 class SproxExtendedSelectShuttleField(ExtendedSelectShuttleField, PropertyMixin):
 	def update_params(self, d):
 		self._my_update_params(d)
+		for p in d :
+			print "Parametros "+ str(p)
+			for q in p:
+				print "##Parametros "+q
 		super(SproxExtendedSelectShuttleField, self).update_params(d)
 
 

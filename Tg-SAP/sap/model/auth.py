@@ -64,6 +64,18 @@ rol_permiso_proyecto_table = Table( 'rol_permiso_proyecto', metadata,
 			onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
 )
 
+rol_permiso_fase_table = Table( 'rol_permiso_fase', metadata,
+
+	Column('rol_id', Integer, ForeignKey('rol.rol_id',
+		onupdate="CASCADE", ondelete="CASCADE"),primary_key=True),
+
+	Column('permiso_id', Integer, ForeignKey('permiso.permiso_id',
+		onupdate="CASCADE", ondelete="CASCADE"),primary_key=True),
+
+	Column ('fase_id', Integer,ForeignKey('fase.id_fase',
+			onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
+)
+
 class RolUsuario(object):
 	pass
 
@@ -73,11 +85,18 @@ class RolPermiso(object):
 class RolPermisoProyecto(object):
 	pass
 
+class RolPermisoFase(object):
+	pass
+
 mapper(RolPermisoProyecto, rol_permiso_proyecto_table)
 
 mapper(RolUsuario, usuario_rol_table)
 
 mapper(RolPermiso , rol_permiso_table)
+
+mapper(RolPermisoFase, rol_permiso_fase_table)
+#} Association tables
+
 #{ The auth* model itself
 
 
@@ -259,31 +278,3 @@ class Permiso(DeclarativeBase):
 
 
 #}
-
-"""
-class RolPermisoProyecto(DeclarativeBase):
-
-	__tablename__ = 'rol_permiso_proyecto'
-
-	rol_id = Column('rol_id', Integer, ForeignKey('rol.rol_id',
-		onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-
-	permiso_id = Column('permiso_id', Integer,
-		ForeignKey('permiso.permiso_id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-
-	proyecto_id = Column ('proyecto_id', Integer,ForeignKey('proyecto.id_proyecto',
-						onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-
-"""
-class RolPermisoFase(DeclarativeBase):
-
-	__tablename__ = 'rol_permiso_fase'
-
-	rol_id = Column('rol_id', Integer, ForeignKey('rol.rol_id',
-		onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-
-	permiso_id = Column('permiso_id', Integer,
-		ForeignKey('permiso.permiso_id', onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
-
-	fase_id = Column ('id_fase', Integer,ForeignKey('fase.id_fase',
-						onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)

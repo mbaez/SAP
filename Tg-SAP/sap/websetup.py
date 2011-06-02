@@ -117,7 +117,7 @@ def setup_app(command, conf, vars):
     tipo2.descripcion = u'Contiene datos del tipo numerico'
 
     tipo3 = model.TipoAtributo()
-    tipo3.nombre = u'Alfanumerico'
+    tipo3.nombre = u'Fecha'
     tipo3.descripcion = u'Contiene datos del tipo Alfanumerico'
 
     model.DBSession.add(tipo1)
@@ -129,13 +129,15 @@ def setup_app(command, conf, vars):
     tipodeitem1 = model.TipoItem()
     tipodeitem1.fase = fase1.id_fase
     tipodeitem1.nombre = u'tipo1'
+    tipodeitem1.codigo = u'codigo tipo1'
 
     model.DBSession.add(tipodeitem1)
 
     tipodeitem2 = model.TipoItem()
     tipodeitem2.fase = fase2.id_fase
     tipodeitem2.nombre = u'tipo2'
-
+    tipodeitem2.codigo = u'codigo tipo2'
+    
     model.DBSession.add(tipodeitem2)
 
     estadoitem = model.EstadoItem()
@@ -153,22 +155,27 @@ def setup_app(command, conf, vars):
 
     for i in range(10):
 		item = model.Item()
+		item.nombre = u'item '+str(i)  
 		item.estado = 1
 		item.tipo_item = 1
 		item.fase = 1
 		item.version = 1
 		item.prioridad = 1
 		item.complejidad = i+1
+		item.codigo = u'codigo'+str(item.fase) +' item-'+str(i)
 		model.DBSession.add(item)
 
-    item = model.Item()
-    item.estado = 1
-    item.tipo_item = 1
-    item.fase = 2
-    item.version = 1
-    item.prioridad = 1
-    item.complejidad = 11
-    model.DBSession.add(item)
+    for i in range(5):
+		item = model.Item()
+		item.nombre = u'item '+str(i)  
+		item.estado = 1
+		item.tipo_item = 2
+		item.fase = 2
+		item.version = 1
+		item.prioridad = 1
+		item.complejidad = i+10
+		item.codigo = u'codigo '+str(item.fase) +'item-'+str(i)
+		model.DBSession.add(item)
 
     model.DBSession.flush()
 

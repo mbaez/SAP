@@ -20,26 +20,26 @@
 	<section id="inner-content">
 		<aside id="dashboard-sidebar">
 			<div class="project-info">
-				<h4>Proyecto info
+				<h4>Fase info
 					<span>
 						<a class="edit-project" >Edit</a>
 					</span>
 				</h4>
 				<h5>Nombre </h5>
 				<p></p>
-
+				<p>${params['fase'].nombre}</p>
 				<p></p>
 				<h5>Descripcion </h5>
 				<div id="selected-tags">
 				</div>
 				<p></p>
-
+				<p>${params['fase'].descripcion}</p>
 				<p></p>
 			</div>
 			<div class="project-info">
 				<h4>Participantes
 					<span>
-						<a class="add-member">A&ntilde;adir</a>
+						<a class="add-member" href="/miproyecto/fase/participantes/${params['idfase']}">A&ntilde;adir</a>
 					</span>
 				</h4>
 				<ul id="team">

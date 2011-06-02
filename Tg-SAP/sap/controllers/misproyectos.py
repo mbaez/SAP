@@ -20,26 +20,30 @@ from sap.controllers.checker import *
 class ProyectosController(RestController):
 
 	fase = FaseController()
+	
 	_current_proyect = None
 	
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':''}
+			  'idfase':'','permiso':''}
 	
 	@expose('sap.templates.miproyecto')
 	@require(predicates.has_permission('ver_proyecto'))
 	def ver(self, idproyecto):
-		tmpl_context.widget = fase_table
 		"""
 		se obtiene la lista de las fases sobre las cuales el usurio
 		tiene permisos de 'ver' y que pertenecen al proyecto que
-		selecciono
+		selecciono.
+		
+		@type  idproyecto : Integer
+		@param idproyecto : Identificador del proyecto.
+		
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
 		"""
-
-		"""
-		listar todas las fases y mostrar unicamente el link de ver en aquellas
-		fases en los que posee permisos.
-		"""
-
+		tmpl_context.widget = fase_table
+		
+		#listar todas las fases y mostrar unicamente el link de ver en aquellas
+		#fases en los que posee permisos.
 		fases = checker.get_fases_by_proyecto_list(idproyecto, 'ver_fase')
 		value = fase_filler.get_value(fases)
 
@@ -57,7 +61,17 @@ class ProyectosController(RestController):
 	@expose('sap.templates.miproyecto')
 	@require(predicates.has_permission('administrar_participantes'))
 	def participantes(self, idproyecto , **kw):
-
+		"""
+		
+		@type  idproyecto : Integer
+		@param idproyecto : Identificador del proyecto.
+		
+		@type  kw :
+		@param kw : 
+		
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+		"""
 		proyecto = self._get_current_proyect(idproyecto)
 		usuarios = util.get_usuarios_by_permiso(idproyecto)
 
@@ -74,7 +88,7 @@ class ProyectosController(RestController):
 
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('administrar_participantes'))
-	def asignar_participante(self, id,**kw):
+	def edit(self, id,**kw):
 		tmpl_context.widget = rol_usuario_edit_form
 		kw['rol_id'] = id
 
@@ -87,7 +101,7 @@ class ProyectosController(RestController):
 		self.params['header_file'] = 'proyecto'
 		return dict(value=value, params=self.params)
 
-	@validate(rol_usuario_edit_form, error_handler=asignar_participante)
+	@validate(rol_usuario_edit_form, error_handler=edit)
 	@expose()
 	@require(predicates.has_permission('administrar_participantes'))
 	def put(self, id, **kw):
@@ -95,12 +109,10 @@ class ProyectosController(RestController):
 
 		proyecto = self._get_current_proyect()
 
-		#rol.usuarios = []
-
 		for user_id in kw['usuarios'] :
 			util.asignar_participante(user_id,rol.codigo,proyecto.id_proyecto)
 
-		flash("El rol ha sido"+rol.nombre+" modificado correctamente.")
+		flash("El rol ha sido "+rol.nombre+" modificado correctamente.")
 		redirect("/miproyecto/participantes/" + str(proyecto.id_proyecto) )
 
 	def _get_current_proyect(self, id=0):
@@ -108,6 +120,3 @@ class ProyectosController(RestController):
 			self._current_proyect = DBSession.query(Proyecto).get(id)
 
 		return self._current_proyect
-
-
-

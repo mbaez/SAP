@@ -109,7 +109,11 @@ rol_filler = RolTableFiller(DBSession);
 ####################################################
 class ItemTable(TableBase):
 	__model__ = Item
-	__omit_fields__ = ['tipo_item','fase','id_item','__actions__']
+	__omit_fields__ = ['tipo_item','fase','id_item','__actions__', 
+						'id_linea_base','observacion', 
+						'tipo_item_relacion', 'linea_base',
+						'estado']
+				
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
 
@@ -133,7 +137,7 @@ item_table = ItemTable(DBSession);
 ####################################################
 class TipoItemTable(TableBase):
 	__model__ = TipoItem
-	__omit_fields__ = ['atributos','items', 
+	__omit_fields__ = ['atributos','items',
 						'id_tipo_item', 'fase','__actions__']
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
@@ -214,9 +218,21 @@ relacion_filler = RelacionTableFiller(DBSession);
 ####################################################
 class LineaBaseTable(TableBase):
 	__model__ = LineaBase
+	__xml_fields__ = ['accion']
+	__add_fields__ = {'accion':None}
+	__omit_fields__ = ['__actions__','fase', 'id_linea_base']
 
 class LineaBaseTableFiller(ExtendedTableFiller):
 	__model__ = LineaBase
+	__add_fields__ = {'accion':None}
+
+	def accion (self, obj):
+		accion = ', '.join([self.__action__.replace('##id##/edit',
+		"/miproyecto/fase/linea_base/##id##/edit").
+		replace('##id##', str(obj.id_linea_base)).
+		replace('##editstate##', "").
+		replace('##deletestate##', "")])
+		return accion.join(('<div>', '</div>'))
 
 linea_base_table = LineaBaseTable(DBSession);
 linea_base_filler = LineaBaseTableFiller(DBSession);

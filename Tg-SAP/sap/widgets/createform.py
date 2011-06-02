@@ -96,7 +96,7 @@ class NewRelacionForm(ExtendedAddRecordForm):
 	__model__ = RelacionItem
 	__omit_fields__ = ['id_item_actual', 'id_item_relacionado', 'relacion_parentesco']
 	__dropdown_field_names__ = {'item1':'id_item', 'item2':'id_item'}
-	item_1 = ExtendedItemDeFaseField 
+	item_1 = ExtendedItemDeFaseField
 	item_2 = ExtendedItemDeFaseSiguienteField
 
 new_relacion_form = NewRelacionForm(DBSession)
@@ -106,11 +106,11 @@ from tw.forms.fields import CheckBox
 ####################################################
 # Widgets para creacion de Lineas Base
 ####################################################
-class NewLineaBaseForm(AddRecordForm):
+class NewLineaBaseForm(ExtendedAddRecordForm):
 	__model__ = LineaBase
-	miCheckBox = CheckBox("ddd")
+	__omit_fields__ = ['fase', 'items', 'id_linea_base', 'estado']
 
-new_linea_base_form = NewLineaBaseForm()
+new_linea_base_form = NewLineaBaseForm(DBSession)
 #fields = new_linea_base_form._do_get_disabled_fields()
 #atributo = TextField("HOla")
 #fields.append(atributo)

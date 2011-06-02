@@ -9,6 +9,7 @@ from sap.controllers.checker import *
 
 class ExtendedTableList(TableFiller):
 	entity_list = None
+	__possible_field_names__ = ['nombre','descripcion']
 
 	def _do_get_provider_count_and_objs(self, **kw):
 		"""
@@ -107,7 +108,7 @@ class AcctionDecorator (Decorator):
 	"""
 	def accion (self, obj):
 		accion = ', '.join([self.__widget__])
-		print "AcctionDecorator: "+ self.__widget__
+		#print "AcctionDecorator: "+ self.__widget__
 		return accion.join(('<div>', '</div>'))
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
@@ -191,6 +192,7 @@ class ItemTableFiller(ExtendedTableList, Decorator):
 	__omit_fields__ = ['tipo_item','fase','id_item']
 	__add_fields__ = {'accion':None}
 	__url__ = "/miproyecto/fase/item/"
+	
 
 	def accion (self, obj):
 		accion = super(ItemTableFiller, self).accion(obj)

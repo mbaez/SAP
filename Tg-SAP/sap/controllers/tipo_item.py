@@ -52,8 +52,11 @@ class TipoItemController(RestController):
 		DBSession.add(tipo_item)
 		flash("El tipo de Item ha sido creado correctamente")
 		#traer el ultimo tipo insertado para pasarle su id al formulario de atributos
-		tipos=list(DBSession.query(TipoItem).order_by(TipoItem.id_tipo_item))
-		redirect('/miproyecto/fase/tipo_item/atributos/'+str(tipos[len(tipos)-1].id_tipo_item)+'/new')
+		tipo = DBSession.query(TipoItem).\
+							filter(TipoItem.nombre==tipo_item.nombre).\
+							filter(TipoItem.descripcion==tipo_item.descripcion).\
+							first()
+		redirect('/miproyecto/fase/tipo_item/atributos/'+tipo.id_tipo_item+'/new')
 	"""
 	Encargado de carga el widget para editar las instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de editar
@@ -157,6 +160,7 @@ class TipoItemController(RestController):
 			'accion': '<div><a href="/miproyecto/fase/tipo_item/importar_este_tipo/'
 			+str(tipo.id_tipo_item)+'/'+idfase+'">Importar este Item</a></div>'}]
 			value=value+aux
+			
 		self.params['header_file'] = "tipo_item"
 		self.params['new_url'] = '/'
 		self.params['idfase'] = idfase

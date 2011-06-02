@@ -10,7 +10,7 @@ from repoze.what import predicates
 from sap.lib.pygraph.classes.digraph import *
 from sap.lib.pygraph.algorithms.cycles import *
 from sap.lib.pygraph.readwrite.dot import write
-
+'''
 # Import graphviz
 import sys
 sys.path.append('..')
@@ -19,7 +19,7 @@ sys.path.append('/usr/lib64/graphviz/python/')
 import gv
 
 from pygraphviz import *
-
+'''
 #import de widgets
 from sap.widgets.createform import *
 from sap.widgets.listform import *
@@ -341,6 +341,7 @@ class ItemController(RestController):
 		TODO
 		no se si esto se aplica solo sobre items aprobados o que onda
 	"""
+	'''
 	@expose('sap.templates.grafico')
 	def dibujarGrafo(self):
 		grafo = self.faseGraphConstructor(1)
@@ -349,3 +350,4 @@ class ItemController(RestController):
 		gv.layout(gvv,'dot')
 		gv.render(gvv,'svg',"fase.svg")
 		return dict()
+	'''
