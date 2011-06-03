@@ -71,17 +71,15 @@ class ExtendedComponent():
 
 class Decorator(ExtendedComponent):
 	"""
-	Debe ser un objeto que herede de la clase ExtendedComponet
-	"""
-	component = None
-	"""
-	Cadena de texto que representa el codigo html que sera anhadido
-	"""
-	__widget__= ""
-
-	"""
 	Clase que actua como proxy entre los componentes.
 	"""
+
+	"""Debe ser un objeto que herede de la clase ExtendedComponet"""
+	component = None
+
+	"""Cadena de texto que representa el codigo html que sera anhadido"""
+	__widget__= ""
+
 	def __init__(self, component=None):
 		self.set_component(component)
 
@@ -108,7 +106,6 @@ class AcctionDecorator (Decorator):
 	"""
 	def accion (self, obj):
 		accion = ', '.join([self.__widget__])
-		#print "AcctionDecorator: "+ self.__widget__
 		return accion.join(('<div>', '</div>'))
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
@@ -119,9 +116,10 @@ class AcctionDecorator (Decorator):
 
 	def replace(self,action, url, id ,permiso_sufijo,check ):
 		pass
-		#return super(ActionDecorator, self).replace(action, url,id,permiso_sufijo, check)
 
-
+###############################################################################
+# Decoradores de los actions, indican con que se va llenar el campo action
+###############################################################################
 class EditActionDecorator(Decorator):
 	__html__ = 	"""
 				<a class= "edit-project" style= '##editstate##;' href='##url####id##/edit'>editar</a>
@@ -153,13 +151,11 @@ class EditActionDecorator(Decorator):
 
 class VerActionDecorator(Decorator):
 
-	__html__= "<a style='##verstate##' href='##url####id##'>ver</a>"
+	__html__= "<a style='##verstate##' href='##url####id##'>Ver</a>"
 
 	def accion(self, obj):
-		print "VerActionDecorator.accion"
 		self.__widget__ = self.__html__
 		accion = Decorator.accion(self,obj)
-		print "VerActionDecorator.accion" +accion
 		return accion
 
 	def replace(self,accion, url, id ,permiso_sufijo,check ):
@@ -167,76 +163,211 @@ class VerActionDecorator(Decorator):
 				replace('##verstate##', check(id,'ver_'+permiso_sufijo)).\
 				replace('##id##', str(id))
 
+class LabelActionDecorator(Decorator):
+	__label__ = "Asignar"
+	__html__= "<a style='##state##' href='##url####id####extra_url##'>##label##</a>"
+	__extra_url__ = "/edit"
 
-class ProyectoDecorator(ExtendedTableList, Decorator):
+	params={'__extra_url__':__extra_url__, '__label__':__label__}
+
+	def __init__(self, params=None):
+		if params == None:
+			return
+
+		self.__extra_url__ = params['__extra_url__']
+		self.__label__ = params['__label__']
+
+	def accion(self, obj):
+		self.__widget__ = self.__html__.replace("##label##", self.__label__)
+		accion = Decorator.accion(self,obj)
+		return accion
+
+	def replace(self,accion, url, id ,permiso_sufijo,check ):
+		return accion.replace('##url##', url).\
+				replace('##state##', check(id,'ver_'+permiso_sufijo)).\
+				replace('##id##', str(id)).\
+				replace('##extra_url##', self.__extra_url__)
+
+###############################################################################
+# Model Decorators, Son las clases que indican con que datos se van a cargar
+###############################################################################
+class ProyectoModelDecorator(ExtendedTableList, Decorator):
 	__model__ = Proyecto
 	__add_fields__ = {'accion':None}
 	__url__= "/administracion/proyecto/"
+
+	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+		super(ProyectoModelDecorator, self).__init__(provider_hint, **provider_hints)
+
+		if url == None :
+			return
+		self.__url__ = url
+
 	def accion (self, obj):
-		accion = super(ProyectoDecorator, self).accion(obj)
+		accion = super(ProyectoModelDecorator, self).accion(obj)
 		accion = self.replace(accion,self.__url__, obj.id_proyecto)
 		return accion
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
 		has_permiso = checker.check_proyecto_permiso(id,permiso_name,True)
-		return super(ProyectoDecorator,self).check_permiso(id, permiso_name, has_permiso)
+		return super(ProyectoModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
 
 	def replace(self,action, url, id):
-		return super(ProyectoDecorator, self).replace( action, url,id,
+		return super(ProyectoModelDecorator, self).replace( action, url,id,
 														'proyecto',
 														self.check_permiso
 													  )
 
-class ItemTableFiller(ExtendedTableList, Decorator):
+class ItemModelDecorator(ExtendedTableList, Decorator):
 	__model__ = Item
-	__omit_fields__ = ['tipo_item','fase','id_item']
+	#__omit_fields__ = ['tipo_item','fase','id_item']
 	__add_fields__ = {'accion':None}
 	__url__ = "/miproyecto/fase/item/"
-	
+
+	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+		super(ItemModelDecorator, self).__init__(provider_hint, **provider_hints)
+
+		if url == None :
+			return
+		self.__url__ = url
 
 	def accion (self, obj):
-		accion = super(ItemTableFiller, self).accion(obj)
+		accion = super(ItemModelDecorator, self).accion(obj)
 		accion = self.replace(accion,self.__url__, obj.id_item)
 		return accion
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
 		has_permiso = True
-		return super(ItemTableFiller,self).check_permiso(id, permiso_name, has_permiso)
+		return super(ItemModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
 
 	def replace(self,action, url, id):
-		return super(ItemTableFiller, self).replace( action, url,id,
+		return super(ItemModelDecorator, self).replace( action, url,id,
 														'fase',
 														self.check_permiso
 													  )
 
+class ParticipantesModelDecorator(ExtendedTableList, Decorator):
+	__model__ = Rol
+	__add_fields__ = {'accion':None}
+	__url__ = "/miproyecto/fase/participantes/"
 
-#Tabla de proyecto con las opciones de eliminar y editar
-accion = AcctionDecorator()
-model  = ProyectoDecorator(DBSession)
-editar = EditActionDecorator()
+	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+		super(ParticipantesModelDecorator, self).__init__(provider_hint, **provider_hints)
 
-editar.set_component(accion)
-model.set_component(editar)
+		if url == None :
+			return
+		self.__url__ = url
 
-proyecto_filler = model
-#Tabla de proyecto con la opcion de ver
+	def accion (self, obj):
+		accion = super(ParticipantesModelDecorator, self).accion(obj)
+		accion = self.replace(accion,self.__url__, obj.rol_id)
+		return accion
 
-accion_ver = AcctionDecorator()
-ProyectoDecorator.__url__ ="/miproyecto/ver/"
-model_ver = ProyectoDecorator(DBSession)
-ver = VerActionDecorator()
+	def check_permiso(self, id, permiso_name, has_permiso=None):
+		has_permiso = True
+		return super(ParticipantesModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
 
-ver.set_component(accion_ver)
-model_ver.set_component(ver)
+	def replace(self,action, url, id):
+		return super(ParticipantesModelDecorator, self).replace( action, url,id,
+														'participantes',
+														self.check_permiso
+													  )
 
-admin_proyecto_filler = model_ver
+class LineaBaseModelDecorator(ExtendedTableList, Decorator):
+	__model__ = LineaBase
+	__add_fields__ = {'accion':None}
+	__url__ = "/miproyecto/fase/linea_base/"
 
-#Tabla de items com la opcion de eliminar y ediar.
-accion_ = AcctionDecorator()
-model_ = ItemTableFiller(DBSession)
-ver_ = EditActionDecorator()
+	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+		super(LineaBaseModelDecorator, self).__init__(provider_hint, **provider_hints)
 
-ver_.set_component(accion_)
-model_.set_component(ver_)
+		if url == None :
+			return
+		self.__url__ = url
 
-item_filler = model_
+	def accion (self, obj):
+		accion = super(LineaBaseModelDecorator, self).accion(obj)
+		accion = self.replace(accion,self.__url__, obj.id_linea_base)
+		return accion
+
+	def check_permiso(self, id, permiso_name, has_permiso=None):
+		has_permiso = True
+		return super(LineaBaseModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
+
+	def replace(self,action, url, id):
+		return super(LineaBaseModelDecorator, self).replace( action, url,id,
+														'linea_base',
+														self.check_permiso
+													  )
+class TipoItemModelDecorator(ExtendedTableList, Decorator):
+
+	__model__ = TipoItem
+	__add_fields__ = {'accion':None}
+	__url__ = '/miproyecto/fase/tipo_item/atributos/list/'
+
+	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+		super(TipoItemModelDecorator, self).__init__(provider_hint, **provider_hints)
+
+		if url == None :
+			return
+		self.__url__ = url
+
+	def accion (self, obj):
+		accion = super(TipoItemModelDecorator, self).accion(obj)
+		accion = self.replace(accion,self.__url__, obj.id_tipo_item)
+		return accion
+
+	def check_permiso(self, id, permiso_name, has_permiso=None):
+		has_permiso = True
+		return super(TipoItemModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
+
+	def replace(self,action, url, id):
+		return super(TipoItemModelDecorator, self).replace( action, url,id,
+														'tipo_item',
+														self.check_permiso
+													  )
+
+class FaseModelDecorator(ExtendedTableList, Decorator):
+	__model__ = Fase
+	__add_fields__ = {'accion':None}
+	__url__ = '/miproyecto/fase/get_all/'
+
+	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+		super(FaseModelDecorator, self).__init__(provider_hint, **provider_hints)
+
+		if url == None :
+			return
+		self.__url__ = url
+
+	def accion (self, obj):
+		accion = super(FaseModelDecorator, self).accion(obj)
+		accion = self.replace(accion,self.__url__, obj.id_fase)
+		return accion
+
+	def check_permiso(self, id, permiso_name, has_permiso=None):
+		has_permiso = True
+		return super(FaseModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
+
+	def replace(self,action, url, id):
+		return super(FaseModelDecorator, self).replace( action, url,id,
+														'fase',
+														self.check_permiso
+													  )
+
+###############################################################################
+# Se crean los widgets utilizando los decoradores
+###############################################################################
+def create_widget(__base_model__, __decorator__, __url__=None, params=None):
+	"""
+	Crea un widget y le anhade los decoradores
+	"""
+	action = AcctionDecorator()
+	action_decorator = __decorator__(params)
+	model_component = __base_model__(DBSession, __url__)
+
+	action_decorator.set_component(action)
+	model_component.set_component(action_decorator)
+
+	return model_component
+
+

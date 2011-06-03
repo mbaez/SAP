@@ -32,46 +32,26 @@ class ProyectoTable(TableBase):
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
 
-class ProyectoTableFiller(ExtendedTableFiller):
-	__model__ = Proyecto
-	__add_fields__ = {'accion':None}
+	def __init__(self, provider_hint=None, __omit_fields__=None ,**provider_hints):
+		super(ProyectoTable, self).__init__(provider_hint, **provider_hints)
 
-	def accion (self, obj):
-		accion = ', '.join([self.__action__.replace('##id##', str(obj.id_proyecto)).
-		replace('##editstate##', self.check_permiso(obj.id_proyecto,'editar_proyecto')).
-		replace('##deletestate##', self.check_permiso(obj.id_proyecto,'eliminar_proyecto'))])
-		return accion.join(('<div>', '</div>'))
+		if __omit_fields__ == None :
+			return
+		self.__omit_fields__ = __omit_fields__
 
-	def check_permiso(self, id_proyecto, permiso_name):
-		has_permiso = checker.check_proyecto_permiso(id_proyecto,permiso_name,True)
-
-		if(has_permiso ==None):
-			return 'visibility: hidden'
-		return ''
 
 proyecto_table = ProyectoTable(DBSession);
-#proyecto_filler = ProyectoTableFiller(DBSession);
-####################################################
-# Widgets de los
-####################################################
-class ProyectoAdminTable(TableBase):
-	__model__ = Proyecto
-	__omit_fields__ = ['lider_id','estado_id', 'id_proyecto' ,
-						'nro_fases', '__actions__'  ]
-	__xml_fields__ = ['accion']
-	__add_fields__ = {'accion':None}
+#Tabla de proyecto con las opciones de eliminar y editar
+proyecto_filler = create_widget(ProyectoModelDecorator, EditActionDecorator)
 
-class ProyectoAdminTableFiller(ExtendedTableFiller):
-	__model__ = Proyecto
-	__add_fields__ = {'accion':None}
+#Crea la tabla de proyecto para el inicio
+__admin_omit_fields__ = ['lider_id','estado_id', 'id_proyecto' ,
+								  'nro_fases', '__actions__'  ]
 
-	def accion (self, obj):
+admin_proyecto_table = ProyectoTable(DBSession,__admin_omit_fields__);
+#Tabla de proyecto con la opcion de ver
+admin_proyecto_filler = create_widget(ProyectoModelDecorator, VerActionDecorator, "/miproyecto/ver/")
 
-		accion = ', '.join(['<a href="/miproyecto/ver/' +str(obj.id_proyecto)+'">ver</a>'])
-		return accion.join(('<div>', '</div>'))
-
-admin_proyecto_table = ProyectoAdminTable(DBSession);
-#admin_proyecto_filler = ProyectoAdminTableFiller(DBSession);
 ####################################################
 # Widgets de las Fases
 ####################################################
@@ -81,17 +61,10 @@ class FaseAdminTable(TableBase):
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
 
-class FaseAdminTableFiller(ExtendedTableFiller):
-	__model__ = Fase
-	__add_fields__ = {'accion':None}
-
-	def accion (self, obj):
-
-		accion = ', '.join(['<a href="/miproyecto/fase/get_all/' +str(obj.id_fase)+'">ver</a>'])
-		return accion.join(('<div>', '</div>'))
 
 fase_table = FaseAdminTable(DBSession);
-fase_filler = FaseAdminTableFiller(DBSession);
+#Tabla de fases con la opcion de ver
+fase_filler = create_widget(FaseModelDecorator, VerActionDecorator)
 ####################################################
 # Widgets de los Roles
 ####################################################
@@ -109,29 +82,18 @@ rol_filler = RolTableFiller(DBSession);
 ####################################################
 class ItemTable(TableBase):
 	__model__ = Item
-	__omit_fields__ = ['tipo_item','fase','id_item','__actions__', 
-						'id_linea_base','observacion', 
+	__omit_fields__ = ['tipo_item','fase','id_item','__actions__',
+						'id_linea_base','observacion',
 						'tipo_item_relacion', 'linea_base',
 						'estado']
-				
+
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
 
-class ItemTableFiller(ExtendedTableFiller):
-	__model__ = Item
-	__omit_fields__ = ['tipo_item','fase','id_item']
-	__add_fields__ = {'accion':None}
-
-	def accion (self, obj):
-		accion = ', '.join([self.__action__.replace('##id##/edit',
-		"/miproyecto/fase/item/##id##/edit").
-		replace('##id##', str(obj.id_item)).
-		replace('##editstate##', "").
-		replace('##deletestate##', "")])
-		return accion.join(('<div>', '</div>'))
-
 item_table = ItemTable(DBSession);
-#item_filler = ItemTableFiller(DBSession);
+#Tabla de items com la opcion de eliminar y ediar.
+item_filler = create_widget(ItemModelDecorator, EditActionDecorator)
+
 ####################################################
 # Widgets de los Tipos de Items
 ####################################################
@@ -142,20 +104,11 @@ class TipoItemTable(TableBase):
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
 
-class TipoItemTableFiller(ExtendedTableFiller):
-	__model__ = TipoItem
-	__add_fields__ = {'accion':None}
-
-	def accion (self, obj):
-		html_widget = "<a href='/miproyecto/fase/tipo_item/atributos/list/##id##'>ver atributos</a>"
-		accion = ', '.join([self.__action__.replace('##id##/edit','/miproyecto/fase/tipo_item/##id##/edit').
-		replace('##id##', str(obj.id_tipo_item))+ html_widget.replace('##id##',  str(obj.id_tipo_item))])
-		#replace('##editstate##', predicates.has_permission('editar_tipo_item'))])
-		#accion = ', '.join()
-		return accion.join(('<div>', '</div>'))
-
 tipo_item_table = TipoItemTable(DBSession);
-tipo_item_filler = TipoItemTableFiller(DBSession);
+#Crea el table filler de los tipos de items
+tipo_item_filler = create_widget(TipoItemModelDecorator, LabelActionDecorator,
+								params={'__label__':'Ver Atributos',
+									'__extra_url__':''})
 
 ####################################################
 # Widgets de los Participantes
@@ -167,31 +120,12 @@ class ParticipantesTable(TableBase):
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
 
-
-class ParticipantesFiller(ExtendedTableFiller):
-	__model__ = Rol
-	__add_fields__ = {'accion':None}
-
-	def accion (self, obj):
-
-		html_widget = "<a href='/miproyecto/##id##/edit'>Asignar</a>"
-		accion = ', '.join([html_widget.replace ('##id##', str(obj.rol_id))])
-		return accion.join(('<div>', '</div>'))
-		
-class ParticipantesFaseFiller(ExtendedTableFiller):
-	__model__ = Rol
-	__add_fields__ = {'accion':None}
-
-	def accion (self, obj):
-
-		html_widget = "<a href='/miproyecto/fase/participantes/##id##/edit'>Asignar</a>"
-		accion = ', '.join([html_widget.replace ('##id##', str(obj.rol_id))])
-		return accion.join(('<div>', '</div>'))
-
-
 participantes_table = ParticipantesTable(DBSession);
-participantes_filler = ParticipantesFiller(DBSession);
-participantes_fase_filler = ParticipantesFaseFiller(DBSession);
+#Crea el table filler de los participantes por fase
+participantes_fase_filler = create_widget(ParticipantesModelDecorator, LabelActionDecorator)
+
+#Crea el table filler de los participantes por proyecto
+participantes_filler = create_widget(ParticipantesModelDecorator, LabelActionDecorator, '/miproyecto/')
 
 ####################################################
 # Widgets de los atributos del tipo de item
@@ -234,19 +168,7 @@ class LineaBaseTable(TableBase):
 	__add_fields__ = {'accion':None}
 	__omit_fields__ = ['__actions__','fase', 'id_linea_base']
 
-class LineaBaseTableFiller(ExtendedTableFiller):
-	__model__ = LineaBase
-	__add_fields__ = {'accion':None}
-
-	def accion (self, obj):
-		accion = ', '.join([self.__action__.replace('##id##/edit',
-		"/miproyecto/fase/linea_base/##id##/edit").
-		replace('##id##', str(obj.id_linea_base)).
-		replace('##editstate##', "").
-		replace('##deletestate##', "")])
-		return accion.join(('<div>', '</div>'))
-
 linea_base_table = LineaBaseTable(DBSession);
-linea_base_filler = LineaBaseTableFiller(DBSession);
-
+#
+linea_base_filler = create_widget(LineaBaseModelDecorator, EditActionDecorator)
 

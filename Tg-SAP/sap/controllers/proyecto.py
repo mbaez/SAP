@@ -31,7 +31,7 @@ class ProyectoController(RestController):
 	"""
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 	'idfase':'','permiso':'', 'label': '', 'cancelar_url':''}
-	
+
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_proyecto'))
 	def new(self, modelname='',**kw):
@@ -121,7 +121,7 @@ class ProyectoController(RestController):
 		'''
 		proyectos = checker.get_poyect_list('ver_proyecto')
 		value = proyecto_filler.get_value(proyectos)
-		
+
 		self.params['title'] = 'Editar Proyecto'
 		self.params['modelname'] = 'Proyectos'
 		self.params['header_file'] = 'abstract'
@@ -141,7 +141,7 @@ class ProyectoController(RestController):
 		value = proyecto_filler.get_value()
 		self.params['title'] = 'Editar Proyecto'
 		self.params['modelname'] = 'Proyectos'
-		self.params['header_file'] = 'abstract'
+		self.params['header_file'] = 'administracion'
 		self.params['new_url'] = '/administracion/proyecto/new'
 		self.params['permiso'] = 'ver_proyecto'
 		self.params['label'] = 'Nuevo Proyecto'
