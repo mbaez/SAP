@@ -177,9 +177,21 @@ class ParticipantesFiller(ExtendedTableFiller):
 		html_widget = "<a href='/miproyecto/##id##/edit'>Asignar</a>"
 		accion = ', '.join([html_widget.replace ('##id##', str(obj.rol_id))])
 		return accion.join(('<div>', '</div>'))
+		
+class ParticipantesFaseFiller(ExtendedTableFiller):
+	__model__ = Rol
+	__add_fields__ = {'accion':None}
+
+	def accion (self, obj):
+
+		html_widget = "<a href='/miproyecto/fase/participantes/##id##/edit'>Asignar</a>"
+		accion = ', '.join([html_widget.replace ('##id##', str(obj.rol_id))])
+		return accion.join(('<div>', '</div>'))
+
 
 participantes_table = ParticipantesTable(DBSession);
 participantes_filler = ParticipantesFiller(DBSession);
+participantes_fase_filler = ParticipantesFaseFiller(DBSession);
 
 ####################################################
 # Widgets de los atributos del tipo de item

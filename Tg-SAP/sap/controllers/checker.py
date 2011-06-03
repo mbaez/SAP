@@ -196,7 +196,9 @@ class SessionUtil() :
 			rol= rol_template
 		#Si ya existe el rol para el proyecto
 		if rol != None:
+			print "ES NONE!!"
 			return rol
+		
 		#Si no existe el rol para el proyecto lo crea
 		rol = Rol()
 		#cambia el nombre del rol
@@ -356,6 +358,28 @@ class SessionUtil() :
 		#se hace commit de toda la transaccion
 		#self.commit_transaction(True)
 
+	def get_usuarios_by_fase(self, id, permiso_name='ver_fase'):
+		"""
+		Obtiene una lista de los usuarios que poseen el permiso especificado sobre
+		un proyecto.
+
+		@type  proyecto_id  : Integer
+		@param proyecto_id  : Identificador del proyecto al cual se va aplicar el rol
+
+		@type  permiso_name : String
+		@param permiso_name : Nombre del permiso
+
+		@rtype  : Usuario []
+		@return : Lista de usuarios que poseen el permiso sobre el proyecto
+		"""
+		usuarios = DBSession.query(Usuario).\
+					filter(RolUsuario.usuario_id == Usuario.usuario_id).\
+					filter(RolPermisoFase.rol_id == RolUsuario.rol_id).\
+					filter(RolPermisoFase.fase_id == id).\
+					filter(RolPermisoFase.permiso_id == Permiso.permiso_id).\
+					filter(Permiso.nombre == permiso_name).all()
+
+		return usuarios
 
 	def get_usuarios_by_permiso(self, proyecto_id, permiso_name='ver_proyecto'):
 		"""
@@ -376,7 +400,7 @@ class SessionUtil() :
 					filter(RolPermisoProyecto.rol_id == RolUsuario.rol_id).\
 					filter(RolPermisoProyecto.proyecto_id == proyecto_id).\
 					filter(RolPermisoProyecto.permiso_id == Permiso.permiso_id).\
-					filter(Permiso.nombre == permiso_name)
+					filter(Permiso.nombre == permiso_name).all()
 
 		return usuarios
 

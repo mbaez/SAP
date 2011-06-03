@@ -10,6 +10,7 @@ from sap.model import *
 from sap.model import DBSession, metadata
 #from sap.controllers.fase import FaseController
 #import de widgets
+from sap.widgets.listform import *
 from sap.widgets.editform import *
 #impot del checker de permisos
 from sap.controllers.checker import *
@@ -18,13 +19,13 @@ from sap.controllers.checker import *
 class ParticipanteController(RestController):
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-			  'idfase':'','permiso':'', 'label':'' }
+			  'idfase':'','permiso':''}
 
-	current_fase = None
+	_current_fase = None
 	
 	@expose('sap.templates.fase')
 	@require(predicates.has_permission('administrar_participantes'))
-	def get_all(self, id , **kw):
+	def admin(self, id , **kw):
 		"""
 		
 		@type  id : Integer
@@ -36,13 +37,15 @@ class ParticipanteController(RestController):
 		@rtype  : Diccionario
 		@return : El diccionario que sera utilizado en el template.
 		"""
-		fase = self._get_current_fase(idproyecto)
-		usuarios = util.get_usuarios_by_permiso(idproyecto)
+		fase = self._get_current_fase(id)
+		print "FASE: "+ str(fase)
+		usuarios = util.get_usuarios_by_fase(fase.proyecto)
+		print "USUARIOS: "+ str(usuarios)
 
 		tmpl_context.widget = participantes_table
 
-		roles = util.get_roles_by_proyectos(idproyecto)
-		value = participantes_filler.get_value(roles)
+		roles = util.get_roles_by_proyectos(fase.proyecto)
+		value = participantes_fase_filler.get_value(roles)
 		
 		self.params['modelname'] = 'Participantes'
 		self.params['text_header'] = 'Lista de roles'
@@ -59,12 +62,14 @@ class ParticipanteController(RestController):
 
 		value = rol_usuario_edit_filler.get_value(kw)
 
-		proyecto = self._get_current_proyect()
-		usuarios = util.get_usuarios_by_permiso(proyecto.id_proyecto)
+		fase = self._get_current_fase()
+		usuarios = util.get_usuarios_by_fase(fase.proyecto)
 		
-		self.params['proyecto'] = proyecto
+		print "Usuarios "+ str(usuarios)
+		
+		#self.params['fase'] = fase
 		self.params['usuarios'] = usuarios
-		self.params['modelname'] = 'Rol'
+		self.params['modelname'] = 'Participantes'
 		self.params['header_file'] = 'proyecto'
 		return dict(value=value, params=self.params)
 
@@ -76,8 +81,8 @@ class ParticipanteController(RestController):
 		fase = self._get_current_fase()
 		util.asociar_rol_fase(rol.codigo, fase.id_fase)
 
-		flash("El rol ha sido"+rol.nombre+" modificado correctamente.")
-		redirect("/miproyecto/participantes/" + str(proyecto.id_proyecto) )
+		flash("El rol ha sido"+rol.nombre+" asignado a la fase "+ str(fase.id_fase)+".")
+		redirect("/miproyecto/fase/participantes/admin/" + str(fase.proyecto) )
 
 	def _get_current_fase(self, id=0):
 		if self._current_fase == None:

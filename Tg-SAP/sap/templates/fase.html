@@ -39,18 +39,18 @@
 			<div class="project-info">
 				<h4>Participantes
 					<span>
-						<a class="add-member" href="/miproyecto/fase/participantes/${params['idfase']}">A&ntilde;adir</a>
+						<a class="add-member" href="/miproyecto/fase/participantes/admin/${params['idfase']}">A&ntilde;adir</a>
 					</span>
 				</h4>
 				<ul id="team">
 
-					<!--li py:for="usuario in usuarios">
+					<li py:for="usuario in params['usuarios']">
 						<img src="/img/saved_resource" alt="">${usuario.user_name}
 							<div class="member-edit">
 								<a>Delete</a>
 							</div>
 						</img>
-					</li-->
+					</li>
 
 				</ul>
 			</div>

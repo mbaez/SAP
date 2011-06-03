@@ -108,6 +108,8 @@ class ProyectosController(RestController):
 		rol = DBSession.query(Rol).get(int(kw['rol_id']))
 
 		proyecto = self._get_current_proyect()
+		
+		rol.usuarios = []
 
 		for user_id in kw['usuarios'] :
 			util.asignar_participante(user_id,rol.codigo,proyecto.id_proyecto)

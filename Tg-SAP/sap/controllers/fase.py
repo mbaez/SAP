@@ -138,6 +138,7 @@ class FaseController(RestController):
 		tmpl_context.widget = item_table
 		items = DBSession.query(Item).filter(Item.fase==idfase).all()
 		value = item_filler.get_value(items)
+
 		self.params['title'] = 'Titulo'
 		self.params['modelname'] = 'Items'
 		self.params['header_file'] = 'fase'
@@ -146,5 +147,7 @@ class FaseController(RestController):
 		self.params['fase'] = DBSession.query(Fase).get(idfase)
 		self.params['new_url'] = '/miproyecto/fase/item/'+idfase+'/new/'
 		self.params['label'] = 'Agregar Atributo'
+		self.params['usuarios'] = util.get_usuarios_by_fase(self.params['fase'].proyecto)
+
 		return dict(value=value, params = self.params)
 
