@@ -11,13 +11,17 @@ from tg import tmpl_context
 from sap.widgets.createform import *
 from sap.widgets.listform import *
 from sap.widgets.editform import *
+from tw.forms import TableForm, SingleSelectField, TextField, TextArea, PasswordField, SubmitButton, Spacer, CheckBox
 # imports del modelo
 from sap.model import *
 from tg import tmpl_context, redirect, validate
 #import del checker de permisos
 from sap.controllers.checker import *
+from sap.controllers.item import *
 #import del controlador
 from tg.controllers import RestController
+
+_widget = None
 
 class LineaBaseController(RestController):
 
@@ -31,12 +35,21 @@ class LineaBaseController(RestController):
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('generar_lineabase'))
 	def new(self, idfase, _method, **kw):
+		NewLineaBaseForm.fields = []
+
+		#items = DBSession.query(Item).all()
+		items = util.get_aprobados_sin_lineas(idfase)
+		for i in items:
+		#fields.append( TextField('codigo', label_text='Lalala' + str(i) ) )
+			NewLineaBaseForm.fields.append( CheckBox(i.codigo) )
+
+		new_linea_base_form = NewLineaBaseForm("new_linea_base_form", action = 'post')
 		tmpl_context.widget = new_linea_base_form
+
 		self.params['title'] = 'Nueva Linea Base'
 		self.params['modelname'] = 'LineaBase'
 		self.params['header_file'] = 'abstract'
 		self.params['permiso'] = 'generar_lineabase'
-		self.params['cancelar_url'] = '/miproyecto/fase/linea_base/list/'+str(idfase)
 		kw['id_fase'] = idfase
 		return dict(value=kw, params = self.params)
 
@@ -44,18 +57,40 @@ class LineaBaseController(RestController):
 	Evento invocado luego de un evento post en el form de crear
 	ecargado de persistir las nuevas instancias.
 	"""
-	@validate(new_linea_base_form, error_handler=new)
+	#@validate(_widget, error_handler=new)
 	@require(predicates.has_permission('generar_lineabase'))
 	@expose()
 	def post(self, idfase, _method, **kw):
-		del kw['sprox_id']
-		linea_base = LineaBase(**kw)
+		#del kw['sprox_id']
+		#linea_base = LineaBase(**kw)
+		listaCodigos = []
+		dic = kw
+		for d in dic:
+			listaCodigos.append(d)
+
+		listaItems = DBSession.query(Item).filter( Item.codigo.in_(listaCodigos) ).\
+											all()
+
+		numero = len(DBSession.query(LineaBase).all())
+
+		lineaBase = LineaBase()
+		lineaBase.codigo = 'LB' + str(numero+1)
+		lineaBase.estado = 1
+		lineaBase.fase = 1
+
+		for i in listaItems:
+			lineaBase.items.append(i)
+
+		DBSession.add(lineaBase)
+		"""
 		DBSession.add(linea_base)
 		linea = DBSession.query(LineaBase).\
 							filter(LineaBase.codigo==linea_base.codigo).\
 							first()
-		redirect("/miproyecto/fase/linea_base/generarLineaBase/"+
-								str(idfase)+'/'+str(linea.id_linea_base))
+		"""
+		redirect("/miproyecto/fase/linea_base/list/"+str(idfase))
+		#redirect("/miproyecto/fase/linea_base/generarLineaBase/"+
+		#						str(idfase)+'/'+str(linea.id_linea_base))
 
 	"""
 	Encargado de carga el widget para editar las instancias,
@@ -105,7 +140,7 @@ class LineaBaseController(RestController):
 		self.params['header_file'] = 'abstract'
 		self.params['permiso'] = 'generar_lineabase'
 		self.params['new_url'] = "/miproyecto/fase/linea_base/"+ str(idfase)+"/new/"
-		self.params['label'] = 'Nueva Linea Base'
+		self.params['label'] = 'Nuevo'
 		return dict(value=value, params = self.params)
 
 	"""
@@ -147,7 +182,6 @@ class LineaBaseController(RestController):
 		self.params['header_file'] = 'abstract'
 		self.params['permiso'] = 'NO MOSTRAR BOTON NUEVO'
 		self.params['new_url'] = ""
-		self.params['label'] = ''
 		value= item_filler.get_value(items)
 		"""
 		aux=[]
@@ -159,6 +193,28 @@ class LineaBaseController(RestController):
 		"""
 		return dict(value = value, params = self.params)
 
-	@expose('sap.templates.list')
-	def abrirLineaBase(self, **kw):
-		pass
+	@expose()
+	def abrirLineaBase(self, idlineabase, **kw):
+		"""
+		Metodo para abrir una linea base. Los de items de la linea base
+		se marcan con estado de revision
+		"""
+		listaItems = DBSession.query(Item).\
+								filter(Item.id_linea_base == idlineabase).all()
+		if(listaItems==None):
+			flash("La linea base no tiene items asociados")
+			return
+
+		#fase = DBSession.query(Fase).get(listaItems[0].fase)
+		#grafo = item_controller.proyectGraphConstructor(fase.proyecto)
+		for item in listaItems:
+			#item_controller.marcar_en_revision(grafo, item.id_item)
+			item.estado = 3
+			DBSession.merge(item)
+
+		flash("La linea base ha sido abierta")
+		redirect("/miproyecto/fase/linea_base/list/1")
+
+
+
+

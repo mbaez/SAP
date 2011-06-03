@@ -352,3 +352,53 @@ class ItemController(RestController):
 		gv.render(gvv,'svg',"fase.svg")
 		return dict()
 	'''
+	
+	def marcar_en_revision(self, grafo, itemId):
+		"""
+		obtener la lista de todos antecesores directos e indirectos
+		el list(set()) es para que elimine los repetidos
+		los metodos listBackwards y listForward retornan listas con elementos
+		repetidos.
+		"""
+		antecesores = list(set(self.listBackward(grafo, grafo.incidents(itemId))))
+		"""
+		se añade a la lista el propio item
+		"""
+		item = [itemId]
+		"""
+		obtener la lista de todos sucesores directos e indirectos
+		"""
+		sucesores = list(set(self.listForward(grafo, grafo.neighbors(itemId))))
+
+		#suma de listas
+		items = antecesores + item + sucesores
+
+		for idItem in items:
+			itemActual = DBSession.query(Item).get(idItem)
+			itemActual.estado = 3
+			DBSession.merge(itemActual)
+
+	"""
+	Si se quiere eliminar un item se verifica que esto no provoque que
+	otro item, de la misma fase u otra quede huerfano
+	parametros:
+	grafo digraph -> grafo completo del proyecto
+	retorna:
+		True si es que deja huerfano a algun item
+		False en caso contrario
+
+
+		TODO
+		no se si esto se aplica solo sobre items aprobados o que onda
+	"""
+	@expose()
+	def aprobar_item(self, iditem, **kw):
+		"""
+		Metodo para aprobar un item
+		"""
+		item = DBSession.query(Item).get(iditem)
+		item.estado = 1
+		idfase = item.fase
+		DBSession.merge(item)
+		flash("El item " + item.codigo+ " ha sido aprobado correctamente")
+		redirect('/miproyecto/fase/get_all/'+idfase)

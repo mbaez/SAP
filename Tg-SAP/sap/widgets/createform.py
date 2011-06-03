@@ -1,7 +1,7 @@
 """Create Form"""
 
 from tw.api import WidgetsList
-from tw.forms import TableForm, SingleSelectField, TextField, TextArea, PasswordField, SubmitButton
+from tw.forms import TableForm, SingleSelectField, TextField, TextArea, PasswordField, SubmitButton, Spacer
 from sprox.formbase import AddRecordForm
 from sap.model import *
 from sprox.widgets import *
@@ -107,14 +107,15 @@ from tw.forms.fields import CheckBox
 ####################################################
 # Widgets para creacion de Lineas Base
 ####################################################
-class NewLineaBaseForm(ExtendedAddRecordForm):
-	__model__ = LineaBase
-	__omit_fields__ = ['fase', 'items', 'id_linea_base', 'estado']
+class NewLineaBaseForm(TableForm):
+	fields = [
+		TextField('cod_usuario', label_text='Codigo'),
+		Spacer()]
 
-new_linea_base_form = NewLineaBaseForm(DBSession)
+	#fields.append( TextField('codigo', label_text='Lalala') )
+	#items = DBSession.query(Item).all()
+	#for i in items:
+		#fields.append( TextField('codigo', label_text='Lalala' + str(i) ) )
+		#fields.append( CheckBox('Item_' + str(i.id_item)) )
 
-TableForm.submit_text = 'Guardar'
-#fields = new_linea_base_form._do_get_disabled_fields()
-#atributo = TextField("HOla")
-#fields.append(atributo)
-#new_linea_base_form.__fields__.append(atributo)
+	submit_text = 'Generar'

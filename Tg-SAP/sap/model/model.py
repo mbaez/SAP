@@ -83,7 +83,7 @@ class EstadoLineaBase(DeclarativeBase):
 
 	__tablename__ = 'estado_linea_base'
 
-	id = Column ('id_estado_linea_base',Integer, autoincrement=True,
+	id_estado_linea_base = Column ('id_estado_linea_base',Integer, autoincrement=True,
 					primary_key=True)
 
 	nombre = Column ('nombre', Unicode(50), nullable=False)

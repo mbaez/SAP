@@ -144,6 +144,23 @@ def setup_app(command, conf, vars):
     estadoitem.nombre = u'estado1'
 
     model.DBSession.add(estadoitem)
+    
+    
+    """
+    Definicion de estados de Item
+    """
+    estadoItem1 = model.EstadoItem()
+    estadoItem1.nombre = 'Aprobado'
+    model.DBSession.add(estadoItem1)
+    model.DBSession.flush()
+
+    estadoItem2 = model.EstadoItem()
+    estadoItem2.nombre = 'En Desarrollo'
+    model.DBSession.add(estadoItem2)
+
+    estadoItem3 = model.EstadoItem()
+    estadoItem3.nombre = 'Revision'
+    model.DBSession.add(estadoItem3)
 
     for name in __relaciones__ :
 		relacion = model.RelacionParentesco()
@@ -162,7 +179,7 @@ def setup_app(command, conf, vars):
 		item.version = 1
 		item.prioridad = 1
 		item.complejidad = i+1
-		item.codigo = u'codigo'+str(item.fase) +' item-'+str(i)
+		item.codigo = u'codigo_'+str(i)
 		model.DBSession.add(item)
 
     for i in range(5):
@@ -174,7 +191,7 @@ def setup_app(command, conf, vars):
 		item.version = 1
 		item.prioridad = 1
 		item.complejidad = i+10
-		item.codigo = u'codigo '+str(item.fase) +'item-'+str(i)
+		item.codigo = u'codigo_'+str(i+11)
 		model.DBSession.add(item)
 
     model.DBSession.flush()
@@ -220,5 +237,10 @@ def setup_app(command, conf, vars):
 
         model.DBSession.add(rpf)
 
+    estadoLineaBase = model.EstadoLineaBase()
+    estadoLineaBase.id_estado_linea_base = 1
+    estadoLineaBase.nombre = 'Cerrada'
+    model.DBSession.add(estadoLineaBase)
+    
     transaction.commit()
     print "Successfully setup"
