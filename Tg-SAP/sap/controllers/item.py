@@ -10,8 +10,8 @@ from repoze.what import predicates
 from sap.lib.pygraph.classes.digraph import *
 from sap.lib.pygraph.algorithms.cycles import *
 from sap.lib.pygraph.readwrite.dot import write
-'''
 # Import graphviz
+"""
 import sys
 sys.path.append('..')
 sys.path.append('/usr/lib/graphviz/python/')
@@ -19,7 +19,7 @@ sys.path.append('/usr/lib64/graphviz/python/')
 import gv
 
 from pygraphviz import *
-'''
+"""
 #import de widgets
 from sap.widgets.createform import *
 from sap.widgets.listform import *
@@ -47,6 +47,7 @@ class ItemController(RestController):
 		self.params['new_url'] = '/administracion/miproyecto/fase/item/'+idfase+'/new'
 		self.params['permiso'] = 'crear_item'
 		self.params['idfase'] = idfase
+		self.params['cancelar_url'] = '/miproyecto/fase/get_all/'+str(idfase)
 		return dict(value=kw, params=self.params)
 
 	"""

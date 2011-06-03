@@ -30,7 +30,7 @@ class ProyectoController(RestController):
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
 	"""
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':''}
+	'idfase':'','permiso':'', 'label': '', 'cancelar_url':''}
 	
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_proyecto'))
@@ -40,9 +40,7 @@ class ProyectoController(RestController):
 		self.params['modelname'] = 'Proyecto'
 		self.params['header_file'] = 'abstract'
 		self.params['permiso'] = 'crear_proyecto'
-		self.params['modelname'] = 'Proyecto'
-		self.params['header_file'] = 'abstract'
-		self.params['permiso'] = 'crear_proyecto'
+		self.params['cancelar_url'] = '/administracion/proyecto'
 		return dict(value=kw, params=self.params)
 
 	"""
@@ -129,6 +127,7 @@ class ProyectoController(RestController):
 		self.params['header_file'] = 'abstract'
 		self.params['new_url'] = '/administracion/proyecto/new'
 		self.params['permiso'] = 'ver_proyecto'
+		self.params['label'] = 'Nuevo Proyeco'
 		return dict(value=value, params=self.params)
 
 	"""
@@ -145,6 +144,7 @@ class ProyectoController(RestController):
 		self.params['header_file'] = 'abstract'
 		self.params['new_url'] = '/administracion/proyecto/new'
 		self.params['permiso'] = 'ver_proyecto'
+		self.params['label'] = 'Nuevo Proyecto'
 		return dict(value=value, params=self.params)
 
 

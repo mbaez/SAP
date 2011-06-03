@@ -33,7 +33,7 @@ class UsuarioContoller(RestController):
 	no se pueda acceder a al formulario atravez de la url.
 	"""
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':''}
+	'idfase':'','permiso':'', 'label': '', 'cancelar_url':''}
 	
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_usuario'))
@@ -42,6 +42,7 @@ class UsuarioContoller(RestController):
 		self.params['title'] = 'Nuevo usuario'
 		self.params['modelname'] = 'Usuario'
 		self.params['header_file'] = 'administracion'
+		self.params['cancelar_url'] = '/administracion/usuario'
 		return dict(value=kw,params=self.params)
 
 	@validate(new_usuario_form, error_handler=new)
@@ -86,6 +87,7 @@ class UsuarioContoller(RestController):
 		self.params['header_file'] = 'administracion'
 		self.params['permiso'] = 'crear_usuario'
 		self.params['new_url'] = '/administracion/usuario/new'
+		self.params['label'] = 'Nuevo Usuario'
 		return dict(value=value,params=self.params)
 
 	@expose()

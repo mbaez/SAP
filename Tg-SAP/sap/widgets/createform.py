@@ -74,10 +74,11 @@ new_atributo_form = NewAtributoForm(DBSession)
 class NewItemForm(ExtendedAddRecordForm):
 	__model__ = Item
 	__omit_fields__ = ['__actions__','id_item', 'tipo_item', 'fase', 'version',
-	'estado']
-	__dropdown_field_names__ = {'tipo_item_relacion':'nombre'}
+	'estado', 'linea_base']
+	__dropdown_field_names__ = {'tipo_item_relacion':'nombre', 
+										'estado_actual':'nombre'}
 	tipo_item_relacion = ExtendedTipoItemField
-
+	
 new_item_form = NewItemForm(DBSession)
 
 ####################################################
@@ -111,6 +112,8 @@ class NewLineaBaseForm(ExtendedAddRecordForm):
 	__omit_fields__ = ['fase', 'items', 'id_linea_base', 'estado']
 
 new_linea_base_form = NewLineaBaseForm(DBSession)
+
+TableForm.submit_text = 'Guardar'
 #fields = new_linea_base_form._do_get_disabled_fields()
 #atributo = TextField("HOla")
 #fields.append(atributo)

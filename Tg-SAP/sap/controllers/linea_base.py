@@ -22,7 +22,7 @@ from tg.controllers import RestController
 class LineaBaseController(RestController):
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':''}
+	'idfase':'','permiso':'', 'cancelar_url':''}
 
 	"""
 	Encargado de carga el widget para crear nuevas instancias,
@@ -36,6 +36,7 @@ class LineaBaseController(RestController):
 		self.params['modelname'] = 'LineaBase'
 		self.params['header_file'] = 'abstract'
 		self.params['permiso'] = 'generar_lineabase'
+		self.params['cancelar_url'] = '/miproyecto/fase/linea_base/list/'+str(idfase)
 		kw['id_fase'] = idfase
 		return dict(value=kw, params = self.params)
 
@@ -104,6 +105,7 @@ class LineaBaseController(RestController):
 		self.params['header_file'] = 'abstract'
 		self.params['permiso'] = 'generar_lineabase'
 		self.params['new_url'] = "/miproyecto/fase/linea_base/"+ str(idfase)+"/new/"
+		self.params['label'] = 'Nueva Linea Base'
 		return dict(value=value, params = self.params)
 
 	"""
@@ -129,14 +131,14 @@ class LineaBaseController(RestController):
 		items = DBSession.query(Item).filter(Item.id_item == LineaBaseItem.id_item).\
 									filter(Item.fase == idfase).\
 									filter(LineaBaseItem.id_linea_base == id_linea_base).all()
-		
+
 		value = item_filler.get_value(items)
 		header_file = "abstract"
 		new_url = "/miproyecto/fase/linea_base/" + str(idfase) + "/new"
 		return dict(modelname='LineaBases', header_file=header_file, new_url=new_url, value=value)
 
 	@expose('sap.templates.list')
-	def generarLineaBase(self, idfase, idtipo, **kw):
+	def generarLineaBase(self, idfase, idlineabase, **kw):
 		tmpl_context.widget = item_table
 		items = util.get_aprobados_sin_lineas(idfase)
 
@@ -145,6 +147,7 @@ class LineaBaseController(RestController):
 		self.params['header_file'] = 'abstract'
 		self.params['permiso'] = 'NO MOSTRAR BOTON NUEVO'
 		self.params['new_url'] = ""
+		self.params['label'] = ''
 		value= item_filler.get_value(items)
 		"""
 		aux=[]
@@ -155,3 +158,7 @@ class LineaBaseController(RestController):
 			value=value+aux
 		"""
 		return dict(value = value, params = self.params)
+
+	@expose('sap.templates.list')
+	def abrirLineaBase(self, **kw):
+		pass

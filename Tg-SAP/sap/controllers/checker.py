@@ -448,8 +448,8 @@ class SessionUtil() :
 			historial_relacion.id_item_1 = relacion.id_item_actual
 			historial_relacion.id_item_2 = relacion.id_item_relacionado
 			historial_relacion.id_tipo_relacion = relacion.relacion_parentesco
-			historial.relaciones.append(historial_relacion)		
-		
+			historial.relaciones.append(historial_relacion)
+			
 		DBSession.add(historial)
 
 	def get_aprobados_sin_lineas (self, idfase):

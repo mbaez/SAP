@@ -18,7 +18,7 @@ from sap.controllers.checker import *
 class ParticipanteController(RestController):
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-			  'idfase':'','permiso':''}
+			  'idfase':'','permiso':'', 'label':'' }
 
 	current_fase = None
 	

@@ -22,7 +22,7 @@ header_file="administracion"
 class RolController(RestController):
 	
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':''}
+	'idfase':'','permiso':'', 'label':'', 'cancelar_url':''}
 
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_rol'))
@@ -32,6 +32,7 @@ class RolController(RestController):
 		self.params['modelname'] = 'Rol'
 		self.params['header_file'] = 'abstract'
 		self.params['permiso'] = 'crear_rol'
+		self.params['cancelar_url'] = '/administracion/rol'
 		return dict(value=kw, params=self.params)
 
 	@validate(new_rol_form, error_handler=new)
@@ -90,6 +91,7 @@ class RolController(RestController):
 		self.params['modelname'] = 'Roles'
 		self.params['header_file'] = header_file
 		self.params['permiso'] = 'crear_rol'
+		self.params['label'] = 'Nuevo Rol'
 		return dict(value=value, params=self.params)
 
 	@expose()

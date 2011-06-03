@@ -49,7 +49,8 @@ class RootController(BaseController):
 
 	miproyecto = ProyectosController()
 
-	params = {'title':'','header_file':'','modelname':'', 'new_url':'','permiso':''}
+	params = {'title':'','header_file':'','modelname':'', 
+				'new_url':'','permiso':'', 'label':''}
 
 	@expose('sap.templates.index')
 	def index(self):
@@ -125,6 +126,7 @@ class RootController(BaseController):
 		self.params['header_file'] = 'administracion'
 		self.params['new_url'] = '/administracion/proyecto/new'
 		self.params['permiso'] = 'crear_proyecto'
+		self.params['label'] = 'Nuevo Proyecto'
 		return dict(value=value, params = self.params)
 	"""
 	metodo para probar el calculo de impacto

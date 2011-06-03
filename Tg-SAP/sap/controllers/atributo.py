@@ -27,7 +27,7 @@ from tg.controllers import RestController
 class AtributoController(RestController):
 	
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idtipo':'','permiso':''}
+	'idtipo':'','permiso':'', 'label':'', 'cancelar_url': '', 'idfase':''}
 
 	"""
 	Encargado de carga el widget para crear nuevas instancias,
@@ -40,6 +40,7 @@ class AtributoController(RestController):
 		self.params['modelname'] = "Atributos del Tipo de Item"
 		self.params['idtipo'] = idtipo
 		self.params['header_file'] = 'tipo_item'
+		self.params['cancelar_url'] = '/miproyecto/fase/tipo_item/atributos/list/'+str(idtipo)
 		return dict(value=kw, params=self.params)
 
 	"""
@@ -103,6 +104,7 @@ class AtributoController(RestController):
 							filter(AtributoTipoItem.tipo_item==idtipo).\
 							all()
 		value = atributo_filler.get_value(atributos)
+		self.params['label'] = 'Agregar Atributo'
 		self.params['header_file'] = "tipo_item"
 		self.params['modelname'] = "Atributos"
 		self.params['permiso'] = "crear_tipo_item"

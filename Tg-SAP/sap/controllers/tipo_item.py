@@ -24,7 +24,7 @@ class TipoItemController(RestController):
 	
 	atributos = AtributoController()
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':''}
+	'idfase':'','permiso':'','label': '', 'cancelar_url':''}
 	"""
 	Encargado de carga el widget para crear nuevas instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
@@ -36,6 +36,7 @@ class TipoItemController(RestController):
 		self.params['modelname'] = "Tipo de Item"
 		self.params['header_file'] = 'tipo_item'
 		self.params['idfase'] = idfase
+		self.params['cancelar_url'] = '/miproyecto/fase/tipo_item/list/'+str(idfase)
 		return dict(value=kw, params=self.params)
 
 	"""
@@ -56,7 +57,8 @@ class TipoItemController(RestController):
 							filter(TipoItem.nombre==tipo_item.nombre).\
 							filter(TipoItem.descripcion==tipo_item.descripcion).\
 							first()
-		redirect('/miproyecto/fase/tipo_item/atributos/'+tipo.id_tipo_item+'/new')
+		redirect('/miproyecto/fase/tipo_item/atributos/'
+											+str(tipo.id_tipo_item)+'/new')
 	"""
 	Encargado de carga el widget para editar las instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de editar
@@ -110,6 +112,7 @@ class TipoItemController(RestController):
 		self.params['new_url'] = "/miproyecto/fase/tipo_item/"+idfase+"/new"
 		self.params['idfase'] = idfase
 		self.params['permiso'] = 'crear_tipo_item'
+		self.params['label'] = 'Nuevo Tipo de Item'
 		return dict(value=value, params=self.params)
 
 	"""
@@ -166,6 +169,7 @@ class TipoItemController(RestController):
 		self.params['idfase'] = idfase
 		self.params['modelname'] = "Tipos de Items de Otros Proyectos" 
 		self.params['permiso'] = 'NO SE MUESTRA EL BOTON NUEVO'
+		self.params['label'] = ''
 		return dict(value=value, params=self.params)
 	
 	@require( predicates.has_permission('editar_tipo_item'))

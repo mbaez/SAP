@@ -21,7 +21,7 @@ from sap.controllers.item import *
 class RelacionController(RestController):
 	
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':''}
+	'idfase':'','permiso':'', 'label': '', 'cancelar_url': ''}
 
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('editar_item'))
@@ -37,6 +37,8 @@ class RelacionController(RestController):
 		self.params['idfase'] = idfase
 		self.params['modelname'] = "Relacion"
 		self.params['permiso'] = 'editar_item'
+		self.params['cancelar_url'] = '/miproyecto/fase/relacion/list/'+str(idfase)
+		
 		return dict(value=kw, params=self.params)
 	"""
 	Evento invocado luego de un evento post en el form de crear
@@ -131,4 +133,5 @@ class RelacionController(RestController):
 		self.params['idfase'] = idfase
 		self.params['modelname'] = "Relaciones" 
 		self.params['permiso'] = 'editar_item'
+		self.params['label'] = 'Nueva Relacion'
 		return dict(value=value, params=self.params)

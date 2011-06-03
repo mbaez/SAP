@@ -28,7 +28,7 @@ from tg.controllers import RestController
 class FaseController(RestController):
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':''}
+	'idfase':'','permiso':'', 'label': '', 'cancelar_url': ''}
 
 	item = ItemController()
 	tipo_item = TipoItemController()
@@ -51,6 +51,7 @@ class FaseController(RestController):
 		self.params['modelname'] = 'Fase'
 		self.params['header_file'] = 'abstract'
 		self.params['permiso'] = 'crear_fase'
+		self.params['cancelar_url'] = '/miproyecto/ver/'+str(idproyecto)
 		return dict(value=kw, params = self.params)
 
 	@validate(new_fase_form, error_handler=new)
@@ -144,5 +145,6 @@ class FaseController(RestController):
 		self.params['idfase'] = idfase
 		self.params['fase'] = DBSession.query(Fase).get(idfase)
 		self.params['new_url'] = '/miproyecto/fase/item/'+idfase+'/new/'
+		self.params['label'] = 'Agregar Atributo'
 		return dict(value=value, params = self.params)
 
