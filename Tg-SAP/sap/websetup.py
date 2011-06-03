@@ -137,15 +137,15 @@ def setup_app(command, conf, vars):
     tipodeitem2.fase = fase2.id_fase
     tipodeitem2.nombre = u'tipo2'
     tipodeitem2.codigo = u'codigo tipo2'
-    
+
     model.DBSession.add(tipodeitem2)
 
     estadoitem = model.EstadoItem()
     estadoitem.nombre = u'estado1'
 
     model.DBSession.add(estadoitem)
-    
-    
+
+
     """
     Definicion de estados de Item
     """
@@ -172,7 +172,7 @@ def setup_app(command, conf, vars):
 
     for i in range(10):
 		item = model.Item()
-		item.nombre = u'item '+str(i)  
+		item.nombre = u'item '+str(i)
 		item.estado = 1
 		item.tipo_item = 1
 		item.fase = 1
@@ -184,7 +184,7 @@ def setup_app(command, conf, vars):
 
     for i in range(5):
 		item = model.Item()
-		item.nombre = u'item '+str(i)  
+		item.nombre = u'item '+str(i)
 		item.estado = 1
 		item.tipo_item = 2
 		item.fase = 2
@@ -230,10 +230,10 @@ def setup_app(command, conf, vars):
 
         model.DBSession.add(rpp)
 
-        rpf = model.RolPermisoFase()
+        rpf = model.UsuarioPermisoFase()
         rpf.fase_id = 1
         rpf.permiso_id = i+1
-        rpf.rol_id = 1
+        rpf.usuario_id = 1
 
         model.DBSession.add(rpf)
 
@@ -241,6 +241,6 @@ def setup_app(command, conf, vars):
     estadoLineaBase.id_estado_linea_base = 1
     estadoLineaBase.nombre = 'Cerrada'
     model.DBSession.add(estadoLineaBase)
-    
+
     transaction.commit()
     print "Successfully setup"

@@ -22,18 +22,18 @@ class ParticipanteController(RestController):
 			  'idfase':'','permiso':''}
 
 	_current_fase = None
-	
+
 	@expose('sap.templates.fase')
 	@require(predicates.has_permission('administrar_participantes'))
 	def admin(self, id , **kw):
 		"""
-		
+
 		@type  id : Integer
 		@param id : Identificador del proyecto.
-		
+
 		@type  kw :
-		@param kw : 
-		
+		@param kw :
+
 		@rtype  : Diccionario
 		@return : El diccionario que sera utilizado en el template.
 		"""
@@ -46,27 +46,32 @@ class ParticipanteController(RestController):
 
 		roles = util.get_roles_by_proyectos(fase.proyecto)
 		value = participantes_fase_filler.get_value(roles)
-		
+
 		self.params['modelname'] = 'Participantes'
 		self.params['text_header'] = 'Lista de roles'
 		self.params['fase'] = fase
 		self.params['usuarios'] = usuarios
-		
+
 		return dict(value=value, params=self.params)
 
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('administrar_participantes'))
 	def edit(self, id,**kw):
 		tmpl_context.widget = rol_usuario_edit_form
+		rol = DBSession.query(Rol).get(id)
 		kw['rol_id'] = id
-
-		value = rol_usuario_edit_filler.get_value(kw)
+		if rol.is_template == True :
+			kw['codigo'] = rol.codigo
+			kw['nombre'] = rol.nombre
+			value = kw
+		else:
+			value = rol_usuario_edit_filler.get_value(kw)
 
 		fase = self._get_current_fase()
 		usuarios = util.get_usuarios_by_fase(fase.proyecto)
-		
+
 		print "Usuarios "+ str(usuarios)
-		
+
 		#self.params['fase'] = fase
 		self.params['usuarios'] = usuarios
 		self.params['modelname'] = 'Participantes'
@@ -77,11 +82,12 @@ class ParticipanteController(RestController):
 	@expose()
 	@require(predicates.has_permission('administrar_participantes'))
 	def put(self, id, **kw):
-		rol = DBSession.query(Rol).get(int(kw['rol_id']))
+		#rol = DBSession.query(Rol).get(int(kw['rol_id']))
 		fase = self._get_current_fase()
-		util.asociar_rol_fase(rol.codigo, fase.id_fase)
+		for usuario_id in kw['usuarios'] :
+			util.asociar_usuario_fase(usuario_id, fase.id_fase)
 
-		flash("El rol ha sido"+rol.nombre+" asignado a la fase "+ str(fase.id_fase)+".")
+		flash("Los Usuarios <"+str(kw['usuarios'])+"> fueron asignados a la fase "+ str(fase.id_fase)+".")
 		redirect("/miproyecto/fase/participantes/admin/" + str(fase.proyecto) )
 
 	def _get_current_fase(self, id=0):

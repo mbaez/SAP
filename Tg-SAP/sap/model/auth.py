@@ -25,7 +25,7 @@ from sqlalchemy.orm import relation, synonym, mapper
 
 from sap.model import DeclarativeBase, metadata, DBSession, model
 
-__all__ = ['Usuario', 'Rol', 'Permiso', 'RolPermisoProyecto', 'RolPermisoFase','RolUsuario', 'RolPermiso']
+__all__ = ['Usuario', 'Rol', 'Permiso', 'RolPermisoProyecto', 'UsuarioPermisoFase','RolUsuario', 'RolPermiso']
 
 
 #{ Association tables
@@ -64,10 +64,10 @@ rol_permiso_proyecto_table = Table( 'rol_permiso_proyecto', metadata,
 			onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
 )
 
-rol_permiso_fase_table = Table( 'rol_permiso_fase', metadata,
+usuario_permiso_fase_table = Table( 'rol_permiso_fase', metadata,
 
-	Column('rol_id', Integer, ForeignKey('rol.rol_id',
-		onupdate="CASCADE", ondelete="CASCADE"),primary_key=True),
+	Column('usuario_id', Integer, ForeignKey('usuario.usuario_id',
+			onupdate="CASCADE", ondelete="CASCADE"), primary_key=True),
 
 	Column('permiso_id', Integer, ForeignKey('permiso.permiso_id',
 		onupdate="CASCADE", ondelete="CASCADE"),primary_key=True),
@@ -85,7 +85,7 @@ class RolPermiso(object):
 class RolPermisoProyecto(object):
 	pass
 
-class RolPermisoFase(object):
+class UsuarioPermisoFase(object):
 	pass
 
 mapper(RolPermisoProyecto, rol_permiso_proyecto_table)
@@ -94,7 +94,7 @@ mapper(RolUsuario, usuario_rol_table)
 
 mapper(RolPermiso , rol_permiso_table)
 
-mapper(RolPermisoFase, rol_permiso_fase_table)
+mapper(UsuarioPermisoFase, usuario_permiso_fase_table)
 #} Association tables
 
 #{ The auth* model itself

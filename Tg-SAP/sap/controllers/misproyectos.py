@@ -20,12 +20,12 @@ from sap.controllers.checker import *
 class ProyectosController(RestController):
 
 	fase = FaseController()
-	
+
 	_current_proyect = None
-	
+
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 			  'idfase':'','permiso':''}
-	
+
 	@expose('sap.templates.miproyecto')
 	@require(predicates.has_permission('ver_proyecto'))
 	def ver(self, idproyecto):
@@ -33,15 +33,15 @@ class ProyectosController(RestController):
 		se obtiene la lista de las fases sobre las cuales el usurio
 		tiene permisos de 'ver' y que pertenecen al proyecto que
 		selecciono.
-		
+
 		@type  idproyecto : Integer
 		@param idproyecto : Identificador del proyecto.
-		
+
 		@rtype  : Diccionario
 		@return : El diccionario que sera utilizado en el template.
 		"""
 		tmpl_context.widget = fase_table
-		
+
 		#listar todas las fases y mostrar unicamente el link de ver en aquellas
 		#fases en los que posee permisos.
 		fases = checker.get_fases_by_proyecto_list(idproyecto, 'ver_fase')
@@ -50,7 +50,7 @@ class ProyectosController(RestController):
 		proyecto = self._get_current_proyect(idproyecto)
 		usuarios = util.get_usuarios_by_permiso(idproyecto)
 		text_header='Listado de Fases del Proyecto'
-		
+
 		self.params['modelname'] = 'Fases'
 		self.params['text_header'] = 'Listado de Fases del Proyecto'
 		self.params['idproyecto'] = idproyecto
@@ -62,13 +62,13 @@ class ProyectosController(RestController):
 	@require(predicates.has_permission('administrar_participantes'))
 	def participantes(self, idproyecto , **kw):
 		"""
-		
+
 		@type  idproyecto : Integer
 		@param idproyecto : Identificador del proyecto.
-		
+
 		@type  kw :
-		@param kw : 
-		
+		@param kw :
+
 		@rtype  : Diccionario
 		@return : El diccionario que sera utilizado en el template.
 		"""
@@ -79,7 +79,7 @@ class ProyectosController(RestController):
 
 		roles = util.get_roles_by_proyectos(idproyecto)
 		value = participantes_filler.get_value(roles)
-		
+
 		self.params['modelname'] = 'Participantes'
 		self.params['text_header'] = 'Lista de roles'
 		self.params['proyecto'] = proyecto
@@ -91,12 +91,17 @@ class ProyectosController(RestController):
 	def edit(self, id,**kw):
 		tmpl_context.widget = rol_usuario_edit_form
 		kw['rol_id'] = id
-
-		value = rol_usuario_edit_filler.get_value(kw)
+		rol = DBSession.query(Rol).get(id)
+		if rol.is_template == True :
+			kw['codigo'] = rol.codigo
+			kw['nombre'] = rol.nombre
+			value = kw
+		else:
+			value = rol_usuario_edit_filler.get_value(kw)
 
 		proyecto = self._get_current_proyect()
 		usuarios = util.get_usuarios_by_permiso(proyecto.id_proyecto)
-		
+
 		self.params['modelname'] = 'Rol'
 		self.params['header_file'] = 'proyecto'
 		return dict(value=value, params=self.params)
@@ -108,7 +113,7 @@ class ProyectosController(RestController):
 		rol = DBSession.query(Rol).get(int(kw['rol_id']))
 
 		proyecto = self._get_current_proyect()
-		
+
 		rol.usuarios = []
 
 		for user_id in kw['usuarios'] :
