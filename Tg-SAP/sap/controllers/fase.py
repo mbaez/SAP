@@ -21,7 +21,7 @@ from sap.controllers.item import *
 from sap.controllers.tipo_item import TipoItemController
 from sap.controllers.relacion import RelacionController
 from sap.controllers.linea_base import LineaBaseController
-from sap.controllers.participante import ParticipanteController
+from sap.controllers.participante import ParticipanteFaseController
 #import del controlador
 from tg.controllers import RestController
 
@@ -34,9 +34,9 @@ class FaseController(RestController):
 	tipo_item = TipoItemController()
 	relacion = RelacionController()
 	linea_base = LineaBaseController()
-	
+
 	""" Contorlador de los participantes de la fase"""
-	participantes = ParticipanteController()
+	participantes = ParticipanteFaseController()
 
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_fase'))

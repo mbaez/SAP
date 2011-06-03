@@ -2152,15 +2152,23 @@ p.kleur{
  *#              Edited by: Mbaez              #
  *##############################################
  */
-
-#edit-row{
-	background: url(../img/icons/document_edit_small.png)no-repeat left center
-	height: 4px;
-	width:76px;
+a.edit-row{
+	background: url(../img/icons/document_edit_small.png) no-repeat left center;
+	height: 16px;
 	display: block;
-	#padding: 0 0 0 20px;
+	text-indent: 18px;
+	width: 16px;
 	text-transform: capitalize;
 }
+.grid td a.delete-row{
+	/*background: url(../img/icons/notification_error.png) no-repeat right center;*/
+	height: 20px;
+	color:#004FE0;
+	text-indent: 18px;
+	width: 16px;
+	text-transform: uppercase;
+}
+
 input[type="delete"], .button {
 	background: url(../img/icons/notification_error.png) no-repeat right center;
 	height: 4px;

@@ -125,7 +125,7 @@ participantes_table = ParticipantesTable(DBSession);
 participantes_fase_filler = create_widget(ParticipantesModelDecorator, LabelActionDecorator)
 
 #Crea el table filler de los participantes por proyecto
-participantes_filler = create_widget(ParticipantesModelDecorator, LabelActionDecorator, '/miproyecto/')
+participantes_filler = create_widget(ParticipantesModelDecorator, LabelActionDecorator, '/miproyecto/participantes/')
 
 ####################################################
 # Widgets de los atributos del tipo de item

@@ -15,11 +15,13 @@ from sap.widgets.listform import *
 from sap.widgets.editform import *
 #impot del checker de permisos
 from sap.controllers.checker import *
-
+from sap.controllers.participante import ParticipanteProyectoController
 
 class ProyectosController(RestController):
 
 	fase = FaseController()
+
+	participantes = ParticipanteProyectoController()
 
 	_current_proyect = None
 
@@ -57,70 +59,6 @@ class ProyectosController(RestController):
 		self.params['proyecto'] = proyecto
 		self.params['usuarios'] = usuarios
 		return dict(value=value, params=self.params)
-
-	@expose('sap.templates.miproyecto')
-	@require(predicates.has_permission('administrar_participantes'))
-	def participantes(self, idproyecto , **kw):
-		"""
-
-		@type  idproyecto : Integer
-		@param idproyecto : Identificador del proyecto.
-
-		@type  kw :
-		@param kw :
-
-		@rtype  : Diccionario
-		@return : El diccionario que sera utilizado en el template.
-		"""
-		proyecto = self._get_current_proyect(idproyecto)
-		usuarios = util.get_usuarios_by_permiso(idproyecto)
-
-		tmpl_context.widget = participantes_table
-
-		roles = util.get_roles_by_proyectos(idproyecto)
-		value = participantes_filler.get_value(roles)
-
-		self.params['modelname'] = 'Participantes'
-		self.params['text_header'] = 'Lista de roles'
-		self.params['proyecto'] = proyecto
-		self.params['usuarios'] = usuarios
-		return dict(value=value, params=self.params)
-
-	@expose('sap.templates.edit')
-	@require(predicates.has_permission('administrar_participantes'))
-	def edit(self, id,**kw):
-		tmpl_context.widget = rol_usuario_edit_form
-		kw['rol_id'] = id
-		rol = DBSession.query(Rol).get(id)
-		if rol.is_template == True :
-			kw['codigo'] = rol.codigo
-			kw['nombre'] = rol.nombre
-			value = kw
-		else:
-			value = rol_usuario_edit_filler.get_value(kw)
-
-		proyecto = self._get_current_proyect()
-		usuarios = util.get_usuarios_by_permiso(proyecto.id_proyecto)
-
-		self.params['modelname'] = 'Rol'
-		self.params['header_file'] = 'proyecto'
-		return dict(value=value, params=self.params)
-
-	@validate(rol_usuario_edit_form, error_handler=edit)
-	@expose()
-	@require(predicates.has_permission('administrar_participantes'))
-	def put(self, id, **kw):
-		rol = DBSession.query(Rol).get(int(kw['rol_id']))
-
-		proyecto = self._get_current_proyect()
-
-		rol.usuarios = []
-
-		for user_id in kw['usuarios'] :
-			util.asignar_participante(user_id,rol.codigo,proyecto.id_proyecto)
-
-		flash("El rol ha sido "+rol.nombre+" modificado correctamente.")
-		redirect("/miproyecto/participantes/" + str(proyecto.id_proyecto) )
 
 	def _get_current_proyect(self, id=0):
 		if self._current_proyect == None:

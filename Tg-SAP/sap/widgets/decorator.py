@@ -122,16 +122,16 @@ class AcctionDecorator (Decorator):
 ###############################################################################
 class EditActionDecorator(Decorator):
 	__html__ = 	"""
-				<a class= "edit-project" style= '##editstate##;' href='##url####id##/edit'>editar</a>
+				<a class= "edit-row" style= '##editstate##;' href='##url####id##/edit'>editar</a>
 				<div>
 					<form style= '##deletestate##;' method='POST'
 							action='##id##' >
 						<input type='hidden' name='_method'
 							value='DELETE' >
 						</input>
-						<input class='delete-row'
+						<a class='delete-row'
 							onclick="return confirm('Are you sure?');"
-							value='eliminar' type='delete' ></input>
+							value='eliminar' type='delete' > eliminar</a>
 					</form>
 				</div>
 				"""
