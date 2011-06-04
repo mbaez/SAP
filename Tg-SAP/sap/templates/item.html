@@ -18,22 +18,26 @@
 <body>
 	${sub_header()}
 	<section id="inner-content">
-		<aside id="dashboard-sidebar">
-			<div class="project-info">
-				<h4>Fase info
-					<span>
-						<a class="edit-project" >Edit</a>
-					</span>
-				</h4>
-				<h5>Nombre </h5>
-				<p></p>
-				<p>${params['fase'].nombre}</p>
-				<p></p>
-				<h5>Descripcion </h5>
+		<aside id="content-sidebar">
+			<div class="filters">
+				<h4>Operaciones</h4>
 				<div id="selected-tags">
+					<h5>Item: ${params['item'].nombre}</h5>
+					<ul>
+						<li> <a class = "tag beige">Calculo de Impacto</a></li>
+						<p></p>
+						<h5>Revertir</h5>
+						<p></p>
+						<h5>Aprobar Item</h5>
+						<p></p>
+						<h5>Eliminar Item</h5>
+						<p></p>
+						<h5>Editar Item</h5>
+						<p></p>
+						<h5>Gestionar Atributos</h5>
+						<p></p>
+					</ul>
 				</div>
-				<p></p>
-				<p>${params['fase'].descripcion}</p>
 				<p></p>
 			</div>
 			<!--div class="project-info">
@@ -56,7 +60,7 @@
 			</div-->
 		</aside>
 
-		<li class="main" style="width: 60%; ">
+		<li class="main" style="width: 80%; ">
 			<div class="block">
 			<h3>
 				<a>Item : #${params['item'].id_item}</a>

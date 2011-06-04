@@ -22,7 +22,7 @@
 			<div class="project-info">
 				<h4>Fase info
 					<span>
-						<a class="edit-project" >Edit</a>
+						<a class="edit-project" py:if="params['permiso_editar']">Edit</a>
 					</span>
 				</h4>
 				<h5>Nombre </h5>
@@ -39,7 +39,8 @@
 			<div class="project-info">
 				<h4>Participantes
 					<span>
-						<a class="add-member" href="/miproyecto/fase/participantes/admin/${params['idfase']}">A&ntilde;adir</a>
+						<a class="add-member" py:if="params['permiso_anadir']"
+							href="/miproyecto/fase/participantes/admin/${params['idfase']}">A&ntilde;adir</a>
 					</span>
 				</h4>
 				<ul id="team">
@@ -56,12 +57,10 @@
 			</div>
 		</aside>
 		<h2>Listado de ${params['modelname']}</h2>
-		<br/>
-		<br/>
 		<div style="float:left; width: 60%">
 			${tmpl_context.widget(value=value)}
 		</div>
-		
+
 	</section>
 	<a class = "add-button" py:if="tg.predicates.has_permission(params['permiso'])"
 			style="width:120px; margin-top:10px" href="${params['new_url']}">

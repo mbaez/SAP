@@ -21,7 +21,7 @@
 		<aside id="dashboard-sidebar">
 			<div class="project-info">
 				<h4>Proyecto info
-					<span><a class="edit-project"
+					<span><a class="edit-project" py:if="params['permiso_editar']"
 						href = "/administracion/proyecto/${params['proyecto'].id_proyecto}/edit">Edit</a>
 					</span></h4>
 				<h5>Nombre </h5>
@@ -38,7 +38,7 @@
 			<div class="project-info">
 				<h4>Participantes
 					<span>
-						<a href="/miproyecto/participantes/admin/${params['proyecto'].id_proyecto}" class="add-member">A&ntilde;adir</a>
+						<a py:if="params['permiso_anadir']" href="/miproyecto/participantes/admin/${params['proyecto'].id_proyecto}" class="add-member">A&ntilde;adir</a>
 					</span>
 				</h4>
 				<ul id="team">
@@ -55,13 +55,14 @@
 			</div>
 		</aside>
 		<h2> ${params['text_header']}</h2>
-		<br/>
-		<br/>
 		<div style="float:left; width: 60%">
 			${tmpl_context.widget(value=value)}
 		</div>
+	<a class = "add-button" py:if="tg.predicates.has_permission(params['permiso'])"
+			style="width:80px; margin-top:10px" href="${params['new_url']}">
+			${params['label']}
+	</a>
 	</section>
-
 </body>
 </html>
 

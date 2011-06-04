@@ -346,6 +346,7 @@ class FaseModelDecorator(ExtendedTableList, Decorator):
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
 		has_permiso = True
+		has_permiso = checker.check_fase_permiso(id, permiso_name, True)
 		return super(FaseModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
 
 	def replace(self,action, url, id):

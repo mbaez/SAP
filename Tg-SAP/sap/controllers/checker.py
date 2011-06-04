@@ -18,126 +18,6 @@ import transaction
    :mail: mxbg.py@gmail.com
 """
 
-class SessionChecker():
-
-	def check_proyecto_permiso(self, id_proyecto, permiso_name,nuleable=False):
-		"""
-		Controla si el usuario que actualmente se encuentra logeado posee
-		el deteminado permiso sobre un proyecto.
-
-		@type   id_proyecto : Integer
-		@param  id_proyecto : Identificador del proyecto
-
-		@type  permiso_name : String
-		@param permiso_name : Nombre del permiso
-
-		@type      nuleable : Boolean
-		@param     nuleable : Variable de control del valor de retorno.
-							  Si es True y el usuario no posee permisos
-							  retorna None
-
-		@rtype  : Predicates
-		@return : retorna las credenciales del usuario
-		"""
-		current_user = self.get_current_user()
-		rol_permiso_proyecto = DBSession.query(RolPermisoProyecto).\
-								filter(RolPermisoProyecto.rol_id ==
-									RolUsuario.rol_id).\
-								filter(RolPermisoProyecto.proyecto_id ==
-									id_proyecto).\
-								filter(Permiso.permiso_id ==
-									RolPermisoProyecto.permiso_id).\
-								filter(Permiso.nombre ==
-									permiso_name).\
-								filter(RolUsuario.usuario_id ==
-									current_user.usuario_id).\
-								all()
-
-		if (len(rol_permiso_proyecto) != 0):
-			return predicates.has_permission(permiso_name)
-		elif nuleable == False:
-			#return predicates.has_permission(permiso_name+' '+str(id_proyecto))
-			return predicates.unmet()
-		else:
-			return None
-
-	def get_current_user(self):
-		"""
-		Obtiene el username del usuario que se encuentra actualmente
-		logeado en el sistema de la cabecera http y recupera
-		de la base de datos el usuario.
-
-		@rtype  : Usuario
-		@return : retorna una instancia de la clase usuario
-		"""
-		identity = request.environ.get('repoze.who.identity')
-		username = identity['repoze.who.userid']
-
-		current_user = DBSession.query(Usuario).\
-				filter(Usuario.user_name == username ).\
-				first()
-
-		return current_user
-
-
-	def get_poyect_list(self, permiso_name):
-		"""
-		Obtiene un lista de los proyectos para los cuales el usuario
-		que se encuentra logeado posee el correspondiente permiso.
-
-		@type  permiso_name : String
-		@param permiso_name : Nombre del permiso
-
-		@rtype  : Proyecto [ ]
-		@return : retorna una lista de los poryectos
-		"""
-		current_user = self.get_current_user()
-
-		proyectos = DBSession.query(Proyecto).\
-					filter(	RolPermisoProyecto.rol_id ==
-							RolUsuario.rol_id).\
-					filter(	RolPermisoProyecto.proyecto_id ==
-							Proyecto.id_proyecto).\
-					filter(	Permiso.permiso_id ==
-							RolPermisoProyecto.permiso_id).\
-					filter(	Permiso.nombre ==
-							permiso_name).\
-					filter(	RolUsuario.usuario_id ==
-							current_user.usuario_id).\
-					all()
-		return proyectos
-
-
-	def get_fases_by_proyecto_list(self, idproyecto, permiso_name):
-		"""
-		Obtiene un lista de las fases que pertenecen a un proyecto, para
-		los cuales el usuario que se encuentra logeado posee el
-		correspondiente permiso.
-
-		@type   idproyecto : Integer
-		@param  idproyecto : Identificador del proyecto
-
-		@type  permiso_name : String
-		@param permiso_name : Nombre del permiso
-
-		@rtype  : Fase []
-		@return : retorna una lista de fases
-		"""
-		current_user = self.get_current_user()
-
-		fases = DBSession.query(Fase).\
-					filter(UsuarioPermisoFase.usuario_id == current_user.usuario_id).\
-					filter(UsuarioPermisoFase.fase_id == Fase.id_fase).\
-					filter(Permiso.permiso_id == UsuarioPermisoFase.permiso_id).\
-					filter(Permiso.nombre == permiso_name).\
-					filter(RolUsuario.usuario_id == current_user.usuario_id).\
-					filter(Fase.proyecto == idproyecto).\
-					all()
-		return fases
-
-
-checker =  SessionChecker()
-
 class SessionUtil() :
 
 	def asignar_lider(self, proyecto):
@@ -451,6 +331,7 @@ class SessionUtil() :
 		historial.complejidad = item.complejidad
 		historial.descripcion = item.descripcion
 		historial.observacion = item.observacion
+		historial.linea_base = item.linea_base
 		#historial de detalles
 		detalles = DBSession.query(DetalleItem).\
 					filter(DetalleItem.id_item==item.id_item).\
@@ -478,6 +359,87 @@ class SessionUtil() :
 
 		DBSession.add(historial)
 
+	def revertir_item (self, historial_item):
+		"""
+		Dada una entidad HistorialItem que representa una version
+		anterior del item en si se obtiene de la tabla las entradas de
+		esa version para que el item recupere los valores de esa version
+		"""
+		item = Item()
+		item.id_item = historial_item.id_item
+		item.nombre = historial_item.nombre
+		item.estado = historial_item.estado
+		item.tipo_item = historial_item.tipo_item
+		item.fase = historial_item.fase
+		item.version = historial_item.version
+		item.prioridad = historial_item.prioridad
+		item.complejidad = historial_item.complejidad
+		item.descripcion = historial_item.descripcion
+		item.observacion = historial_item.observacion
+		item.linea_base = historial_item.linea_base
+
+		#recuperar los detalles
+		historial_detalles = DBSession.query(HistorialDetalleItem).\
+			filter(HistorialDetalleItem.id_item==historial_item.id_item).\
+			all()
+
+		for hist_detalle in historial_detalles:
+			detalle = DetalleItem()
+			detalle.id_detalle = hist_detalle.id_detalle
+			detalle.id_item = hist_detalle.id_item
+			detalle.recurso = hist_detalle.recurso
+			detalle.valor = hist_detalle.valor
+			item.detalles.append(detalle)
+
+		#recuperar los relaciones
+		historial_relaciones = DBSession.query(HistorialRelacion).\
+			filter(HistorialRelacion.id_item_actual == historial_item.id_item\
+			or HistorialRelacion.id_item_relacionado == historial_item.id_item).\
+			all()
+
+		for hist_relacion in historial_relaciones:
+			relacion = RelacionItem()
+			if(DBSession.query(Item).get(hist_relacion.id_item_1)!=None and
+				DBSession.query(Item).get(hist_relacion.id_item_2)!=None):
+				relacion.id_item_actual = hist_relacion.id_item_1
+				relacion.id_item_relacionado = hist_relacion.id_item_2
+				relacion.relacion_parentesco = hist_relacion.id_tipo_relacion
+				item.relaciones.append(relacion)
+
+		DBSession.merge(item)
+
+	def revivir_item (self, historial_item):
+		"""
+		Restaura el item a su ultima version sin sus relaciones
+		"""
+		item = Item()
+		item.id_item = historial_item.id_item
+		item.nombre = historial_item.nombre
+		item.estado = historial_item.estado
+		item.tipo_item = historial_item.tipo_item
+		item.fase = historial_item.fase
+		item.version = historial_item.version
+		item.prioridad = historial_item.prioridad
+		item.complejidad = historial_item.complejidad
+		item.descripcion = historial_item.descripcion
+		item.observacion = historial_item.observacion
+		item.linea_base = historial_item.linea_base
+
+		#recuperar los detalles
+		historial_detalles = DBSession.query(HistorialDetalleItem).\
+			filter(HistorialDetalleItem.id_item==historial_item.id_item).\
+			all()
+
+		for hist_detalle in historial_detalles:
+			detalle = DetalleItem()
+			detalle.id_detalle = hist_detalle.id_detalle
+			detalle.id_item = hist_detalle.id_item
+			detalle.recurso = hist_detalle.recurso
+			detalle.valor = hist_detalle.valor
+			item.detalles.append(detalle)
+
+		DBSession.merge(item)
+
 	def get_aprobados_sin_lineas (self, idfase):
 		#lista de items aprobados de la fase. Suponiendo que el id del estado "aprobado"
 		#sea 1
@@ -498,7 +460,175 @@ class SessionUtil() :
 		detalles = item.detalles
 		return detalles
 
-
-
-
 util = SessionUtil()
+
+
+class SessionChecker():
+
+	def check_proyecto_permiso(self, id_proyecto, permiso_name,nuleable=False):
+		"""
+		Controla si el usuario que actualmente se encuentra logeado posee
+		el deteminado permiso sobre un proyecto.
+
+		@type   id_proyecto : Integer
+		@param  id_proyecto : Identificador del proyecto
+
+		@type  permiso_name : String
+		@param permiso_name : Nombre del permiso
+
+		@type      nuleable : Boolean
+		@param     nuleable : Variable de control del valor de retorno.
+							  Si es True y el usuario no posee permisos
+							  retorna None
+
+		@rtype  : Predicates
+		@return : retorna las credenciales del usuario
+		"""
+		current_user = self.get_current_user()
+
+		rol_permiso_proyecto = DBSession.query(RolPermisoProyecto).\
+								filter(RolPermisoProyecto.rol_id ==
+									RolUsuario.rol_id).\
+								filter(RolPermisoProyecto.proyecto_id ==
+									id_proyecto).\
+								filter(Permiso.permiso_id ==
+									RolPermisoProyecto.permiso_id).\
+								filter(Permiso.nombre ==
+									permiso_name).\
+								filter(RolUsuario.usuario_id ==
+									current_user.usuario_id).\
+								all()
+
+		if (len(rol_permiso_proyecto) != 0):
+			return predicates.has_permission(permiso_name)
+		elif nuleable == False:
+			return predicates.has_permission(permiso_name+' '+str(id_proyecto))
+		else:
+			return None
+
+	def check_fase_permiso(self, id_fase, permiso_name,nuleable=False):
+		"""
+		Controla si el usuario que actualmente se encuentra logeado posee
+		el deteminado permiso sobre una fase.
+
+		@type   id_fase : Integer
+		@param  id_fase : Identificador de la fase
+
+		@type  permiso_name : String
+		@param permiso_name : Nombre del permiso
+
+		@type      nuleable : Boolean
+		@param     nuleable : Variable de control del valor de retorno.
+							  Si es True y el usuario no posee permisos
+							  retorna None
+
+		@rtype  : Predicates
+		@return : retorna las credenciales del usuario
+		"""
+
+		current_user = self.get_current_user()
+		#Se obtiene la fase actual
+		fase = DBSession.query(Fase).get(id_fase)
+		#se recupera el rol del lider del proyecto
+		rol = util.get_rol_by_codigo('lider_' + str(fase.proyecto))
+		#si el usuario es lider del proyecto se salta los controles
+		if util.usuario_has_rol(current_user.usuario_id, rol) :
+			return predicates.has_permission(permiso_name)
+
+		usuario_permiso_fase = DBSession.query(UsuarioPermisoFase).\
+								filter(UsuarioPermisoFase.usuario_id ==
+									RolUsuario.usuario_id).\
+								filter(UsuarioPermisoFase.fase_id ==
+									id_fase).\
+								filter(Permiso.permiso_id ==
+									UsuarioPermisoFase.permiso_id).\
+								filter(Permiso.nombre ==
+									permiso_name).\
+								filter(RolUsuario.usuario_id ==
+									current_user.usuario_id).\
+								all()
+
+		if (len(usuario_permiso_fase) != 0):
+			return predicates.has_permission(permiso_name)
+		elif nuleable == False:
+			#return predicates.has_permission(permiso_name+' '+str(id_proyecto))
+			return predicates.has_permission('Sin permiso')
+		else:
+			return None
+
+	def get_current_user(self):
+		"""
+		Obtiene el username del usuario que se encuentra actualmente
+		logeado en el sistema de la cabecera http y recupera
+		de la base de datos el usuario.
+
+		@rtype  : Usuario
+		@return : retorna una instancia de la clase usuario
+		"""
+		identity = request.environ.get('repoze.who.identity')
+		username = identity['repoze.who.userid']
+
+		current_user = DBSession.query(Usuario).\
+				filter(Usuario.user_name == username ).\
+				first()
+
+		return current_user
+
+
+	def get_poyect_list(self, permiso_name):
+		"""
+		Obtiene un lista de los proyectos para los cuales el usuario
+		que se encuentra logeado posee el correspondiente permiso.
+
+		@type  permiso_name : String
+		@param permiso_name : Nombre del permiso
+
+		@rtype  : Proyecto [ ]
+		@return : retorna una lista de los poryectos
+		"""
+		current_user = self.get_current_user()
+
+		proyectos = DBSession.query(Proyecto).\
+					filter(	RolPermisoProyecto.rol_id ==
+							RolUsuario.rol_id).\
+					filter(	RolPermisoProyecto.proyecto_id ==
+							Proyecto.id_proyecto).\
+					filter(	Permiso.permiso_id ==
+							RolPermisoProyecto.permiso_id).\
+					filter(	Permiso.nombre ==
+							permiso_name).\
+					filter(	RolUsuario.usuario_id ==
+							current_user.usuario_id).\
+					all()
+		return proyectos
+
+
+	def get_fases_by_proyecto_list(self, idproyecto, permiso_name):
+		"""
+		Obtiene un lista de las fases que pertenecen a un proyecto, para
+		los cuales el usuario que se encuentra logeado posee el
+		correspondiente permiso.
+
+		@type   idproyecto : Integer
+		@param  idproyecto : Identificador del proyecto
+
+		@type  permiso_name : String
+		@param permiso_name : Nombre del permiso
+
+		@rtype  : Fase []
+		@return : retorna una lista de fases
+		"""
+		current_user = self.get_current_user()
+
+		fases = DBSession.query(Fase).\
+					filter(UsuarioPermisoFase.usuario_id == current_user.usuario_id).\
+					filter(UsuarioPermisoFase.fase_id == Fase.id_fase).\
+					filter(Permiso.permiso_id == UsuarioPermisoFase.permiso_id).\
+					filter(Permiso.nombre == permiso_name).\
+					filter(RolUsuario.usuario_id == current_user.usuario_id).\
+					filter(Fase.proyecto == idproyecto).\
+					all()
+		return fases
+
+
+checker =  SessionChecker()

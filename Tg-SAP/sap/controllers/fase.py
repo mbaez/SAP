@@ -28,7 +28,8 @@ from tg.controllers import RestController
 class FaseController(RestController):
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':'', 'label': '', 'cancelar_url': ''}
+	'idfase':'','permiso':'', 'label': '', 'cancelar_url': '', 
+						'permiso_editar': '', 'permiso_anadir': ''}
 
 	item = ItemController()
 	tipo_item = TipoItemController()
@@ -100,7 +101,7 @@ class FaseController(RestController):
 		redirect("/miproyecto/fase/list")
 
 
-	@expose('sap.templates.item')
+	@expose('sap.templates.list')
 	#@require( predicates.has_permission('ver_proyecto'))
 	def list(self, **kw):
 		"""
@@ -138,8 +139,13 @@ class FaseController(RestController):
 		tmpl_context.widget = item_table
 		items = DBSession.query(Item).filter(Item.fase==idfase).all()
 		value = item_filler.get_value(items)
-
+		
+		permiso_editar = checker.check_fase_permiso(idfase, 'editar_fase')
+		permiso_anadir = checker.check_fase_permiso(idfase, 'administrar_participantes')
+		
 		self.params['title'] = 'Titulo'
+		self.params['permiso_editar'] = permiso_editar
+		self.params['permiso_anadir'] = permiso_anadir
 		self.params['modelname'] = 'Items'
 		self.params['header_file'] = 'fase'
 		self.params['permiso'] = 'crear_item'

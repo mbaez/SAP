@@ -2,15 +2,17 @@
 """Setup the SAP application"""
 
 import logging
-
+import random
 import transaction
 from tg import config
 
 from sap.config.environment import load_environment
+from sap import model
 
 __all__ = ['setup_app']
 
 log = logging.getLogger(__name__)
+
 
 __permisos__ = ['admin_usuario', 'admin_proyecto','admin_rol',
 				'ver_proyecto','crear_proyecto','editar_proyecto', 'eliminar_proyecto',
@@ -20,36 +22,46 @@ __permisos__ = ['admin_usuario', 'admin_proyecto','admin_rol',
 				'administrar_participantes',
 				'generar_lineabase', 'abrir_lineabase',
 				'crear_tipo_item', 'eliminar_tipo_item', 'editar_tipo_item',
-				'ver_item','crear_item', 'eliminar_item', 'editar_item','aprobar_item'
-				]
+				'crear_item', 'eliminar_item', 'editar_item','aprobar_item',
+				'ver_item']
 
 #lista de tipos de relacion
 __relaciones__= ['padre_hijo','antecesor_sucesor']
 
-def setup_app(command, conf, vars):
-    """Place any commands to setup sap here"""
-    load_environment(conf.global_conf, conf.local_conf)
-    # Load the models
-    from sap import model
-    engine = config['pylons.app_globals'].sa_engine
-    print "Droping tables"
-    model.metadata.drop_all(engine)
-    print "Finish..\nCreating tables"
-    model.metadata.create_all(bind=engine)
+def cargar_usuarios ():
 
-    manager = model.Usuario()
-    manager.user_name = u'admin'
-    manager.nombre = u'Administrador'
-    manager.email_address = u'admin@somedomain.com'
-    manager.password = u'admin'
+    usr = model.Usuario()
+    usr.user_name = u'mbaez'
+    usr.nombre = u'Maxi'
+    usr.email_address = u'mbaez@gmail.com'
+    usr.password = u'mbaez'
+    
+    model.DBSession.add(usr)
 
-    model.DBSession.add(manager)
+    usr2 = model.Usuario()
+    usr2.user_name = u'dtorres'
+    usr2.nombre = u'Diego'
+    usr2.email_address = u'dtorres@gmail.com'
+    usr2.password = u'dtorres'
+    
+    model.DBSession.add(usr2)
+    
+    usr3 = model.Usuario()
+    usr3.user_name = u'rbanuelos'
+    usr3.nombre = u'Roberto'
+    usr3.email_address = u'rbanuelos@gmail.com'
+    usr3.password = u'rbanuelos'
+    
+    model.DBSession.add(usr3)
+    return usr, usr2, usr3
+
+def cargar_roles(manager,usr, usr2, usr3):
 
     group = model.Rol()
     group.codigo = u'admin'
     group.nombre = u'Administracion'
     group.descripcion = u'Rol de Administracion'
-    group.is_template = True
+    group.is_template = False
 
     group.usuarios.append(manager)
 
@@ -60,54 +72,154 @@ def setup_app(command, conf, vars):
     group2.nombre = u'Lider'
     group2.descripcion = u'Lider del Proyecto'
     group2.is_template = True
-
-    group2.usuarios.append(manager)
-
+    
+    group21 = model.Rol()
+    group21.codigo = u'lider_1'
+    group21.nombre = u'Lider'
+    group21.descripcion = u'Lider del Proyecto'
+    group21.is_template = False
+    
+    group22 = model.Rol()
+    group22.codigo = u'lider_2'
+    group22.nombre = u'Lider'
+    group22.descripcion = u'Lider del Proyecto'
+    group22.is_template = False
+    
+    
+    group23 = model.Rol()
+    group23.codigo = u'lider_3'
+    group23.nombre = u'Lider'
+    group23.descripcion = u'Lider del Proyecto'
+    group23.is_template = False
+    
+    #group2.usuarios.append(manager)
+    group21.usuarios.append(usr)
+    group22.usuarios.append(usr)
+    group23.usuarios.append(usr2)
+    
     model.DBSession.add(group2)
+    model.DBSession.add(group21)
+    model.DBSession.add(group22)
+    model.DBSession.add(group23)
 
+    group3 = model.Rol()
+    group3.codigo = u'visitante'
+    group3.nombre = u'Visitante'
+    group3.descripcion = u'Visitante de Proyectos'
+    group3.is_template = True
 
+    group31 = model.Rol()
+    group31.codigo = u'visitante_1'
+    group31.nombre = u'Visitante'
+    group31.descripcion = u'Visitante de Proyectos'
+    group31.is_template = False
+
+    group31.usuarios.append(usr3)
+    
+    model.DBSession.add(group3)
+    model.DBSession.add(group31)
+    
+    return group, group2, group3, group21, group31, group22, group23
+
+def cargar_estados():
     activo = model.EstadoProyecto()
     activo.nombre = u'Activo'
     activo.descripcion = u'Estado que indica que un proyecto esta activo'
 
     model.DBSession.add(activo)
 
-    permission = model.Permiso()
-    permission.nombre = u'manage'
-    permission.descripcion = u'This permission give an administrative right to the bearer'
-    permission.roles.append(group)
+    
+    cancelado = model.EstadoProyecto()
+    cancelado.nombre = u'Cancelado'
+    cancelado.descripcion = u'Estado que indica que un proyecto esta cancelado'
+    
+    model.DBSession.add(cancelado)
+    
+    pausado = model.EstadoProyecto()
+    pausado.nombre = u'Pausado'
+    pausado.descripcion = u'Estado que indica que un proyecto esta pausado'
+    
+    model.DBSession.add(pausado)
+    return activo, cancelado, pausado
 
-    model.DBSession.add(permission)
-    for name in __permisos__ :
+def cargar_permisos(group, group2, group3, group21, group31, group22,group23):
+	permiso = model.Permiso()
+	permiso.nombre = u'manage'
+	permiso.descripcion = u'Permiso administracion'
+	permiso.roles.append(group)
+	
+	for name in __permisos__ :
 		permiso = model.Permiso()
 		permiso.nombre = name
 		permiso.descripcion = u'Este permiso permite '+name
 		permiso.roles.append(group)
-
-    """
-    --------------------Datos Prueba Grafos---------------------
-    """
+		permiso.roles.append(group2)
+		permiso.roles.append(group21)
+		permiso.roles.append(group22)
+		permiso.roles.append(group23)
+		if(name.find("ver")>=0):
+			permiso.roles.append(group3)
+			permiso.roles.append(group31)
+	
+def cargar_proyectos(usr, usr2):
     proyecto = model.Proyecto()
-    proyecto.lider_id = manager.usuario_id
-    proyecto.nombre = u'proyecto1'
-    proyecto.nro_fases = 3
+    proyecto.lider = usr
+    proyecto.nombre = u'SW Proyect'
+    proyecto.descripcion = u'SW Proyect es un proyecto. Fin'
+    proyecto.nro_fases = 4
 
     model.DBSession.add(proyecto)
 
-    model.DBSession.flush()
+    proyecto2 = model.Proyecto()
+    proyecto2.lider = usr
+    proyecto2.nombre = u'Parallel Programing Proyect'
+    proyecto2.descripcion = u'Parallel Programing Proyect es un proyecto. Fin'
+    proyecto2.nro_fases = 3
 
+    model.DBSession.add(proyecto2)
+
+    proyecto3 = model.Proyecto()
+    proyecto3.lider = usr2
+    proyecto3.nombre = u'Software Development'
+    proyecto3.descripcion = u'Software Development es otro proyecto'
+    proyecto3.nro_fases = 3
+
+    model.DBSession.add(proyecto3)
+
+    model.DBSession.flush()
+    return proyecto,proyecto2,proyecto3
+
+def cargar_fases():
     fase1 = model.Fase()
-    fase1.nombre = u'fase1'
+    fase1.nombre = u'Analisis de Requerimientos'
+    fase1.descripcion = u'Esta fase pertenece al proyecto SW Proyect'
     fase1.proyecto = 1
 
     model.DBSession.add(fase1)
 
     fase2 = model.Fase()
-    fase2.nombre = u'fase2'
+    fase2.nombre = u'Disenho'
+    fase2.descripcion = u'Esta fase pertenece al proyecto SW Proyect'
     fase2.proyecto = 1
 
     model.DBSession.add(fase2)
 
+    fase3 = model.Fase()
+    fase3.nombre = u'Analisis de Requerimientos'
+    fase3.descripcion = u'Esta fase pertenece al proyecto Parallel Programing'
+    fase3.proyecto = 2
+
+    model.DBSession.add(fase3)
+
+    fase4 = model.Fase()
+    fase4.nombre = u'Analisis de Requerimientos'
+    fase4.descripcion = u'Esta fase pertenece al proyecto Software Development'
+    fase4.proyecto = 3
+
+    model.DBSession.add(fase4)
+    return fase1, fase2,fase3,fase4
+
+def cargar_tipo_atributo():
     tipo1 = model.TipoAtributo()
     tipo1.nombre = u'Texto'
     tipo1.descripcion = u'Contiene datos del tipo texto'
@@ -118,37 +230,45 @@ def setup_app(command, conf, vars):
 
     tipo3 = model.TipoAtributo()
     tipo3.nombre = u'Fecha'
-    tipo3.descripcion = u'Contiene datos del tipo Alfanumerico'
+    tipo3.descripcion = u'Contiene datos del tipo Fecha'
 
     model.DBSession.add(tipo1)
     model.DBSession.add(tipo2)
     model.DBSession.add(tipo3)
 
     model.DBSession.flush()
-
+    return tipo1, tipo2, tipo3
+def cargar_tipo_item(fase1, fase2, fase3, fase4):
     tipodeitem1 = model.TipoItem()
     tipodeitem1.fase = fase1.id_fase
-    tipodeitem1.nombre = u'tipo1'
-    tipodeitem1.codigo = u'codigo tipo1'
+    tipodeitem1.nombre = u'Caso de Uso'
+    tipodeitem1.codigo = u'cod_1'
 
     model.DBSession.add(tipodeitem1)
 
     tipodeitem2 = model.TipoItem()
     tipodeitem2.fase = fase2.id_fase
-    tipodeitem2.nombre = u'tipo2'
-    tipodeitem2.codigo = u'codigo tipo2'
+    tipodeitem2.nombre = u'Diagrama Secuencia'
+    tipodeitem2.codigo = u'cod_2'
 
     model.DBSession.add(tipodeitem2)
 
-    estadoitem = model.EstadoItem()
-    estadoitem.nombre = u'estado1'
+    tipodeitem3 = model.TipoItem()
+    tipodeitem3.fase = fase3.id_fase
+    tipodeitem3.nombre = u'Documento'
+    tipodeitem3.codigo = u'cod_3'
 
-    model.DBSession.add(estadoitem)
+    model.DBSession.add(tipodeitem3)
 
+    tipodeitem4 = model.TipoItem()
+    tipodeitem4.fase = fase4.id_fase
+    tipodeitem4.nombre = u'Diagrama BD'
+    tipodeitem4.codigo = u'cod_4'
 
-    """
-    Definicion de estados de Item
-    """
+    model.DBSession.add(tipodeitem4)
+    return tipodeitem1,tipodeitem2,tipodeitem3,tipodeitem4
+
+def cargar_estados_item():
     estadoItem1 = model.EstadoItem()
     estadoItem1.nombre = 'Aprobado'
     model.DBSession.add(estadoItem1)
@@ -161,41 +281,17 @@ def setup_app(command, conf, vars):
     estadoItem3 = model.EstadoItem()
     estadoItem3.nombre = 'Revision'
     model.DBSession.add(estadoItem3)
+    return estadoItem1,estadoItem2,estadoItem3
 
+def cargar_relaciones():
     for name in __relaciones__ :
-		relacion = model.RelacionParentesco()
-		relacion.nombre = name
-		relacion.descripcion = u'Este tipo representa la relacion '+name
-		model.DBSession.add(relacion)
-
+        relacion = model.RelacionParentesco()
+        relacion.nombre = name
+        relacion.descripcion = u'Este tipo representa la relacion '+name
+        model.DBSession.add(relacion)
+    
     model.DBSession.flush()
-
-    for i in range(10):
-		item = model.Item()
-		item.nombre = u'item '+str(i)
-		item.estado = 1
-		item.tipo_item = 1
-		item.fase = 1
-		item.version = 1
-		item.prioridad = 1
-		item.complejidad = i+1
-		item.codigo = u'codigo_'+str(i)
-		model.DBSession.add(item)
-
-    for i in range(5):
-		item = model.Item()
-		item.nombre = u'item '+str(i)
-		item.estado = 1
-		item.tipo_item = 2
-		item.fase = 2
-		item.version = 1
-		item.prioridad = 1
-		item.complejidad = i+10
-		item.codigo = u'codigo_'+str(i+11)
-		model.DBSession.add(item)
-
-    model.DBSession.flush()
-
+    
     relacion1 = model.RelacionItem()
     relacion1.id_item_actual = 1
     relacion1.id_item_relacionado = 2
@@ -218,29 +314,130 @@ def setup_app(command, conf, vars):
 
     model.DBSession.add(relacion3)
 
-    """
-    --------------------Fin Datos de Prueba----------------------
-    """
-    model.DBSession.flush()
-    for i in range(17):
-        rpp = model.RolPermisoProyecto()
-        rpp.rol_id = 1
-        rpp.proyecto_id = 1
-        rpp.permiso_id = i+1
+    relacion4 = model.RelacionItem()
+    relacion4.id_item_actual= 5
+    relacion4.id_item_relacionado = 11
+    relacion4.relacion_parentesco = 2
 
-        model.DBSession.add(rpp)
+    model.DBSession.add(relacion4)
+
+    model.DBSession.flush()
+    
+
+def cargar_items():
+	for i in range(10):
+		item = model.Item()
+		item.nombre = u'item '+str(i)
+		item.estado = 1
+		item.tipo_item = 1
+		item.fase = 1
+		item.version = 1
+		item.prioridad = 1
+		item.complejidad =  int(random.random()*10)+1 
+		item.codigo = u'cod_'+str(i)
+		model.DBSession.add(item)
+
+	for i in range(5):
+		item = model.Item()
+		item.nombre = u'item '+str(i)
+		item.estado = 1
+		item.tipo_item = 2
+		item.fase = 2
+		item.version = 1
+		item.prioridad = 1
+		item.complejidad = int(random.random()*10)+1 
+		item.codigo = u'cod_'+str(i+10)
+		model.DBSession.add(item)
+
+	model.DBSession.flush()
+
+def cargar_permisos_proyecto(group21, group22, group23, group31):
+    id = [group21.rol_id, group22.rol_id, group23.rol_id, group31.rol_id]
+    
+    for i in range(len(__permisos__)):
+        for j in range(len(id)):
+            rpp = model.RolPermisoProyecto()
+            rpp.rol_id = id[j]
+            if j==3 :
+                rpp.proyecto_id = j
+            else :
+                rpp.proyecto_id = j+1
+            rpp.permiso_id = i+1
+
+            model.DBSession.add(rpp)
 
         rpf = model.UsuarioPermisoFase()
         rpf.fase_id = 1
         rpf.permiso_id = i+1
-        rpf.usuario_id = 1
+        rpf.usuario_id = 2
 
         model.DBSession.add(rpf)
+        
+        rpf2 = model.UsuarioPermisoFase()
+        rpf2.fase_id = 2
+        rpf2.permiso_id = i+1
+        rpf2.usuario_id = 2
 
+        model.DBSession.add(rpf2)
+
+def cargar_estado_lineabase():
+    model.DBSession.flush()
+    
     estadoLineaBase = model.EstadoLineaBase()
     estadoLineaBase.id_estado_linea_base = 1
     estadoLineaBase.nombre = 'Cerrada'
     model.DBSession.add(estadoLineaBase)
 
+    estadoLineaBase = model.EstadoLineaBase()
+    estadoLineaBase.id_estado_linea_base = 2
+    estadoLineaBase.nombre = 'Abierta'
+    model.DBSession.add(estadoLineaBase)
+
+def setup_app(command, conf, vars):
+    """Place any commands to setup sap here"""
+    load_environment(conf.global_conf, conf.local_conf)
+    # Load the models
+    engine = config['pylons.app_globals'].sa_engine
+    print "Droping tables"
+    model.metadata.drop_all(engine)
+    print "Finish..\nCreating tables"
+    model.metadata.create_all(bind=engine)
+
+    manager = model.Usuario()
+    manager.user_name = u'admin'
+    manager.nombre = u'Administrador'
+    manager.email_address = u'admin@somedomain.com'
+    manager.password = u'admin'
+    
+    model.DBSession.add(manager)
+    ##usuarios
+    usr, usr2, usr3 = cargar_usuarios()
+    #Roles
+    group, group2, group3,group21, group31,group22,group23 = cargar_roles(manager,
+                                                       usr, usr2, usr3)
+    #estados
+    activo, cancelado, pausado = cargar_estados()
+    #Permisos
+    cargar_permisos(group, group2, group3, group21, group31, group22, group23)
+    #Proyectos
+    proyecto,proyecto2,proyecto3 = cargar_proyectos(usr,usr2)
+    #fases
+    fase1, fase2,fase3,fase4 = cargar_fases()
+    #tipo de atributo
+    tipo1, tipo2, tipo3 = cargar_tipo_atributo()
+    #tipo de item
+    tipodeitem1,tipodeitem2,tipodeitem3,tipodeitem4 = cargar_tipo_item(
+                                                       fase1, fase2,fase3,
+                                                       fase4)
+    #estados de item
+    estadoItem1,estadoItem2,estadoItem3 = cargar_estados_item()
+    #items
+    cargar_items()
+	#relaciones
+    cargar_relaciones()
+    #Permisos del rol de proyecto
+    cargar_permisos_proyecto(group21,group22,group23,group31)
+    #estado linea base
+    cargar_estado_lineabase()
     transaction.commit()
     print "Successfully setup"

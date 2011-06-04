@@ -159,7 +159,8 @@ class TipoItemController(RestController):
 		value=[]
 		aux=[]
 		for tipo in tipo_items:
-			aux=[{'nombre': tipo.nombre, 'descripcion': tipo.descripcion,
+			aux=[{'codigo': tipo.codigo, 'nombre': tipo.nombre, 
+			'descripcion': tipo.descripcion,
 			'accion': '<div><a href="/miproyecto/fase/tipo_item/importar_este_tipo/'
 			+str(tipo.id_tipo_item)+'/'+idfase+'">Importar este Item</a></div>'}]
 			value=value+aux
@@ -189,7 +190,7 @@ class TipoItemController(RestController):
 		copia_tipo.nombre = tipo.nombre
 		copia_tipo.descripcion = tipo.descripcion
 		copia_tipo.fase = idfase
-		
+		copia_tipo.codigo = 'coddddd'
 		"""
 		Se settean los valores para cada copia_atributo
 		

@@ -177,8 +177,9 @@ class Item(DeclarativeBase):
 					ForeignKey('linea_base.id_linea_base'))
 
 	observacion = Column ('observacion', Unicode(100))
-
 	detalles = relation ('DetalleItem', backref = 'item')
+
+
 
 class LineaBaseItem(DeclarativeBase):
 
@@ -302,6 +303,7 @@ class HistorialItem(DeclarativeBase):
 
 	tipo_item = Column ('id_tipo_item', Integer, nullable=False)
 
+	linea_base = Column ('id_linea', Integer, nullable=False)
 
 	fase = Column ('id_fase', Integer, nullable=False)
 
@@ -325,7 +327,7 @@ class HistorialDetalleItem(DeclarativeBase):
 	id_historial = Column ('id_historial_item', Integer,
 				ForeignKey('historial_item.id_historial_item'))
 
-	items = relation("HistorialItem", backref="detalles")
+	item = relation("HistorialItem", backref="detalles")
 
 	id_detalle = Column ('id_detalle', Integer, nullable=False)
 

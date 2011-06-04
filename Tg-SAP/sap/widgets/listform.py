@@ -92,7 +92,7 @@ class ItemTable(TableBase):
 
 item_table = ItemTable(DBSession);
 #Tabla de items com la opcion de eliminar y ediar.
-item_filler = create_widget(ItemModelDecorator, EditActionDecorator)
+item_filler = create_widget(ItemModelDecorator, VerActionDecorator,'/miproyecto/fase/item/ver/')
 
 ####################################################
 # Widgets de los Tipos de Items
