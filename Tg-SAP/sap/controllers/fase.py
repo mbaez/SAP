@@ -100,7 +100,7 @@ class FaseController(RestController):
 		redirect("/miproyecto/fase/list")
 
 
-	@expose('sap.templates.list')
+	@expose('sap.templates.item')
 	#@require( predicates.has_permission('ver_proyecto'))
 	def list(self, **kw):
 		"""

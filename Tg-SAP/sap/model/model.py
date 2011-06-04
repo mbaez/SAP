@@ -97,7 +97,7 @@ class TipoItem(DeclarativeBase) :
 							primary_key=True)
 
 	codigo = Column ('codigo', Unicode(50), unique = True, nullable = False)
-	
+
 	fase = Column ('id_fase', Integer, ForeignKey ('fase.id_fase'))
 
 	nombre = Column ('nombre', Unicode(50), nullable=False)
@@ -149,11 +149,11 @@ class Item(DeclarativeBase):
 	estado = Column ('id_estado_item', Integer,
 						ForeignKey('estado_item.id_estado_item'),
 						nullable=False)
-	
+
 	estado_actual = relation('EstadoItem', backref = 'items')
-	
+
 	codigo = Column ('codigo', Unicode(50), unique = True, nullable = False)
-	
+
 	nombre = Column ('nombre', Unicode(50))
 
 	tipo_item = Column ('id_tipo_item', Integer,
@@ -178,7 +178,7 @@ class Item(DeclarativeBase):
 
 	observacion = Column ('observacion', Unicode(100))
 
-
+	detalles = relation ('DetalleItem', backref = 'item')
 
 class LineaBaseItem(DeclarativeBase):
 
@@ -265,16 +265,16 @@ class DetalleItem(DeclarativeBase):
 				ForeignKey('recurso.id_recurso'), nullable=False)
 
 	valor = Column('valor', Unicode(200))
-	
+
 class LineaBase (DeclarativeBase):
 
 	__tablename__ = 'linea_base'
 
 	id_linea_base = Column ('id_linea_base', Integer, autoincrement=True,
 								primary_key=True)
-	
+
 	codigo = Column ('codigo', Unicode(50), unique = True, nullable = False)
-				
+
 	estado = Column ('id_estado_lineabase',Integer,
 				ForeignKey('estado_linea_base.id_estado_linea_base'))
 

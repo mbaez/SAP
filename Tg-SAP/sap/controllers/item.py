@@ -28,12 +28,28 @@ from sap.widgets.editform import *
 from sap.lib.base import BaseController
 from sap.model import *
 from sap.model import DBSession, metadata
+from sap.controllers.item_detalles import ItemDetallesController
 from tg.controllers import RestController
 
 class ItemController(RestController):
 
+	item_detalles = ItemDetallesController()
+
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':''}
+	'idfase':'','permiso':'','progreso':0}
+
+
+	@expose('sap.templates.item')
+	#@require(predicates.has_permission('ver_item'))
+	def ver(self, id_item, **kw):
+
+		self.params['item'] = DBSession.query(Item).get(id_item)
+		self.params['fase'] = DBSession.query(Fase).get(self.params['item'].fase)
+		progreso = self.params['item'].complejidad*10
+		print "PROGRESO:"+str(progreso)
+		self.params['progreso'] = progreso
+
+		return dict(params=self.params)
 
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_item'))
@@ -68,6 +84,14 @@ class ItemController(RestController):
 		item.estado=1
 		item.tipo_item= kw['tipo_item_relacion']
 		item.version=1
+		tipo = DBSession.query(TipoItem).get(item.tipo_item)
+		atributos = tipo.atributos
+		for atributo in atributos:
+			detalle = DetalleItem()
+			detalle.nombre = atributo.nombre
+			detalle.valor = None
+			detalle.recurso = None
+			item.detalles.append(detalle)
 		DBSession.add(item)
 		flash("El item se ha creado correctamente")
 		redirect('/miproyecto/fase/get_all/'+idfase)
@@ -352,7 +376,7 @@ class ItemController(RestController):
 		gv.render(gvv,'svg',"fase.svg")
 		return dict()
 	'''
-	
+
 	def marcar_en_revision(self, grafo, itemId):
 		"""
 		obtener la lista de todos antecesores directos e indirectos

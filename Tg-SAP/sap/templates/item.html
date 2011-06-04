@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="master.html" />
+<xi:include href="header/abstract.html" />
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+	<link type="text/css" href="${tg.url('/css/redmond/jquery-ui-1.8.13.custom.css')}" rel="stylesheet" />
+	<script type="text/javascript" src="${tg.url('/jquery/jquery-1.5.1.min.js')}"></script>
+	<script type="text/javascript" src="${tg.url('/jquery/jquery-ui-1.8.13.custom.min.js')}"></script>
+	<script type="text/javascript" src="${tg.url('/jquery/sap-ui.js')}"></script>
+  <title>Mi proyecto </title>
+</head>
+
+<body>
+	${sub_header()}
+	<section id="inner-content">
+		<aside id="dashboard-sidebar">
+			<div class="project-info">
+				<h4>Fase info
+					<span>
+						<a class="edit-project" >Edit</a>
+					</span>
+				</h4>
+				<h5>Nombre </h5>
+				<p></p>
+				<p>${params['fase'].nombre}</p>
+				<p></p>
+				<h5>Descripcion </h5>
+				<div id="selected-tags">
+				</div>
+				<p></p>
+				<p>${params['fase'].descripcion}</p>
+				<p></p>
+			</div>
+			<!--div class="project-info">
+				<h4>Participantes
+					<span>
+						<a class="add-member" href="/miproyecto/fase/participantes/admin/${params['idfase']}">A&ntilde;adir</a>
+					</span>
+				</h4>
+				<ul id="team">
+
+					<li py:for="usuario in params['usuarios']">
+						<img src="/img/saved_resource" alt="">${usuario.user_name}
+							<div class="member-edit">
+								<a>Delete</a>
+							</div>
+						</img>
+					</li>
+
+				</ul>
+			</div-->
+		</aside>
+
+		<li class="main" style="width: 60%; ">
+			<div class="block">
+			<h3>
+				<a>Item : #${params['item'].id_item}</a>
+			</h3>
+			<ul>
+				<li class="project-info">
+
+					<h5>Nombre</h5>
+					<p></p>
+					<p>${params['item'].nombre}</p>
+					<h5> Version</h5>
+					<p></p>
+					<p>${params['item'].version}</p>
+					<h5> Prioridad</h5>
+					<p></p>
+					<p>${params['item'].prioridad}</p>
+					<h5> Descripci&oacute;n</h5>
+					<p></p>
+					<p>${params['item'].descripcion}</p>
+					<h5>Observaci&oacute;n</h5>
+					<p></p>
+					<p>${params['item'].observacion}</p>
+					<h5> Estado</h5>
+					<p></p>
+					<p>${params['item'].estado_actual.nombre}</p>
+					<h5> complejidad</h5>
+					<p></p>
+					<div class="progbar">
+						<div class="progress" style="width:${params['progreso']}%">${params['progreso']}%</div>
+					</div>
+				</li>
+			  	<li class="project-list-task">
+					<a>Atributos</a>
+				</li>
+
+			</ul>
+			</div>
+		</li>
+		<!--div style="float:left; width: 60%">
+			${tmpl_context.widget(value=value)}
+		</div-->
+
+	</section>
+</body>
+</html>

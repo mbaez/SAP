@@ -20,7 +20,7 @@ __permisos__ = ['admin_usuario', 'admin_proyecto','admin_rol',
 				'administrar_participantes',
 				'generar_lineabase', 'abrir_lineabase',
 				'crear_tipo_item', 'eliminar_tipo_item', 'editar_tipo_item',
-				'crear_item', 'eliminar_item', 'editar_item','aprobar_item'
+				'ver_item','crear_item', 'eliminar_item', 'editar_item','aprobar_item'
 				]
 
 #lista de tipos de relacion

@@ -487,6 +487,18 @@ class SessionUtil() :
 												all()
 		return itemsAprobados
 
+	def get_detalles_by_item(self, iditem):
+		"""
+		Retorna los atributos del tipo de item al que pertenece el item
+		especificado
+		"""
+		item = DBSession.query(Item).get(iditem)
+		#tipo_item = DBSession.query(TipoItem).get(item.tipo_item)
+		#atibutos = tipo_item.atributos
+		detalles = item.detalles
+		return detalles
+
+
 
 
 util = SessionUtil()
