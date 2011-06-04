@@ -44,7 +44,6 @@ class ItemController(RestController):
 	def ver(self, id_item, **kw):
 
 		self.params['item'] = DBSession.query(Item).get(id_item)
-		self.params['fase'] = DBSession.query(Fase).get(self.params['item'].fase)
 		progreso = self.params['item'].complejidad*10
 		print "PROGRESO:"+str(progreso)
 		self.params['progreso'] = progreso
