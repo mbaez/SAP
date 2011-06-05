@@ -28,12 +28,12 @@ from sap.widgets.editform import *
 from sap.lib.base import BaseController
 from sap.model import *
 from sap.model import DBSession, metadata
-from sap.controllers.item_detalles import ItemDetallesController
+#from sap.controllers.item_detalles import ItemDetallesController
 from tg.controllers import RestController
 
 class ItemController(RestController):
 
-	item_detalles = ItemDetallesController()
+	#item_detalles = ItemDetallesController()
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 	'idfase':'','permiso':'','progreso':0}

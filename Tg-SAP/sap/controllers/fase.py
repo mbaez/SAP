@@ -22,13 +22,15 @@ from sap.controllers.tipo_item import TipoItemController
 from sap.controllers.relacion import RelacionController
 from sap.controllers.linea_base import LineaBaseController
 from sap.controllers.participante import ParticipanteFaseController
+
+from tg.decorators import paginate
 #import del controlador
 from tg.controllers import RestController
 
 class FaseController(RestController):
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':'', 'label': '', 'cancelar_url': '', 
+	'idfase':'','permiso':'', 'label': '', 'cancelar_url': '',
 						'permiso_editar': '', 'permiso_anadir': ''}
 
 	item = ItemController()
@@ -139,10 +141,10 @@ class FaseController(RestController):
 		tmpl_context.widget = item_table
 		items = DBSession.query(Item).filter(Item.fase==idfase).all()
 		value = item_filler.get_value(items)
-		
+
 		permiso_editar = checker.check_fase_permiso(idfase, 'editar_fase')
 		permiso_anadir = checker.check_fase_permiso(idfase, 'administrar_participantes')
-		
+
 		self.params['title'] = 'Titulo'
 		self.params['permiso_editar'] = permiso_editar
 		self.params['permiso_anadir'] = permiso_anadir

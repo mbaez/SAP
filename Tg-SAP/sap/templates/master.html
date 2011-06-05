@@ -18,7 +18,11 @@
 <body py:match="body" py:attrs="select('@*')">
 <div id="container">
 	${header()}
-	<!--h2 class="module-title"><a>Projects </a> ProyectName</h2-->
+	<h2>
+		<a href="javascript: history.back()"><img src ="/img/back.png" /> </a>
+		<a href="javascript: history.forward()"> <img src ="/img/next.png"/> </a>
+	</h2>
+
 	<section id="content" class="shade">
 		<div class="wrapper">
 			<py:if test="defined('page')">

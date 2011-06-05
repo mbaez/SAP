@@ -2152,6 +2152,13 @@ p.kleur{
  *#              Edited by: Mbaez              #
  *##############################################
  */
+#next{
+background: url(../img/next.png) no-repeat ;
+width: 16px;
+}
+#back{
+background: url(../img/back.png) no-repeat;
+}
 a.edit-row{
 	background: url(../img/icons/document_edit_small.png) no-repeat left center;
 	height: 16px;
