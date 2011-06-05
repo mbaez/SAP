@@ -260,8 +260,15 @@ class SessionUtil() :
 					filter(UsuarioPermisoFase.fase_id == id).\
 					filter(UsuarioPermisoFase.permiso_id == Permiso.permiso_id).\
 					filter(Permiso.nombre == permiso_name).all()
+		#Si el usuairo es lider del proyecto se saltan los controles
+		user = checker.get_current_user()
+		fase = DBSession.query(Fase).get(id)
+		rol = self.get_rol_by_codigo('lider_' + str(fase.proyecto))
 
-		return usuarios
+		if self.usuario_has_rol(user.usuario_id, rol ):
+			usuarios.append(user)
+
+		return self.distinct(usuarios)
 
 	def get_usuarios_by_permiso(self, proyecto_id, permiso_name='ver_proyecto'):
 		"""

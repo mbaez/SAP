@@ -38,15 +38,22 @@ class ParticipanteFaseController(RestController):
 		@return : El diccionario que sera utilizado en el template.
 		"""
 		fase = self._get_current_fase(id)
-		print "FASE: "+ str(fase)
-		usuarios = util.get_usuarios_by_fase(fase.proyecto)
-		print "USUARIOS: "+ str(usuarios)
+
+		usuarios = util.get_usuarios_by_fase(fase.id_fase)
 
 		tmpl_context.widget = participantes_table
 
 		roles = util.get_roles_by_proyectos(fase.proyecto)
 		value = participantes_fase_filler.get_value(roles)
+				#para saber si mostrar o no el boton editar
+		permiso_editar = checker.check_fase_permiso(id,
+												'editar_fase')
+		#para saber si mostrar o no el boton anhdir participante
+		permiso_anadir = checker.check_fase_permiso(id,
+											'administrar_participantes')
 
+		self.params['permiso_editar'] = permiso_editar
+		self.params['permiso_anadir'] = permiso_anadir
 		self.params['modelname'] = 'Participantes'
 		self.params['text_header'] = 'Lista de roles'
 		self.params['fase'] = fase
@@ -68,7 +75,7 @@ class ParticipanteFaseController(RestController):
 			value = rol_usuario_edit_filler.get_value(kw)
 
 		fase = self._get_current_fase()
-		usuarios = util.get_usuarios_by_fase(fase.proyecto)
+		usuarios = util.get_usuarios_by_fase(fase.id_fase)
 
 		print "Usuarios "+ str(usuarios)
 
@@ -89,6 +96,19 @@ class ParticipanteFaseController(RestController):
 
 		flash("Los Usuarios <"+str(kw['usuarios'])+"> fueron asignados a la fase "+ str(fase.id_fase)+".")
 		redirect("/miproyecto/fase/participantes/admin/" + str(fase.proyecto) )
+
+	@expose()
+	def delete(self, id_fase ,id, **kw):
+		fase = self._get_current_fase()
+		list = DBSession.query(UsuarioPermisoFase).\
+				filter(UsuarioPermisoFase.usuario_id == id).\
+				filter(UsuarioPermisoFase.fase_id == id_fase)
+
+		for element in list :
+			DBSession.delete(element)
+
+		flash("El usuario '"+ str(id) +"' ha sido desvinculado de la fase.")
+		redirect("/miproyecto/fase/get_all/"+ str(id_fase))
 
 	def _get_current_fase(self, id=0):
 		if self._current_fase == None:
@@ -126,11 +146,19 @@ class ParticipanteProyectoController(RestController):
 
 		roles = util.get_roles_by_proyectos(idproyecto)
 		value = participantes_filler.get_value(roles)
+		#para saber si mostrar o no el boton editar
+		permiso_editar = checker.check_proyecto_permiso(idproyecto,
+												'editar_proyecto')
+		#para saber si mostrar o no el boton anhdir participante
+		permiso_anadir = checker.check_proyecto_permiso(idproyecto,
+											'administrar_participantes')
 
 		self.params['modelname'] = 'Participantes'
 		self.params['text_header'] = 'Lista de roles'
 		self.params['proyecto'] = proyecto
 		self.params['usuarios'] = usuarios
+		self.params['permiso_editar'] = permiso_editar
+		self.params['permiso_anadir'] = permiso_anadir
 		return dict(value=value, params=self.params)
 
 	@expose('sap.templates.edit')
@@ -167,7 +195,30 @@ class ParticipanteProyectoController(RestController):
 			util.asignar_participante(user_id,rol.codigo,proyecto.id_proyecto)
 
 		flash("El rol ha sido "+rol.nombre+" modificado correctamente.")
-		redirect("/miproyecto/participantes/" + str(proyecto.id_proyecto))
+		redirect("/miproyecto/participantes/admin/" + str(proyecto.id_proyecto))
+
+	@expose()
+	def delete(self, proyecto_id ,id, **kw):
+		#se obtienen las relaciones del usuario sobre las fases del proyecto
+		list = DBSession.query(UsuarioPermisoFase).\
+				filter(UsuarioPermisoFase.usuario_id == id).\
+				filter(Fase.proyecto == proyecto_id).\
+				filter(UsuarioPermisoFase.fase_id == Fase.id_fase)
+		#Se eliminan las relaciones del usuario con las fases
+		for element in list :
+			DBSession.delete(element)
+		#Se obtienen los roles del usuario en el proyecto
+		list = DBSession.query(RolUsuario).\
+				  filter(RolUsuario.usuario_id == id).\
+				  filter(RolUsuario.rol_id == RolPermisoProyecto.rol_id).\
+				  filter(RolPermisoProyecto.proyecto_id == proyecto_id)
+		#Se eliminan los roles del usuario sobre el proyecto
+		for element in list :
+			DBSession.delete(element)
+
+		flash("El usuario '"+ str(id) +"' ha sido desvinculado del proyecto.")
+		redirect("/miproyecto/ver/"+str(proyecto_id))
+
 
 	def _get_current_proyect(self, id=0):
 		if self._current_proyect == None:

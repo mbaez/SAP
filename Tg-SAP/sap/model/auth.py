@@ -64,7 +64,7 @@ rol_permiso_proyecto_table = Table( 'rol_permiso_proyecto', metadata,
 			onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
 )
 
-usuario_permiso_fase_table = Table( 'rol_permiso_fase', metadata,
+usuario_permiso_fase_table = Table( 'usuario_permiso_fase', metadata,
 
 	Column('usuario_id', Integer, ForeignKey('usuario.usuario_id',
 			onupdate="CASCADE", ondelete="CASCADE"), primary_key=True),
