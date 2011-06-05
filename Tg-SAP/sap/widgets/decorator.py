@@ -220,7 +220,6 @@ class ProyectoModelDecorator(ExtendedTableList, Decorator):
 
 class ItemModelDecorator(ExtendedTableList, Decorator):
 	__model__ = Item
-	#__omit_fields__ = ['tipo_item','fase','id_item']
 	__add_fields__ = {'accion':None}
 	__url__ = "/miproyecto/fase/item/"
 
