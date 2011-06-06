@@ -29,9 +29,12 @@ from sap.lib.base import BaseController
 from sap.model import *
 from sap.model import DBSession, metadata
 #from sap.controllers.item_detalles import ItemDetallesController
+from sap.controllers.item_detalle import *
 from tg.controllers import RestController
 
 class ItemController(RestController):
+	
+	item_detalle = ItemDetalleController()
 
 	#item_detalles = ItemDetallesController()
 

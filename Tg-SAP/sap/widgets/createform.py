@@ -119,3 +119,10 @@ class NewLineaBaseForm(TableForm):
 		#fields.append( CheckBox('Item_' + str(i.id_item)) )
 
 	submit_text = 'Generar'
+	
+####################################################
+# Widgets para creacion detalles de item
+####################################################
+class NewItemDetalleForm(TableForm):
+	fields = []
+	submit_text = 'Guardar'

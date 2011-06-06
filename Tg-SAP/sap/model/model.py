@@ -246,7 +246,7 @@ class DetalleItem(DeclarativeBase):
 	id_item = Column ('id_item', Integer, ForeignKey ('item.id_item'),
 				primary_key=True)
 
-	id = Column ('id_item_detalle', Integer,
+	id_item_detalle = Column ('id_item_detalle', Integer,
 				autoincrement=True, primary_key=True)
 
 	recurso = Column ('id_recurso', Integer,
