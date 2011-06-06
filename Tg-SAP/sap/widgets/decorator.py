@@ -151,7 +151,7 @@ class EditActionDecorator(Decorator):
 
 class VerActionDecorator(Decorator):
 
-	__html__= "<a style='##verstate##' href='##url####id##'>Ver</a>"
+	__html__= "<a style='##verstate##' class='link' href='##url####id##'>Ver</a>"
 
 	def accion(self, obj):
 		self.__widget__ = self.__html__
@@ -165,7 +165,7 @@ class VerActionDecorator(Decorator):
 
 class LabelActionDecorator(Decorator):
 	__label__ = "Asignar"
-	__html__= "<a style='##state##' href='##url####id####extra_url##'>##label##</a>"
+	__html__= "<a style='##state##' class='link' href='##url####id####extra_url##'>##label##</a>"
 	__extra_url__ = "/edit"
 
 	params={'__extra_url__':__extra_url__, '__label__':__label__}
@@ -195,13 +195,15 @@ class ProyectoModelDecorator(ExtendedTableList, Decorator):
 	__model__ = Proyecto
 	__add_fields__ = {'accion':None}
 	__url__= "/administracion/proyecto/"
+	__check_permiso__ = True
 
-	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+	def __init__(self, provider_hint=None, url=None, check_permiso=True ,**provider_hints):
 		super(ProyectoModelDecorator, self).__init__(provider_hint, **provider_hints)
-
-		if url == None :
-			return
-		self.__url__ = url
+		
+		if url != None :
+			self.__url__ = url
+		if check_permiso !=True :
+			self.__check_permiso__ = False;
 
 	def accion (self, obj):
 		accion = super(ProyectoModelDecorator, self).accion(obj)
@@ -209,7 +211,11 @@ class ProyectoModelDecorator(ExtendedTableList, Decorator):
 		return accion
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
-		has_permiso = checker.check_proyecto_permiso(id,permiso_name,True)
+		has_permiso = True
+		
+		if self.__check_permiso__ :
+			has_permiso = checker.check_proyecto_permiso(id,permiso_name,True)
+		
 		return super(ProyectoModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
 
 	def replace(self,action, url, id):
@@ -223,7 +229,7 @@ class ItemModelDecorator(ExtendedTableList, Decorator):
 	__add_fields__ = {'accion':None}
 	__url__ = "/miproyecto/fase/item/"
 
-	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+	def __init__(self, provider_hint=None, url=None, check_permiso=True ,**provider_hints):
 		super(ItemModelDecorator, self).__init__(provider_hint, **provider_hints)
 
 		if url == None :
@@ -250,7 +256,7 @@ class ParticipantesModelDecorator(ExtendedTableList, Decorator):
 	__add_fields__ = {'accion':None}
 	__url__ = "/miproyecto/fase/participantes/"
 
-	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+	def __init__(self, provider_hint=None, url=None, check_permiso=True ,**provider_hints):
 		super(ParticipantesModelDecorator, self).__init__(provider_hint, **provider_hints)
 
 		if url == None :
@@ -277,7 +283,7 @@ class LineaBaseModelDecorator(ExtendedTableList, Decorator):
 	__add_fields__ = {'accion':None}
 	__url__ = "/miproyecto/fase/linea_base/"
 
-	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+	def __init__(self, provider_hint=None, url=None, check_permiso=True ,**provider_hints):
 		super(LineaBaseModelDecorator, self).__init__(provider_hint, **provider_hints)
 
 		if url == None :
@@ -304,7 +310,7 @@ class TipoItemModelDecorator(ExtendedTableList, Decorator):
 	__add_fields__ = {'accion':None}
 	__url__ = '/miproyecto/fase/tipo_item/atributos/list/'
 
-	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+	def __init__(self, provider_hint=None, url=None,check_permiso=True ,**provider_hints):
 		super(TipoItemModelDecorator, self).__init__(provider_hint, **provider_hints)
 
 		if url == None :
@@ -331,7 +337,7 @@ class FaseModelDecorator(ExtendedTableList, Decorator):
 	__add_fields__ = {'accion':None}
 	__url__ = '/miproyecto/fase/get_all/'
 
-	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+	def __init__(self, provider_hint=None, url=None, check_permiso=True,**provider_hints):
 		super(FaseModelDecorator, self).__init__(provider_hint, **provider_hints)
 
 		if url == None :
@@ -354,21 +360,6 @@ class FaseModelDecorator(ExtendedTableList, Decorator):
 														self.check_permiso
 													  )
 
-###############################################################################
-# Se crean los widgets utilizando los decoradores
-###############################################################################
-def create_widget(__base_model__, __decorator__, __url__=None, params=None):
-	"""
-	Crea un widget y le anhade los decoradores
-	"""
-	action = AcctionDecorator()
-	action_decorator = __decorator__(params)
-	model_component = __base_model__(DBSession, __url__)
-
-	action_decorator.set_component(action)
-	model_component.set_component(action_decorator)
-
-	return model_component
 
 class HistorialModelDecorator(ExtendedTableList, Decorator):
 
@@ -376,7 +367,7 @@ class HistorialModelDecorator(ExtendedTableList, Decorator):
 	__add_fields__ = {'accion':None}
 	__url__ = '/miproyecto/fase/item/revertir/'
 
-	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+	def __init__(self, provider_hint=None, url=None,  check_permiso=True ,**provider_hints):
 		super(HistorialModelDecorator, self).__init__(provider_hint, **provider_hints)
 
 		if url == None :
@@ -397,3 +388,76 @@ class HistorialModelDecorator(ExtendedTableList, Decorator):
 														'historial_item',
 														self.check_permiso
 													  )
+
+class UsuarioModelDecorator(ExtendedTableList, Decorator):
+
+	__model__ = Usuario
+	__add_fields__ = {'accion':None}
+	__url__ = '/administracion/usuario/'
+
+	def __init__(self, provider_hint=None, url=None,  check_permiso=True ,**provider_hints):
+		super(UsuarioModelDecorator, self).__init__(provider_hint, **provider_hints)
+
+		if url == None :
+			return
+		self.__url__ = url
+
+	def accion (self, obj):
+		accion = super(UsuarioModelDecorator, self).accion(obj)
+		accion = self.replace(accion,self.__url__, obj.usuario_id)
+		return accion
+
+	def check_permiso(self, id, permiso_name, has_permiso=None):
+		has_permiso = True
+		return super(UsuarioModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
+
+	def replace(self,action, url, id):
+		return super(UsuarioModelDecorator, self).replace( action, url,id,
+														'usuario',
+														self.check_permiso
+													  )
+
+class RolModelDecorator(ExtendedTableList, Decorator):
+
+	__model__ = Rol
+	__add_fields__ = {'accion':None}
+	__url__ = '/administracion/rol/'
+
+	def __init__(self, provider_hint=None, url=None,  check_permiso=True ,**provider_hints):
+		super(RolModelDecorator, self).__init__(provider_hint, **provider_hints)
+
+		if url == None :
+			return
+		self.__url__ = url
+
+	def accion (self, obj):
+		accion = super(RolModelDecorator, self).accion(obj)
+		accion = self.replace(accion,self.__url__, obj.rol_id)
+		return accion
+
+	def check_permiso(self, id, permiso_name, has_permiso=None):
+		has_permiso = True
+		return super(RolModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
+
+	def replace(self,action, url, id):
+		return super(RolModelDecorator, self).replace( action, url,id,
+														'rol',
+														self.check_permiso
+													  )
+
+###############################################################################
+# Se crean los widgets utilizando los decoradores
+###############################################################################
+def create_widget(__base_model__, __decorator__, __url__=None,check_permiso=True, params=None):
+	"""
+	Crea un widget y le anhade los decoradores
+	"""
+	action = AcctionDecorator()
+	action_decorator = __decorator__(params)
+
+	model_component = __base_model__(DBSession, __url__,check_permiso)
+
+	action_decorator.set_component(action)
+	model_component.set_component(action_decorator)
+
+	return model_component

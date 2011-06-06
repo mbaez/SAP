@@ -12,16 +12,15 @@ from sap.widgets.decorator import *
 ####################################################
 # Widgets de los Usuarios
 ####################################################
-class UsuarioTableFiller(ExtendedTableFiller):
-	__model__ = Usuario
-
 
 class UsuarioTable(TableBase):
 	__model__ = Usuario
-	__omit_fields__ = ['_password','proyectos','password', 'roles']
+	__omit_fields__ = ['_password','proyectos','password', 'roles', '__actions__' ]
+	__xml_fields__ = ['accion']
+	__add_fields__ = {'accion':None}
 
-usuario_filler = UsuarioTableFiller(DBSession)
 usuario_table = UsuarioTable(DBSession);
+usuario_filler = create_widget(UsuarioModelDecorator, EditActionDecorator, check_permiso=False)
 
 ####################################################
 # Widgets de los Proyectos
@@ -42,7 +41,7 @@ class ProyectoTable(TableBase):
 
 proyecto_table = ProyectoTable(DBSession);
 #Tabla de proyecto con las opciones de eliminar y editar
-proyecto_filler = create_widget(ProyectoModelDecorator, EditActionDecorator)
+proyecto_filler = create_widget(ProyectoModelDecorator, EditActionDecorator, check_permiso=False)
 
 #Crea la tabla de proyecto para el inicio
 __admin_omit_fields__ = ['lider_id','estado_id', 'id_proyecto' ,
@@ -70,13 +69,13 @@ fase_filler = create_widget(FaseModelDecorator, VerActionDecorator)
 ####################################################
 class RolTable(TableBase):
 	__model__ = Rol
-	__omit_fields__ = ['rol_id', 'permisos','usuarios'  ]
+	__omit_fields__ = ['rol_id', 'permisos','usuarios','__actions__' ]
+	__xml_fields__ = ['accion']
+	__add_fields__ = {'accion':None}
 
-class RolTableFiller(ExtendedTableFiller):
-	__model__ = Rol
 
 rol_table = RolTable(DBSession);
-rol_filler = RolTableFiller(DBSession);
+rol_filler = create_widget(RolModelDecorator, EditActionDecorator, check_permiso=False)
 ####################################################
 # Widgets de los Items
 ####################################################

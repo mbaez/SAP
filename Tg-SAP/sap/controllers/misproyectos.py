@@ -79,7 +79,7 @@ class ProyectosController(RestController):
 		
 		self.params['modelname'] = 'Fases'
 		self.params['permiso'] = permiso
-		self.params['label'] = 'Nueva Fase'
+		self.params['label'] = '+Crear'
 		self.params['new_url'] = "/miproyecto/fase/"+str(idproyecto)+"/new"
 		self.params['text_header'] = 'Listado de Fases del Proyecto'
 		self.params['idproyecto'] = idproyecto

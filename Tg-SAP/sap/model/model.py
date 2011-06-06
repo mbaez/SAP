@@ -180,19 +180,6 @@ class Item(DeclarativeBase):
 	detalles = relation ('DetalleItem', backref = 'item')
 
 
-
-class LineaBaseItem(DeclarativeBase):
-
-	__tablename__ = 'linea_base_item'
-
-	id_item = Column ('id_item', Integer,
-				ForeignKey('item.id_item'), primary_key=True)
-
-	linea_base = Column ('id_linea_base', Integer,
-						ForeignKey('linea_base.id_linea_base'),
-						primary_key=True)
-
-
 class RelacionParentesco(DeclarativeBase):
 
 	__tablename__ = 'relacion_parentesco'

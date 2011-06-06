@@ -2152,12 +2152,25 @@ p.kleur{
  *#              Edited by: Mbaez              #
  *##############################################
  */
+.grid .odd:hover , .grid .even:hover{
+	background:#B4D3F1;
+	
+}
 #next{
-background: url(../img/next.png) no-repeat ;
-width: 16px;
+	background: url(../img/next.png) no-repeat ;
+	width: 16px;
 }
 #back{
-background: url(../img/back.png) no-repeat;
+	
+}
+.grid td  a.link{
+	color: #008EE8;
+	font-weight: bold;
+
+}
+.grid td a.link:hover, a.edit-row:hover, .grid td a.delete-row:hover{
+	color:#7F2525;
+	text-decoration: underline;
 }
 a.edit-row{
 	background: url(../img/icons/document_edit_small.png) no-repeat left center;
@@ -2168,7 +2181,6 @@ a.edit-row{
 	text-transform: capitalize;
 }
 .grid td a.delete-row{
-	/*background: url(../img/icons/notification_error.png) no-repeat right center;*/
 	height: 20px;
 	color:#004FE0;
 	text-indent: 18px;
