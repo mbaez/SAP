@@ -11,15 +11,15 @@ from sap.lib.pygraph.classes.digraph import *
 from sap.lib.pygraph.algorithms.cycles import *
 from sap.lib.pygraph.readwrite.dot import write
 # Import graphviz
-"""
+
 import sys
 sys.path.append('..')
 sys.path.append('/usr/lib/graphviz/python/')
 sys.path.append('/usr/lib64/graphviz/python/')
 import gv
 
-from pygraphviz import *
-"""
+import pygraphviz as pgv
+
 #import de widgets
 from sap.widgets.createform import *
 from sap.widgets.listform import *
@@ -40,7 +40,7 @@ class ItemController(RestController):
 
 
 	@expose('sap.templates.item')
-	#@require(predicates.has_permission('ver_item'))
+	@require(predicates.has_permission('ver_item'))
 	def ver(self, id_item, **kw):
 
 		self.params['item'] = DBSession.query(Item).get(id_item)
@@ -106,6 +106,8 @@ class ItemController(RestController):
 		tmpl_context.widget = item_edit_form
 		kw['id_item'] = item.id_item
 		kw['descripcion'] = item.descripcion
+		kw['nombre'] = item.nombre
+		kw['codigo'] = item.codigo
 		kw['complejidad'] = item.complejidad
 		kw['prioridad'] = item.prioridad
 		kw['observacion'] = item.observacion
@@ -120,12 +122,14 @@ class ItemController(RestController):
 	@validate(item_edit_form, error_handler=edit)
 	@require(predicates.has_permission('editar_item'))
 	@expose()
-	def put(self, idfase, **kw):
-		item =  DBSession.query(Item).get(int(kw['id_item']))
+	def put(self, id_item, **kw):
+		item =  DBSession.query(Item).get(id_item)
 		# Se registra en el historial el item antes de ser modificado
 		util.audit_item(item)
 		# Se modifica el item
 		item.descripcion=kw['descripcion']
+		item.codigo=kw['codigo']
+		item.nombre=kw['nombre']
 		item.complejidad = kw['complejidad']
 		item.prioridad = kw['prioridad']
 		item.observacion = kw['observacion']
@@ -133,7 +137,7 @@ class ItemController(RestController):
 		#Se persiste el item
 		DBSession.merge(item)
 
-		flash("El item id= " +str(item.id_item)+ " ha sido modificado correctamente.")
+		flash("El item " +str(item.nombre)+ " ha sido modificado correctamente.")
 		redirect('/miproyecto/fase/get_all/'+str(item.fase))
 
 	"""
@@ -278,7 +282,7 @@ class ItemController(RestController):
 	retorna:
 	- valorImpacto Tipo Integer
 	"""
-	def calcularImpacto(self, grafo, itemId):
+	def calcular_impacto(self, grafo, itemId):
 		"""
 		obtener la lista de todos antecesores directos e indirectos
 		el list(set()) es para que elimine los repetidos
@@ -303,7 +307,7 @@ class ItemController(RestController):
 			itemActual = DBSession.query(Item).get(idItem)
 			valorImpacto = valorImpacto + itemActual.complejidad
 
-		return valorImpacto
+		return valorImpacto, impactoList
 
 	"""
 	metodo recursivo para obtener la lista de sucesores del item
@@ -322,9 +326,9 @@ class ItemController(RestController):
 		lista = []
 		for item in items:
 			if(item in lista):
-				lista = lista + listForward(grafo, grafo.neighbors(item))
+				lista = lista + self.listForward(grafo, grafo.neighbors(item))
 			else:
-				lista = lista + listForward(grafo, grafo.neighbors(item)) + [item]
+				lista = lista + self.listForward(grafo, grafo.neighbors(item)) + [item]
 
 		return lista
 
@@ -346,9 +350,9 @@ class ItemController(RestController):
 		lista = []
 		for item in items:
 			if(item in lista):
-				lista = lista + listBackward(grafo, grafo.incidents(item))
+				lista = lista + self.listBackward(grafo, grafo.incidents(item))
 			else:
-				lista = lista + listBackward(grafo, grafo.incidents(item)) + [item]
+				lista = lista + self.listBackward(grafo, grafo.incidents(item)) + [item]
 
 		return lista
 
@@ -425,3 +429,79 @@ class ItemController(RestController):
 		DBSession.merge(item)
 		flash("El item " + item.codigo+ " ha sido aprobado correctamente")
 		redirect('/miproyecto/fase/get_all/'+idfase)
+	
+	@expose('sap.templates.list')
+	@require(predicates.has_permission('editar_item'))
+	def historial_versiones(self, id_item):
+		versiones = DBSession.query(HistorialItem).\
+								filter(HistorialItem.id_item==id_item).\
+								all()
+		tmpl_context.widget = historial_table
+		value = historial_filler.get_value(versiones)
+		self.params['title'] = 'Versiones Anteriores'
+		self.params['modelname'] = 'Historial'
+		self.params['header_file'] = 'abstract'
+		self.params['new_url'] = '/'
+		self.params['permiso'] = 'NONE'
+		self.params['idfase'] = 'NONE'
+		return dict (value=value, params=self.params)
+	
+	
+	@expose()
+	@require(predicates.has_permission('editar_item'))
+	def revertir(self, id_historial):
+		historial = DBSession.query(HistorialItem).get(id_historial)
+		util.revertir_item(historial)
+		redirect("/miproyecto/fase/item/ver/"+str(historial.id_item))
+
+	@expose('sap.templates.impacto')
+	@require(predicates.has_permission('editar_item'))
+	def impacto(self, id_item,**kw):
+		item = DBSession.query(Item).get(id_item)
+		fase = DBSession.query(Fase).get(item.fase)
+		grafo = self.proyectGraphConstructor(fase.proyecto)
+		nodos = []
+		impacto, nodos = self.calcular_impacto(grafo, item.id_item)
+		flash(impacto)
+		self.dibujarGrafo(nodos, item)
+		return dict()
+
+	def dibujarGrafo(self, nodos, item_impacto):
+		fase = DBSession.query(Fase).get(item_impacto.fase)
+		fases = DBSession.query(Fase).filter(Fase.proyecto==fase.proyecto).\
+										all()
+		desplazamiento_x = []
+		for i in fases:
+			desplazamiento_x.append(i.id_fase)
+		
+		desplazamiento_y = []
+		for i in range(len(fases)):
+			desplazamiento_y.append(0)
+		
+		gr = pgv.AGraph(directed=True)
+		for nodo in nodos:
+			item = DBSession.query(Item).get(nodo)
+			valor = str(item.codigo)+" : "+str(item.complejidad)
+			index = desplazamiento_x.index(item.fase)
+			posicion =  str(index*2)+','+str(90-desplazamiento_y[index]*2)
+			desplazamiento_y[index] = desplazamiento_y[index] + 1 
+			if(nodo == item_impacto.id_item):
+				gr.add_node(valor, color='red', pos=posicion, pin=True)
+			else:
+				gr.add_node(valor, color='black', pos=posicion, pin=True)
+		
+		#relaciones son aristas
+		aristas = DBSession.query(RelacionItem).\
+						filter(RelacionItem.id_item_actual.in_(nodos)).\
+						filter(RelacionItem.id_item_relacionado.in_(nodos)).\
+						all()
+		for arista in aristas:
+			if(gr.has_edge((arista.id_item_actual, arista.id_item_relacionado))==False):
+				item1 = item = DBSession.query(Item).get(arista.id_item_actual)
+				item2 = item = DBSession.query(Item).get(arista.id_item_relacionado)
+				valor1 = str(item1.codigo)+" : "+str(item1.complejidad)
+				valor2 = str(item2.codigo)+" : "+str(item2.complejidad)
+				gr.add_edge((valor1, valor2))
+				
+		gr.layout()
+		gr.draw('sap/public/img/calculo_impacto.png')

@@ -24,17 +24,17 @@
 				<div id="selected-tags">
 					<h5>Item: ${params['item'].nombre}</h5>
 					<ul>
-						<li> <a class = "tag beige">Calculo de Impacto</a></li>
+						<li> <a href="/miproyecto/fase/item/impacto/${params['item'].id_item}" class="tag beige">Calculo de Impacto</a></li>
 						<p></p>
-						<h5>Revertir</h5>
+						<li> <a href="/miproyecto/fase/item/historial_versiones/${params['item'].id_item}" class="tag beige">Revertir</a></li>
 						<p></p>
-						<h5>Aprobar Item</h5>
+						<li> <a class = "tag beige">Aprobar Item</a></li>
 						<p></p>
-						<h5>Eliminar Item</h5>
+						<li> <a class = "tag beige">Eliminar Item</a></li>
 						<p></p>
-						<h5>Editar Item</h5>
+						<li> <a href="/miproyecto/fase/item/${params['item'].id_item}/edit" class="tag beige">Editar</a></li>
 						<p></p>
-						<h5>Gestionar Atributos</h5>
+						<li> <a class = "tag beige">Gestionar Atributos</a></li>
 						<p></p>
 					</ul>
 				</div>

@@ -87,8 +87,9 @@ item_edit_filler = ItemEditFiller(DBSession)
 
 class ItemEditForm(ExtendedEditableForm):
 	__model__ = Item
-	__omit_fields__ = ['estado', 'fase', 'version', 'tipo_item_relacion',
-	'tipo_item', '']
+	__omit_fields__ = ['tipo_item_relacion','tipo_item', '__actions__',
+					'id_item', 'fase', 'version','estado', 'linea_base',
+					'estado_actual', 'id_linea_base' , 'detalles']
 
 item_edit_form = ItemEditForm(DBSession)
 

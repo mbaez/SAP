@@ -172,3 +172,20 @@ linea_base_table = LineaBaseTable(DBSession);
 #
 linea_base_filler = create_widget(LineaBaseModelDecorator, EditActionDecorator)
 
+####################################################
+# Widgets del historial
+####################################################
+
+class HistorialTable(TableBase):
+	__model__ = HistorialItem
+	__xml_fields__ = ['accion']
+	__add_fields__ = {'accion':None}
+	__omit_fields__ = ['__actions__', 'fase', 'tipo_item', 'observacion',
+						'id_historial_item', 'id_item', 'linea_base', 'relaciones',
+						'detalles','estado']
+
+
+historial_table = HistorialTable(DBSession);
+historial_filler = create_widget(HistorialModelDecorator, LabelActionDecorator,
+								params={'__label__':'revertir',
+											'__extra_url__':''})

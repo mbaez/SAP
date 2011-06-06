@@ -330,6 +330,7 @@ class SessionUtil() :
 
 		historial.id_item = item.id_item
 		historial.nombre = item.nombre
+		historial.codigo = item.codigo
 		historial.estado = item.estado
 		historial.tipo_item = item.tipo_item
 		historial.fase = item.fase
@@ -341,7 +342,7 @@ class SessionUtil() :
 		historial.linea_base = item.linea_base
 		#historial de detalles
 		detalles = DBSession.query(DetalleItem).\
-					filter(DetalleItem.id_item==item.id_item).\
+					filter(DetalleItem.id_item==historial.id_item).\
 					all()
 		for detalle in detalles:
 			historial_detalle = HistorialDetalleItem()
@@ -353,10 +354,10 @@ class SessionUtil() :
 
 		#Obtener las relaciones
 		relaciones = DBSession.query(RelacionItem).\
-					filter(RelacionItem.id_item_actual==item.id_item or
-						RelacionItem.id_item_relacionado==item.id_item).\
-						all()
-
+							filter((RelacionItem.id_item_actual or 
+							RelacionItem.id_item_relacionado) == item.id_item).\
+							all()
+							
 		for relacion in relaciones:
 			historial_relacion = HistorialRelacion()
 			historial_relacion.id_item_1 = relacion.id_item_actual
@@ -372,13 +373,18 @@ class SessionUtil() :
 		anterior del item en si se obtiene de la tabla las entradas de
 		esa version para que el item recupere los valores de esa version
 		"""
+		#debe ser una version posterior a la actual
+		item = DBSession.query(Item).get(historial_item.id_item)
+		version = int(item.version) + 1
+		
 		item = Item()
 		item.id_item = historial_item.id_item
 		item.nombre = historial_item.nombre
-		item.estado = historial_item.estado
+		item.codigo = historial_item.codigo
+ 		item.estado = historial_item.estado
 		item.tipo_item = historial_item.tipo_item
 		item.fase = historial_item.fase
-		item.version = historial_item.version
+		item.version = version 
 		item.prioridad = historial_item.prioridad
 		item.complejidad = historial_item.complejidad
 		item.descripcion = historial_item.descripcion
@@ -400,8 +406,8 @@ class SessionUtil() :
 
 		#recuperar los relaciones
 		historial_relaciones = DBSession.query(HistorialRelacion).\
-			filter(HistorialRelacion.id_item_actual == historial_item.id_item\
-			or HistorialRelacion.id_item_relacionado == historial_item.id_item).\
+			filter((HistorialRelacion.id_item_1 or 
+			HistorialRelacion.id_item_2) == item.id_item).\
 			all()
 
 		for hist_relacion in historial_relaciones:

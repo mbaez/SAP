@@ -370,4 +370,30 @@ def create_widget(__base_model__, __decorator__, __url__=None, params=None):
 
 	return model_component
 
+class HistorialModelDecorator(ExtendedTableList, Decorator):
 
+	__model__ = HistorialItem
+	__add_fields__ = {'accion':None}
+	__url__ = '/miproyecto/fase/item/revertir/'
+
+	def __init__(self, provider_hint=None, url=None ,**provider_hints):
+		super(HistorialModelDecorator, self).__init__(provider_hint, **provider_hints)
+
+		if url == None :
+			return
+		self.__url__ = url
+
+	def accion (self, obj):
+		accion = super(HistorialModelDecorator, self).accion(obj)
+		accion = self.replace(accion,self.__url__, obj.id_item)
+		return accion
+
+	def check_permiso(self, id, permiso_name, has_permiso=None):
+		has_permiso = True
+		return super(HistorialModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
+
+	def replace(self,action, url, id):
+		return super(HistorialModelDecorator, self).replace( action, url,id,
+														'historial_item',
+														self.check_permiso
+													  )

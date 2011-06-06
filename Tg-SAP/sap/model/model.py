@@ -231,8 +231,8 @@ class Recurso(DeclarativeBase):
 	id= Column ('id_recurso', Integer, autoincrement=True,
 				primary_key = True)
 
-	#adjunto = Column ('adjunto', BYTEA, nullable = False)
-
+	adjunto = Column ('adjunto', Binary, nullable = False)
+	
 	observacion = Column ('observacion', Unicode(100))
 
 class TipoAtributo(DeclarativeBase):
@@ -292,18 +292,23 @@ class HistorialItem(DeclarativeBase):
 
 	__tablename__ = 'historial_item'
 
-	id_historial = Column ('id_historial_item', Integer, autoincrement=True,
+	id_historial_item = Column ('id_historial_item', Integer, autoincrement=True,
 						primary_key = True)
 
 	id_item = Column ('id_item', Integer, nullable=False)
 
-	nombre = Column ('nombre', Unicode(200),unique=True)
+	codigo = Column ('codigo', Unicode(50),nullable=False)
+	
+	nombre = Column ('nombre', Unicode(200))
 
-	estado = Column ('id_estado_item', Integer, nullable=False)
+	estado = Column ('id_estado_item', Integer, ForeignKey ('estado_item.id_estado_item'),
+										nullable=False)
+
+	estado_historial = relation('EstadoItem')
 
 	tipo_item = Column ('id_tipo_item', Integer, nullable=False)
 
-	linea_base = Column ('id_linea', Integer, nullable=False)
+	linea_base = Column ('id_linea', Integer)
 
 	fase = Column ('id_fase', Integer, nullable=False)
 
