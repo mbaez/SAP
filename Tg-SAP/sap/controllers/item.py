@@ -98,8 +98,9 @@ class ItemController(RestController):
 			detalle.recurso = None
 			item.detalles.append(detalle)
 		DBSession.add(item)
+		DBSession.flush()
 		flash("El item se ha creado correctamente")
-		redirect('/miproyecto/fase/get_all/'+idfase)
+		redirect('/miproyecto/fase/item/ver/'+str(item.id_item))
 
 	"""
 	Encargado de carga el widget para editar las instancias,
@@ -142,9 +143,10 @@ class ItemController(RestController):
 		item.version=int(item.version) + 1
 		#Se persiste el item
 		DBSession.merge(item)
+		DBSession.flush()
 
 		flash("El item " +str(item.nombre)+ " ha sido modificado correctamente.")
-		redirect('/miproyecto/fase/get_all/'+str(item.fase))
+		redirect('/miproyecto/fase/item/ver/'+str(item.id_item))
 
 	"""
 	Falta verificar si deja huerfano a alguien!

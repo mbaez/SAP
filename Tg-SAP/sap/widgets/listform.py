@@ -114,7 +114,7 @@ tipo_item_filler = create_widget(TipoItemModelDecorator, LabelActionDecorator,
 ####################################################
 class ParticipantesTable(TableBase):
 	__model__ = Rol
-	__omit_fields__ = ['__actions__','permisos', 'created',
+	__omit_fields__ = ['__actions__','permisos', 'created', 'rol_id',
 						'codigo','is_template']
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}

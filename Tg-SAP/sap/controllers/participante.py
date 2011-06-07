@@ -111,7 +111,7 @@ class ParticipanteFaseController(RestController):
 			util.asociar_usuario_fase(usuario_id, fase.id_fase)
 
 		flash("Los Usuarios <"+str(kw['usuarios'])+"> fueron asignados a la fase "+ str(fase.id_fase)+".")
-		redirect("/miproyecto/fase/participantes/admin/" + str(fase.id_fase) )
+		redirect("/miproyecto/fase/get_all/" + str(fase.id_fase) )
 
 	@expose()
 	def delete(self, id_fase ,id, **kw):
@@ -222,7 +222,7 @@ class ParticipanteProyectoController(RestController):
 		proyecto = self._get_current_proyect()
 		usuarios = util.get_usuarios_by_permiso(proyecto.id_proyecto)
 
-		self.params['modelname'] = 'Rol'
+		self.params['modelname'] = 'Participantes'
 		self.params['header_file'] = 'proyecto'
 		return dict(value=value, params=self.params)
 
