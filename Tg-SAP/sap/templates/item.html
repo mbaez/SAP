@@ -40,68 +40,57 @@
 				</div>
 				<p></p>
 			</div>
-			<!--div class="project-info">
-				<h4>Participantes
-					<span>
-						<a class="add-member" href="/miproyecto/fase/participantes/admin/${params['idfase']}">A&ntilde;adir</a>
-					</span>
-				</h4>
-				<ul id="team">
 
-					<li py:for="usuario in params['usuarios']">
-						<img src="/img/saved_resource" alt="">${usuario.user_name}
-							<div class="member-edit">
-								<a>Delete</a>
-							</div>
-						</img>
-					</li>
-
-				</ul>
-			</div-->
 		</aside>
 
-		<li class="main" style="width: 80%; ">
-			<div class="block">
-			<h3>
-				<a>Item : #${params['item'].id_item}</a>
-			</h3>
-			<ul>
-				<li class="project-info">
-
-					<h5>Nombre</h5>
-					<p></p>
-					<p>${params['item'].nombre}</p>
-					<h5> Version</h5>
-					<p></p>
-					<p>${params['item'].version}</p>
-					<h5> Prioridad</h5>
-					<p></p>
-					<p>${params['item'].prioridad}</p>
-					<h5> Descripci&oacute;n</h5>
-					<p></p>
-					<p>${params['item'].descripcion}</p>
-					<h5>Observaci&oacute;n</h5>
-					<p></p>
-					<p>${params['item'].observacion}</p>
-					<h5> Estado</h5>
-					<p></p>
-					<p>${params['item'].estado_actual.nombre}</p>
-					<h5> complejidad</h5>
-					<p></p>
-					<div class="progbar">
-						<div class="progress" style="width:${params['progreso']}%">${params['progreso']}%</div>
-					</div>
-				</li>
-			  	<li class="project-list-task">
-					<a>Atributos</a>
-				</li>
-
-			</ul>
+			<li class="main" style="width: 75%; ">
+				<div class="block">
+				<h3>
+					<a>Item : #${params['item'].id_item}</a>
+				</h3>
+				<ul>
+					<li class="project-info">
+						<h5>Nombre</h5>
+						<p></p>
+						<p>${params['item'].nombre}</p>
+						<table style="width:100%;">
+							<tr>
+								<td style=";padding:0px 0px 15px 0px;">
+									<h5> Estado</h5>
+									<p></p>
+									<p>${params['item'].estado_actual.nombre}</p>
+									<h5> Prioridad</h5>
+									<p></p>
+									<p>${params['item'].prioridad}</p>
+								</td>
+								<td style="width: 35%;">
+									<h5> Version</h5>
+									<p></p>
+									<p>${params['item'].version}</p>
+									<h5> complejidad</h5>
+									<p></p>
+									<div class="progbar">
+										<div class="progress" style="width:${params['progreso']}%">${params['progreso']}%</div>
+									</div>
+								</td>
+							</tr>
+						</table>
+						<h5> Descripci&oacute;n</h5>
+						<p></p>
+						<p>${params['item'].descripcion}</p>
+						<h5>Observaci&oacute;n</h5>
+						<p></p>
+						<p>${params['item'].observacion}</p>
+					</li>
+					<li class="project-list-task">
+						<a>Atributos</a>
+					</li>
+				</ul>
 			</div>
 		</li>
-		<!--div style="float:left; width: 60%">
-			${tmpl_context.widget(value=value)}
-		</div-->
+			<!--div style="float:left; width: 60%">
+				${tmpl_context.widget(value=value)}
+			</div-->
 
 	</section>
 </body>

@@ -11,7 +11,7 @@ from sap.lib.pygraph.classes.digraph import *
 from sap.lib.pygraph.algorithms.cycles import *
 from sap.lib.pygraph.readwrite.dot import write
 # Import graphviz
-
+"""
 import sys
 sys.path.append('..')
 sys.path.append('/usr/lib/graphviz/python/')
@@ -19,7 +19,7 @@ sys.path.append('/usr/lib64/graphviz/python/')
 import gv
 
 import pygraphviz as pgv
-
+"""
 #import de widgets
 from sap.widgets.createform import *
 from sap.widgets.listform import *

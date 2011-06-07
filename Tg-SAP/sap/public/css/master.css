@@ -159,7 +159,7 @@ nav{
 
 #content-sidebar{
 	float: right;
-	width: 200px;
+	width: 220px;
 }
 
 footer{
@@ -1457,7 +1457,6 @@ a.folder{
 	-moz-border-radius: 6px;
 	-khtml-border-radius: 6px;
 	padding-bottom: 20px;
-	margin: 28px 0 0 0;
 }
 
 aside h4, div.form h4{
@@ -2154,14 +2153,14 @@ p.kleur{
  */
 .grid .odd:hover , .grid .even:hover{
 	background:#B4D3F1;
-	
+
 }
 #next{
 	background: url(../img/next.png) no-repeat ;
 	width: 16px;
 }
 #back{
-	
+
 }
 .grid td  a.link{
 	color: #008EE8;
