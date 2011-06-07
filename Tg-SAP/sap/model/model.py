@@ -33,21 +33,21 @@ class EstadoProyecto(DeclarativeBase):
 class Proyecto(DeclarativeBase):
 
 	__tablename__ = 'proyecto'
-	
+
 	#{ Columnas
 	id_proyecto = Column ('id_proyecto', Integer, autoincrement=True,
 							primary_key=True)
 
 	lider_id = Column ('id_usuario_lider', Integer,
 					ForeignKey('usuario.usuario_id'))
-	
+
 	nombre = Column ('nombre', Unicode(50), nullable=False)
 
 	nro_fases = Column ('nro_fases', Integer, nullable=False)
 
 	descripcion = Column ('descripcion', Unicode(200))
 	#{ Relaciones
-	
+
 	#Se relaciona con una instnacia de una clase Usuario
 	lider = relation ('Usuario', backref='proyectos')
 
@@ -57,7 +57,7 @@ class Proyecto(DeclarativeBase):
 	Se relaciona con una instnacia de una clase EstadoProyecto
 	"""
 	estado = relation ('EstadoProyecto', backref='proyectos')
-	
+
 	#{ Metodos
 	def __str__(self):
 		return ' %s %s %s' % (self.nombre, self.nro_fases, self.descripcion)
@@ -66,7 +66,7 @@ class Proyecto(DeclarativeBase):
 class Fase(DeclarativeBase):
 
 	__tablename__ = 'fase'
-	
+
 	#{Columnas
 	id_fase = Column ('id_fase', Integer, autoincrement=True,
 						primary_key=True)
@@ -83,7 +83,7 @@ class Fase(DeclarativeBase):
 class EstadoLineaBase(DeclarativeBase):
 
 	__tablename__ = 'estado_linea_base'
-	
+
 	#{Columnas
 	id_estado_linea_base = Column ('id_estado_linea_base',Integer, autoincrement=True,
 					primary_key=True)
@@ -94,7 +94,7 @@ class EstadoLineaBase(DeclarativeBase):
 class TipoItem(DeclarativeBase) :
 
 	__tablename__ = 'tipo_item'
-	
+
 	#{Columnas
 	id_tipo_item = Column ('id_tipo_item', Integer, autoincrement=True,
 							primary_key=True)
@@ -113,14 +113,14 @@ class AtributoTipoItem(DeclarativeBase):
 	__tablename__ = 'atributo_tipo_item'
 
 	#{Columnas
-	id_atributo_tipo_item = Column ('id_atributo_tipo_item', Integer, autoincrement=True,
-					primary_key=True)
-
-	tipo_item = Column ('id_tipo_item', Integer,
-						ForeignKey ('tipo_item.id_tipo_item'),
-						nullable=False)
+	id_atributo_tipo_item = Column ('id_atributo_tipo_item', Integer,
+								autoincrement=True, primary_key=True)
 
 	nombre = Column ('nombre', Unicode(50), nullable=False)
+
+	#{ForeignKey
+	tipo_item = Column ('id_tipo_item', Integer,
+						ForeignKey ('tipo_item.id_tipo_item'), nullable=False)
 
 	tipo_id = Column ('tipo_atributo', Integer,
 						ForeignKey ('tipo_atributo.id_tipo_atributo'),
@@ -136,7 +136,7 @@ class AtributoTipoItem(DeclarativeBase):
 class EstadoItem(DeclarativeBase):
 
 	__tablename__ = 'estado_item'
-	
+
 	#{Columnas
 	id_estado_item = Column ('id_estado_item', Integer, autoincrement=True,
 					primary_key=True)
@@ -152,20 +152,9 @@ class Item(DeclarativeBase):
 	id_item = Column ('id_item', Integer, autoincrement=True,
 						primary_key = True)
 
-	estado = Column ('id_estado_item', Integer,
-						ForeignKey('estado_item.id_estado_item'),
-						nullable=False)
-
 	codigo = Column ('codigo', Unicode(50), unique = True, nullable = False)
 
-	nombre = Column ('nombre', Unicode(50))
-
-	tipo_item = Column ('id_tipo_item', Integer,
-						ForeignKey ('tipo_item.id_tipo_item'),
-						nullable=False)
-	
-	fase = Column ('id_fase', Integer, ForeignKey('fase.id_fase'),
-					nullable=False)
+	nombre = Column ('nombre', Unicode(50), nullable=False)
 
 	version = Column ('version', Integer, nullable=False)
 
@@ -174,19 +163,31 @@ class Item(DeclarativeBase):
 	complejidad = Column ('complejidad', Integer, nullable=False)
 
 	descripcion = Column ('descripcion', Unicode(200))
-	
+
 	observacion = Column ('observacion', Unicode(100))
-	
+
+	#{ForeignKey
 	id_linea_base = Column ('id_linea_base', Integer,
 					ForeignKey('linea_base.id_linea_base'))
-	
+
+	tipo_item = Column ('id_tipo_item', Integer,
+						ForeignKey ('tipo_item.id_tipo_item'),
+						nullable=False)
+
+	fase = Column ('id_fase', Integer, ForeignKey('fase.id_fase'),
+					nullable=False)
+
+	estado = Column ('id_estado_item', Integer,
+						ForeignKey('estado_item.id_estado_item'),
+						nullable=False)
+
 	#{Relaciones
 	tipo_item_relacion = relation('TipoItem', backref='items')
 
 	estado_actual = relation('EstadoItem', backref = 'items')
-	
+
 	detalles = relation ('DetalleItem', backref = 'item')
-	
+
 	#}
 
 class RelacionParentesco(DeclarativeBase):
@@ -229,12 +230,12 @@ class Recurso(DeclarativeBase):
 				primary_key = True)
 
 	adjunto = Column ('adjunto', Binary, nullable = False)
-	
+
 	observacion = Column ('observacion', Unicode(100))
 	#}
-	
+
 class TipoAtributo(DeclarativeBase):
-	
+
 	__tablename__ = 'tipo_atributo'
 	#{Columnas
 	id_tipo_atributo = Column('id_tipo_atributo', Integer, autoincrement=True, primary_key=True)
@@ -253,19 +254,26 @@ class TipoAtributo(DeclarativeBase):
 class DetalleItem(DeclarativeBase):
 
 	__tablename__ = 'detalle_item'
+
 	#{Columnas
-	id_item = Column ('id_item', Integer, ForeignKey ('item.id_item'),
-				primary_key=True)
-
-	id_item_detalle = Column ('id_item_detalle', Integer,
-				autoincrement=True, primary_key=True)
-
-	recurso_id = Column ('id_recurso', Integer,
-				ForeignKey('recurso.id_recurso'), nullable=False)
-	
-	recurso = relation(Recurso, backref='item')
+	id_item_detalle = Column ('id_item_detalle', Integer, autoincrement=True,
+								primary_key=True)
 
 	valor = Column('valor', Unicode(200))
+
+	#{ForeignKey
+	id_item = Column ('id_item', Integer, ForeignKey ('item.id_item'))
+
+	id_atributo_tipo_item = Column( 'id_atributo_tipo_item', Integer,
+							ForeignKey ('.id_atributo_tipo_item'))
+
+	recurso_id = Column ('id_recurso', Integer,
+						ForeignKey('recurso.id_recurso'))
+	#{Relation
+	recurso = relation(Recurso, backref='item')
+
+	atributo_tipo_item = relation (AtributoTipoItem, backref='detalle_item')
+
 	#}
 
 class LineaBase (DeclarativeBase):
@@ -299,7 +307,7 @@ class HistorialItem(DeclarativeBase):
 	id_item = Column ('id_item', Integer, nullable=False)
 
 	codigo = Column ('codigo', Unicode(50),nullable=False)
-	
+
 	nombre = Column ('nombre', Unicode(200))
 
 	estado = Column ('id_estado_item', Integer, ForeignKey ('estado_item.id_estado_item'),
