@@ -169,8 +169,9 @@ class LineaBaseTable(TableBase):
 
 linea_base_table = LineaBaseTable(DBSession);
 #
-linea_base_filler = create_widget(LineaBaseModelDecorator, EditActionDecorator)
-
+linea_base_filler = create_widget(LineaBaseModelDecorator, LabelActionDecorator,
+									'/miproyecto/fase/linea_base/abrir/',
+									params={'__label__':'Abrir','__extra_url__': ''})
 ####################################################
 # Widgets del historial
 ####################################################
@@ -199,6 +200,8 @@ class HistorialRevivirTable(TableBase):
 
 
 historial_revivir_table = HistorialRevivirTable(DBSession);
-historial_revivir_filler = create_widget(HistorialModelDecorator, LabelActionDecorator,
-														'/miproyecto/fase/item/revivir/',
-								params={'__label__':'revivir', '__extra_url__':''})
+historial_revivir_filler = create_widget(HistorialModelDecorator,
+								LabelActionDecorator,
+								'/miproyecto/fase/item/revivir/',
+								params={'__label__':'revivir', '__extra_url__':''}
+							)
