@@ -5,14 +5,42 @@
     xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <xi:include href="master.html" />
+<xi:include href="header/abstract.html" />
+
 <head>
 		<title>Calculo de Impacto</title>
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/master.css" />
 </head>
 
 <body>
-	<div>
-	<img src="/img/calculo_impacto.png" />
-	</div>
+	<section id="inner-content">
+		<aside id="dashboard-sidebar">
+				<div class="filters">
+					<h4>Calculo de impacto</h4>
+					<div id="selected-tags">
+						<h5>INFO</h5>
+						<ul>
+							<p>El calculo de impacto del ${params['item'].nombre} (azul) tiene un valor de ${params['impacto']}.
+							e implica la revision de ${params['cantidad']} items que se relacionan con éste de forma directa o indirecta.
+							Dicho valor de impacto es la suma de las complejidades de los items que se ven en la figura.
+							</p>
+						</ul>
+						<h5>LECTURA</h5>
+						<ul>
+							<p>* Aquellos items que pertenecen a la misma columna son de la misma fase.
+							</p>
+							<p>* Cada Nodo del grafo representa un item dentro del proyecto.
+							</p>
+							<p>* Cada Arco del grafo representa una relacion entre 2 items.
+							</p>
+						</ul>
+					</div>
+					<p></p>
+				</div>
+		</aside>
+		<div style="float:left; width: 60%">
+		<img src="/img/calculo_impacto.svg" />
+		</div>
+	</section>
 </body>
 </html>

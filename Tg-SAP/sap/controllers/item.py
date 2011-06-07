@@ -11,15 +11,13 @@ from sap.lib.pygraph.classes.digraph import *
 from sap.lib.pygraph.algorithms.cycles import *
 from sap.lib.pygraph.readwrite.dot import write
 # Import graphviz
-"""
 import sys
 sys.path.append('..')
 sys.path.append('/usr/lib/graphviz/python/')
 sys.path.append('/usr/lib64/graphviz/python/')
 import gv
-
 import pygraphviz as pgv
-"""
+
 #import de widgets
 from sap.widgets.createform import *
 from sap.widgets.listform import *
@@ -36,10 +34,8 @@ class ItemController(RestController):
 	
 	item_detalle = ItemDetalleController()
 
-	#item_detalles = ItemDetallesController()
-
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':'','progreso':0}
+	'idfase':'','permiso':'','progreso':0, 'cantidad':'', 'item':'', 'impacto':''}
 
 
 	@expose('sap.templates.item')
@@ -142,7 +138,31 @@ class ItemController(RestController):
 
 		flash("El item " +str(item.nombre)+ " ha sido modificado correctamente.")
 		redirect('/miproyecto/fase/get_all/'+str(item.fase))
-
+	
+	"""
+	Falta verificar si deja huerfano a alguien!
+	"""
+	@require(predicates.has_permission('eliminar_item'))
+	@expose()
+	def eliminar(self, id_item):
+		#se utiliza el campo estado para determinar en la tabla historial que 
+		#esta muerto
+		item = DBSession.query(Item).get(id_item)
+		item.estado = 4
+		util.audit_item(item)
+		relaciones = DBSession.query(RelacionItem).filter((RelacionItem.id_item_actual or\
+													RelacionItem.id_item_actual) == id_item).\
+													all()
+													
+		for relacion in relaciones:
+			DBSession.delete(relacion)
+		
+		DBSession.flush()
+		
+		DBSession.delete(item)
+		flash("El item fue eliminado con exito")
+		redirect("/miproyecto/fase/get_all/"+str(item.fase))
+		
 	"""
 	metodo que retorna el padres de un item.
 	parametros:
@@ -359,30 +379,6 @@ class ItemController(RestController):
 
 		return lista
 
-	"""
-	Si se quiere eliminar un item se verifica que esto no provoque que
-	otro item, de la misma fase u otra quede huerfano
-	parametros:
-	grafo digraph -> grafo completo del proyecto
-	retorna:
-		True si es que deja huerfano a algun item
-		False en caso contrario
-
-
-		TODO
-		no se si esto se aplica solo sobre items aprobados o que onda
-	"""
-	'''
-	@expose('sap.templates.grafico')
-	def dibujarGrafo(self):
-		grafo = self.faseGraphConstructor(1)
-		dot = write(grafo)
-		gvv = gv.readstring(dot)
-		gv.layout(gvv,'dot')
-		gv.render(gvv,'svg',"fase.svg")
-		return dict()
-	'''
-
 	def marcar_en_revision(self, grafo, itemId):
 		"""
 		obtener la lista de todos antecesores directos e indirectos
@@ -408,19 +404,6 @@ class ItemController(RestController):
 			itemActual.estado = 3
 			DBSession.merge(itemActual)
 
-	"""
-	Si se quiere eliminar un item se verifica que esto no provoque que
-	otro item, de la misma fase u otra quede huerfano
-	parametros:
-	grafo digraph -> grafo completo del proyecto
-	retorna:
-		True si es que deja huerfano a algun item
-		False en caso contrario
-
-
-		TODO
-		no se si esto se aplica solo sobre items aprobados o que onda
-	"""
 	@expose()
 	def aprobar_item(self, iditem, **kw):
 		"""
@@ -454,6 +437,10 @@ class ItemController(RestController):
 	@require(predicates.has_permission('editar_item'))
 	def revertir(self, id_historial):
 		historial = DBSession.query(HistorialItem).get(id_historial)
+		item = DBSession.query(Item).get(historial.id_item)
+		# Se registra en el historial el item antes de ser revertido
+		util.audit_item(item)
+		#se revierte
 		util.revertir_item(historial)
 		redirect("/miproyecto/fase/item/ver/"+str(historial.id_item))
 
@@ -465,11 +452,13 @@ class ItemController(RestController):
 		grafo = self.proyectGraphConstructor(fase.proyecto)
 		nodos = []
 		impacto, nodos = self.calcular_impacto(grafo, item.id_item)
-		flash(impacto)
-		self.dibujarGrafo(nodos, item)
-		return dict()
+		self.dibujar_grafo(nodos, item)
+		self.params['cantidad'] = len(nodos)
+		self.params['impacto'] = impacto 
+		self.params['item'] = item
+		return dict(params = self.params)
 
-	def dibujarGrafo(self, nodos, item_impacto):
+	def dibujar_grafo(self, nodos, item_impacto):
 		fase = DBSession.query(Fase).get(item_impacto.fase)
 		fases = DBSession.query(Fase).filter(Fase.proyecto==fase.proyecto).\
 										all()
@@ -481,17 +470,20 @@ class ItemController(RestController):
 		for i in range(len(fases)):
 			desplazamiento_y.append(0)
 		
-		gr = pgv.AGraph(directed=True)
+		gr = pgv.AGraph(directed=True, label="Grafico calculo de impacto")
 		for nodo in nodos:
 			item = DBSession.query(Item).get(nodo)
 			valor = str(item.codigo)+" : "+str(item.complejidad)
 			index = desplazamiento_x.index(item.fase)
 			posicion =  str(index*2)+','+str(90-desplazamiento_y[index]*2)
 			desplazamiento_y[index] = desplazamiento_y[index] + 1 
+			url= "/miproyecto/fase/item/ver/"+str(item.id_item)
 			if(nodo == item_impacto.id_item):
-				gr.add_node(valor, color='red', pos=posicion, pin=True)
+				gr.add_node(valor, label=valor, fillcolor='#008ee8', 
+					style="filled", pos=posicion, href=url, pin=True)
 			else:
-				gr.add_node(valor, color='black', pos=posicion, pin=True)
+				gr.add_node(valor, label=valor, fillcolor='white', 
+					style="filled", pos=posicion, href=url, pin=True)
 		
 		#relaciones son aristas
 		aristas = DBSession.query(RelacionItem).\
@@ -504,7 +496,37 @@ class ItemController(RestController):
 				item2 = item = DBSession.query(Item).get(arista.id_item_relacionado)
 				valor1 = str(item1.codigo)+" : "+str(item1.complejidad)
 				valor2 = str(item2.codigo)+" : "+str(item2.complejidad)
-				gr.add_edge((valor1, valor2))
+				gr.add_edge((valor1, valor2), color='#8dad48', href="/")
 				
 		gr.layout()
-		gr.draw('sap/public/img/calculo_impacto.png')
+		gr.draw('sap/public/img/calculo_impacto.svg')
+	
+	@expose('sap.templates.list')
+	@require(predicates.has_permission('editar_item'))
+	def items_borrados(self, id_fase):
+		#se obtienen los items borrados de esta fase que tengan estado 
+		#"muerto" (4)
+		muertos = DBSession.query(HistorialItem).\
+								filter(HistorialItem.fase==id_fase).\
+								filter(HistorialItem.estado==4).\
+								all()
+								
+		tmpl_context.widget = historial_revivir_table
+		value = historial_revivir_filler.get_value(muertos)
+		self.params['title'] = 'Items borrados '
+		self.params['modelname'] = 'Items Borrados'
+		self.params['header_file'] = 'abstract'
+		self.params['new_url'] = '/'
+		self.params['permiso'] = 'NONE'
+		self.params['idfase'] = 'NONE'
+		return dict (value=value, params=self.params)
+
+	@expose()
+	@require(predicates.has_permission('editar_item'))
+	def revivir(self, id_historial):
+		historial = DBSession.query(HistorialItem).get(id_historial)
+		#se revive el item a partir de su historial
+		util.revivir_item(historial)
+		#se elimina el historial del item muerto
+		DBSession.delete(historial)
+		redirect("/miproyecto/fase/item/ver/"+str(historial.id_item))

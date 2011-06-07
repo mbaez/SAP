@@ -417,7 +417,7 @@ class SessionUtil() :
 				relacion.id_item_actual = hist_relacion.id_item_1
 				relacion.id_item_relacionado = hist_relacion.id_item_2
 				relacion.relacion_parentesco = hist_relacion.id_tipo_relacion
-				item.relaciones.append(relacion)
+				DBSession.merge(relacion)
 
 		DBSession.merge(item)
 
@@ -428,7 +428,9 @@ class SessionUtil() :
 		item = Item()
 		item.id_item = historial_item.id_item
 		item.nombre = historial_item.nombre
-		item.estado = historial_item.estado
+		item.codigo = historial_item.codigo
+		#el estado del item es en desarrollo al revivir
+		item.estado = 2
 		item.tipo_item = historial_item.tipo_item
 		item.fase = historial_item.fase
 		item.version = historial_item.version

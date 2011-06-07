@@ -188,3 +188,17 @@ historial_table = HistorialTable(DBSession);
 historial_filler = create_widget(HistorialModelDecorator, LabelActionDecorator,
 								params={'__label__':'revertir',
 											'__extra_url__':''})
+
+class HistorialRevivirTable(TableBase):
+	__model__ = HistorialItem
+	__xml_fields__ = ['accion']
+	__add_fields__ = {'accion':None}
+	__omit_fields__ = ['__actions__', 'fase', 'tipo_item', 'observacion',
+						'id_historial_item', 'id_item', 'linea_base', 'relaciones',
+						'detalles','estado']
+
+
+historial_revivir_table = HistorialRevivirTable(DBSession);
+historial_revivir_filler = create_widget(HistorialModelDecorator, LabelActionDecorator,
+														'/miproyecto/fase/item/revivir/', 
+								params={'__label__':'revivir', '__extra_url__':''})

@@ -15,7 +15,7 @@
 				<a href="/miproyecto/fase/tipo_item/list/${params['idfase']}">Tipos de Item</a>
 			</li>
 			<li id="nav-agenda" py:if="tg.predicates.has_permission('ver_item')" >
-				<a href="${tg.url('/administracion/proyecto/listall')}">Historial de Items</a>
+				<a href="/miproyecto/fase/item/items_borrados/${params['idfase']}">Historial de Items</a>
 			</li>
 			<li id="nav-agenda" py:if="tg.predicates.has_permission('ver_item')" >
 				<a href="/miproyecto/fase/relacion/list/${params['idfase']}">Administrar Relaciones</a>

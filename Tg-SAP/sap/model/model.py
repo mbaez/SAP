@@ -186,6 +186,7 @@ class Item(DeclarativeBase):
 	estado_actual = relation('EstadoItem', backref = 'items')
 	
 	detalles = relation ('DetalleItem', backref = 'item')
+	
 	#}
 
 class RelacionParentesco(DeclarativeBase):

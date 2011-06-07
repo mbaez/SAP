@@ -55,7 +55,7 @@ class ExtendedTableList(TableFiller):
 
 ###############################################################################
 #Se trata de anhadir el patron decorator a los extended widgets para facilitar#
-#la utilizacion de los mismos y obente un esquema mas entendible              #
+#la utilizacion de los mismos y obtener un esquema mas entendible              #
 ###############################################################################
 
 class ExtendedComponent():
@@ -376,7 +376,7 @@ class HistorialModelDecorator(ExtendedTableList, Decorator):
 
 	def accion (self, obj):
 		accion = super(HistorialModelDecorator, self).accion(obj)
-		accion = self.replace(accion,self.__url__, obj.id_item)
+		accion = self.replace(accion,self.__url__, obj.id_historial_item)
 		return accion
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):

@@ -281,7 +281,12 @@ def cargar_estados_item():
     estadoItem3 = model.EstadoItem()
     estadoItem3.nombre = 'Revision'
     model.DBSession.add(estadoItem3)
-    return estadoItem1,estadoItem2,estadoItem3
+    
+    estadoItem4 = model.EstadoItem()
+    estadoItem4.nombre = 'muerto'
+    model.DBSession.add(estadoItem4)
+    
+    return estadoItem1,estadoItem2,estadoItem3, estadoItem4
 
 def cargar_relaciones():
     for name in __relaciones__ :
@@ -430,7 +435,7 @@ def setup_app(command, conf, vars):
                                                        fase1, fase2,fase3,
                                                        fase4)
     #estados de item
-    estadoItem1,estadoItem2,estadoItem3 = cargar_estados_item()
+    estadoItem1,estadoItem2,estadoItem3, estadoItem4 = cargar_estados_item()
     #items
     cargar_items()
 	#relaciones
