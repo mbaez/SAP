@@ -82,7 +82,7 @@ rol_filler = create_widget(RolModelDecorator, EditActionDecorator, check_permiso
 class ItemTable(TableBase):
 	__model__ = Item
 	__omit_fields__ = ['tipo_item','fase','id_item','__actions__',
-						'id_linea_base','observacion',
+						'id_linea_base','descripcion','detalles',
 						'tipo_item_relacion', 'linea_base',
 						'estado']
 
@@ -200,5 +200,5 @@ class HistorialRevivirTable(TableBase):
 
 historial_revivir_table = HistorialRevivirTable(DBSession);
 historial_revivir_filler = create_widget(HistorialModelDecorator, LabelActionDecorator,
-														'/miproyecto/fase/item/revivir/', 
+														'/miproyecto/fase/item/revivir/',
 								params={'__label__':'revivir', '__extra_url__':''})

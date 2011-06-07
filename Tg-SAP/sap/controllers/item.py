@@ -31,11 +31,13 @@ from sap.controllers.item_detalle import *
 from tg.controllers import RestController
 
 class ItemController(RestController):
-	
+
 	item_detalle = ItemDetalleController()
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':'','progreso':0, 'cantidad':'', 'item':'', 'impacto':''}
+			  'idfase':'','permiso':'','progreso':0, 'cantidad':'', 'item':'',
+			  'impacto':'', 'atributos':''
+			 }
 
 
 	@expose('sap.templates.item')
@@ -43,8 +45,11 @@ class ItemController(RestController):
 	def ver(self, id_item, **kw):
 
 		self.params['item'] = DBSession.query(Item).get(id_item)
+
+		self.params['atributos'] = DBSession.query(AtributoTipoItem).\
+			filter(AtributoTipoItem.tipo_item==self.params['item'].tipo_item)
+
 		progreso = self.params['item'].complejidad*10
-		print "PROGRESO:"+str(progreso)
 		self.params['progreso'] = progreso
 
 		return dict(params=self.params)
@@ -74,13 +79,15 @@ class ItemController(RestController):
 	def post(self, idfase, modelname='',**kw):
 		del kw['sprox_id']
 		item = Item()
-		item.descripcion=kw['descripcion']
-		item.complejidad=kw['complejidad']
-		item.prioridad=kw['prioridad']
-		item.observacion=kw['observacion']
+		item.nombre = kw['nombre']
+		item.codigo = kw['codigo']
+		item.descripcion = kw['descripcion']
+		item.complejidad = kw['complejidad']
+		item.prioridad = kw['prioridad']
+		item.observacion = kw['observacion']
 		item.fase = idfase
 		item.estado=1
-		item.tipo_item= kw['tipo_item_relacion']
+		item.tipo_item = kw['tipo_item_relacion']
 		item.version=1
 		tipo = DBSession.query(TipoItem).get(item.tipo_item)
 		atributos = tipo.atributos
@@ -138,14 +145,14 @@ class ItemController(RestController):
 
 		flash("El item " +str(item.nombre)+ " ha sido modificado correctamente.")
 		redirect('/miproyecto/fase/get_all/'+str(item.fase))
-	
+
 	"""
 	Falta verificar si deja huerfano a alguien!
 	"""
 	@require(predicates.has_permission('eliminar_item'))
 	@expose()
 	def eliminar(self, id_item):
-		#se utiliza el campo estado para determinar en la tabla historial que 
+		#se utiliza el campo estado para determinar en la tabla historial que
 		#esta muerto
 		item = DBSession.query(Item).get(id_item)
 		item.estado = 4
@@ -153,16 +160,16 @@ class ItemController(RestController):
 		relaciones = DBSession.query(RelacionItem).filter((RelacionItem.id_item_actual or\
 													RelacionItem.id_item_actual) == id_item).\
 													all()
-													
+
 		for relacion in relaciones:
 			DBSession.delete(relacion)
-		
+
 		DBSession.flush()
-		
+
 		DBSession.delete(item)
 		flash("El item fue eliminado con exito")
 		redirect("/miproyecto/fase/get_all/"+str(item.fase))
-		
+
 	"""
 	metodo que retorna el padres de un item.
 	parametros:
@@ -415,7 +422,7 @@ class ItemController(RestController):
 		DBSession.merge(item)
 		flash("El item " + item.codigo+ " ha sido aprobado correctamente")
 		redirect('/miproyecto/fase/get_all/'+idfase)
-	
+
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('editar_item'))
 	def historial_versiones(self, id_item):
@@ -431,8 +438,8 @@ class ItemController(RestController):
 		self.params['permiso'] = 'NONE'
 		self.params['idfase'] = 'NONE'
 		return dict (value=value, params=self.params)
-	
-	
+
+
 	@expose()
 	@require(predicates.has_permission('editar_item'))
 	def revertir(self, id_historial):
@@ -454,7 +461,7 @@ class ItemController(RestController):
 		impacto, nodos = self.calcular_impacto(grafo, item.id_item)
 		self.dibujar_grafo(nodos, item)
 		self.params['cantidad'] = len(nodos)
-		self.params['impacto'] = impacto 
+		self.params['impacto'] = impacto
 		self.params['item'] = item
 		return dict(params = self.params)
 
@@ -465,26 +472,26 @@ class ItemController(RestController):
 		desplazamiento_x = []
 		for i in fases:
 			desplazamiento_x.append(i.id_fase)
-		
+
 		desplazamiento_y = []
 		for i in range(len(fases)):
 			desplazamiento_y.append(0)
-		
+
 		gr = pgv.AGraph(directed=True, label="Grafico calculo de impacto")
 		for nodo in nodos:
 			item = DBSession.query(Item).get(nodo)
 			valor = str(item.codigo)+" : "+str(item.complejidad)
 			index = desplazamiento_x.index(item.fase)
 			posicion =  str(index*2)+','+str(90-desplazamiento_y[index]*2)
-			desplazamiento_y[index] = desplazamiento_y[index] + 1 
+			desplazamiento_y[index] = desplazamiento_y[index] + 1
 			url= "/miproyecto/fase/item/ver/"+str(item.id_item)
 			if(nodo == item_impacto.id_item):
-				gr.add_node(valor, label=valor, fillcolor='#008ee8', 
+				gr.add_node(valor, label=valor, fillcolor='#008ee8',
 					style="filled", pos=posicion, href=url, pin=True)
 			else:
-				gr.add_node(valor, label=valor, fillcolor='white', 
+				gr.add_node(valor, label=valor, fillcolor='white',
 					style="filled", pos=posicion, href=url, pin=True)
-		
+
 		#relaciones son aristas
 		aristas = DBSession.query(RelacionItem).\
 						filter(RelacionItem.id_item_actual.in_(nodos)).\
@@ -497,20 +504,20 @@ class ItemController(RestController):
 				valor1 = str(item1.codigo)+" : "+str(item1.complejidad)
 				valor2 = str(item2.codigo)+" : "+str(item2.complejidad)
 				gr.add_edge((valor1, valor2), color='#8dad48', href="/")
-				
+
 		gr.layout()
 		gr.draw('sap/public/img/calculo_impacto.svg')
-	
+
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('editar_item'))
 	def items_borrados(self, id_fase):
-		#se obtienen los items borrados de esta fase que tengan estado 
+		#se obtienen los items borrados de esta fase que tengan estado
 		#"muerto" (4)
 		muertos = DBSession.query(HistorialItem).\
 								filter(HistorialItem.fase==id_fase).\
 								filter(HistorialItem.estado==4).\
 								all()
-								
+
 		tmpl_context.widget = historial_revivir_table
 		value = historial_revivir_filler.get_value(muertos)
 		self.params['title'] = 'Items borrados '

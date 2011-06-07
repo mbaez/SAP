@@ -74,11 +74,11 @@ new_atributo_form = NewAtributoForm(DBSession)
 class NewItemForm(ExtendedAddRecordForm):
 	__model__ = Item
 	__omit_fields__ = ['__actions__','id_item', 'tipo_item', 'fase', 'version',
-	'estado', 'linea_base']
-	__dropdown_field_names__ = {'tipo_item_relacion':'nombre', 
+					   'estado', 'linea_base', 'detalles']
+	__dropdown_field_names__ = {'tipo_item_relacion':'nombre',
 										'estado_actual':'nombre'}
 	tipo_item_relacion = ExtendedTipoItemField
-	
+
 new_item_form = NewItemForm(DBSession)
 
 ####################################################
@@ -119,7 +119,7 @@ class NewLineaBaseForm(TableForm):
 		#fields.append( CheckBox('Item_' + str(i.id_item)) )
 
 	submit_text = 'Generar'
-	
+
 ####################################################
 # Widgets para creacion detalles de item
 ####################################################

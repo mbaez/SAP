@@ -30,10 +30,6 @@
 						<p></p>
 						<li> <a class = "tag beige">Aprobar Item</a></li>
 						<p></p>
-						<li> <a href="/miproyecto/fase/item/eliminar/${params['item'].id_item}" class = "tag beige">Eliminar Item</a></li>
-						<p></p>
-						<li> <a href="/miproyecto/fase/item/${params['item'].id_item}/edit" class="tag beige">Editar</a></li>
-						<p></p>
 						<li> <a class = "tag beige">Gestionar Atributos</a></li>
 						<p></p>
 					</ul>
@@ -43,10 +39,18 @@
 
 		</aside>
 
-			<li class="main" style="width: 75%; ">
+			<li class="main" style="width: 79%; ">
 				<div class="block">
 				<h3>
-					<a>Item : #${params['item'].id_item}</a>
+					<a href="/miproyecto/fase/item/${params['item'].id_item}/edit">
+						Item : #${params['item'].id_item}
+						<img src= "/img/icons/document_edit_small.png"
+							 style= "float:left;">
+						</img>
+					</a>
+					<a style= "float:right;" href="/miproyecto/fase/item/eliminar/${params['item'].id_item}" >
+						<img src= "/img/icons/trash.png"/>
+					</a>
 				</h3>
 				<ul>
 					<li class="project-info">
@@ -84,14 +88,14 @@
 					</li>
 					<li class="project-list-task">
 						<a>Atributos</a>
+						<li py:for="atributo in params['atributos']">
+							<a>${atributo.nombre}</a>
+							<a>Tipo : ${atributo.tipo.nombre}</a>
+						</li>
 					</li>
 				</ul>
 			</div>
 		</li>
-			<!--div style="float:left; width: 60%">
-				${tmpl_context.widget(value=value)}
-			</div-->
-
 	</section>
 </body>
 </html>
