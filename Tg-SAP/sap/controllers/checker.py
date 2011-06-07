@@ -246,14 +246,14 @@ class SessionUtil() :
 		Obtiene una lista de los usuarios que poseen el permiso especificado sobre
 		un proyecto.
 
-		@type  proyecto_id  : Integer
-		@param proyecto_id  : Identificador del proyecto al cual se va aplicar el rol
+		@type  id  : Integer
+		@param id  : Identificador de la fase
 
 		@type  permiso_name : String
 		@param permiso_name : Nombre del permiso
 
 		@rtype  : Usuario []
-		@return : Lista de usuarios que poseen el permiso sobre el proyecto
+		@return : Lista de usuarios que poseen el permiso sobre la fase
 		"""
 		usuarios = DBSession.query(Usuario).\
 					filter(UsuarioPermisoFase.usuario_id == Usuario.usuario_id).\
@@ -276,7 +276,8 @@ class SessionUtil() :
 		un proyecto.
 
 		@type  proyecto_id  : Integer
-		@param proyecto_id  : Identificador del proyecto al cual se va aplicar el rol
+		@param proyecto_id  : Identificador del proyecto al cual se va aplicar
+							  el rol
 
 		@type  permiso_name : String
 		@param permiso_name : Nombre del permiso
@@ -291,7 +292,7 @@ class SessionUtil() :
 					filter(RolPermisoProyecto.permiso_id == Permiso.permiso_id).\
 					filter(Permiso.nombre == permiso_name).all()
 
-		return usuarios
+		return self.distinct(usuarios)
 
 	__get_usuario_proyectos__ = get_usuarios_by_permiso
 
@@ -354,10 +355,10 @@ class SessionUtil() :
 
 		#Obtener las relaciones
 		relaciones = DBSession.query(RelacionItem).\
-							filter((RelacionItem.id_item_actual or 
+							filter((RelacionItem.id_item_actual or
 							RelacionItem.id_item_relacionado) == item.id_item).\
 							all()
-							
+
 		for relacion in relaciones:
 			historial_relacion = HistorialRelacion()
 			historial_relacion.id_item_1 = relacion.id_item_actual
@@ -376,7 +377,7 @@ class SessionUtil() :
 		#debe ser una version posterior a la actual
 		item = DBSession.query(Item).get(historial_item.id_item)
 		version = int(item.version) + 1
-		
+
 		item = Item()
 		item.id_item = historial_item.id_item
 		item.nombre = historial_item.nombre
@@ -384,7 +385,7 @@ class SessionUtil() :
  		item.estado = historial_item.estado
 		item.tipo_item = historial_item.tipo_item
 		item.fase = historial_item.fase
-		item.version = version 
+		item.version = version
 		item.prioridad = historial_item.prioridad
 		item.complejidad = historial_item.complejidad
 		item.descripcion = historial_item.descripcion
@@ -406,7 +407,7 @@ class SessionUtil() :
 
 		#recuperar los relaciones
 		historial_relaciones = DBSession.query(HistorialRelacion).\
-			filter((HistorialRelacion.id_item_1 or 
+			filter((HistorialRelacion.id_item_1 or
 			HistorialRelacion.id_item_2) == item.id_item).\
 			all()
 

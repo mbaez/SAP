@@ -35,7 +35,7 @@ def cargar_usuarios ():
     usr.nombre = u'Maxi'
     usr.email_address = u'mbaez@gmail.com'
     usr.password = u'mbaez'
-    
+
     model.DBSession.add(usr)
 
     usr2 = model.Usuario()
@@ -43,15 +43,15 @@ def cargar_usuarios ():
     usr2.nombre = u'Diego'
     usr2.email_address = u'dtorres@gmail.com'
     usr2.password = u'dtorres'
-    
+
     model.DBSession.add(usr2)
-    
+
     usr3 = model.Usuario()
     usr3.user_name = u'rbanuelos'
     usr3.nombre = u'Roberto'
     usr3.email_address = u'rbanuelos@gmail.com'
     usr3.password = u'rbanuelos'
-    
+
     model.DBSession.add(usr3)
     return usr, usr2, usr3
 
@@ -72,31 +72,31 @@ def cargar_roles(manager,usr, usr2, usr3):
     group2.nombre = u'Lider'
     group2.descripcion = u'Lider del Proyecto'
     group2.is_template = True
-    
+
     group21 = model.Rol()
     group21.codigo = u'lider_1'
     group21.nombre = u'Lider'
     group21.descripcion = u'Lider del Proyecto'
     group21.is_template = False
-    
+
     group22 = model.Rol()
     group22.codigo = u'lider_2'
     group22.nombre = u'Lider'
     group22.descripcion = u'Lider del Proyecto'
     group22.is_template = False
-    
-    
+
+
     group23 = model.Rol()
     group23.codigo = u'lider_3'
     group23.nombre = u'Lider'
     group23.descripcion = u'Lider del Proyecto'
     group23.is_template = False
-    
+
     #group2.usuarios.append(manager)
     group21.usuarios.append(usr)
     group22.usuarios.append(usr)
     group23.usuarios.append(usr2)
-    
+
     model.DBSession.add(group2)
     model.DBSession.add(group21)
     model.DBSession.add(group22)
@@ -109,16 +109,16 @@ def cargar_roles(manager,usr, usr2, usr3):
     group3.is_template = True
 
     group31 = model.Rol()
-    group31.codigo = u'visitante_1'
+    group31.codigo = u'visitante_3'
     group31.nombre = u'Visitante'
     group31.descripcion = u'Visitante de Proyectos'
     group31.is_template = False
 
     group31.usuarios.append(usr3)
-    
+
     model.DBSession.add(group3)
     model.DBSession.add(group31)
-    
+
     return group, group2, group3, group21, group31, group22, group23
 
 def cargar_estados():
@@ -128,17 +128,17 @@ def cargar_estados():
 
     model.DBSession.add(activo)
 
-    
+
     cancelado = model.EstadoProyecto()
     cancelado.nombre = u'Cancelado'
     cancelado.descripcion = u'Estado que indica que un proyecto esta cancelado'
-    
+
     model.DBSession.add(cancelado)
-    
+
     pausado = model.EstadoProyecto()
     pausado.nombre = u'Pausado'
     pausado.descripcion = u'Estado que indica que un proyecto esta pausado'
-    
+
     model.DBSession.add(pausado)
     return activo, cancelado, pausado
 
@@ -147,7 +147,7 @@ def cargar_permisos(group, group2, group3, group21, group31, group22,group23):
 	permiso.nombre = u'manage'
 	permiso.descripcion = u'Permiso administracion'
 	permiso.roles.append(group)
-	
+
 	for name in __permisos__ :
 		permiso = model.Permiso()
 		permiso.nombre = name
@@ -160,7 +160,7 @@ def cargar_permisos(group, group2, group3, group21, group31, group22,group23):
 		if(name.find("ver")>=0):
 			permiso.roles.append(group3)
 			permiso.roles.append(group31)
-	
+
 def cargar_proyectos(usr, usr2):
     proyecto = model.Proyecto()
     proyecto.lider = usr
@@ -281,11 +281,11 @@ def cargar_estados_item():
     estadoItem3 = model.EstadoItem()
     estadoItem3.nombre = 'Revision'
     model.DBSession.add(estadoItem3)
-    
+
     estadoItem4 = model.EstadoItem()
     estadoItem4.nombre = 'muerto'
     model.DBSession.add(estadoItem4)
-    
+
     return estadoItem1,estadoItem2,estadoItem3, estadoItem4
 
 def cargar_relaciones():
@@ -294,9 +294,9 @@ def cargar_relaciones():
         relacion.nombre = name
         relacion.descripcion = u'Este tipo representa la relacion '+name
         model.DBSession.add(relacion)
-    
+
     model.DBSession.flush()
-    
+
     relacion1 = model.RelacionItem()
     relacion1.id_item_actual = 1
     relacion1.id_item_relacionado = 2
@@ -327,7 +327,7 @@ def cargar_relaciones():
     model.DBSession.add(relacion4)
 
     model.DBSession.flush()
-    
+
 
 def cargar_items():
 	for i in range(10):
@@ -338,7 +338,7 @@ def cargar_items():
 		item.fase = 1
 		item.version = 1
 		item.prioridad = 1
-		item.complejidad =  int(random.random()*10)+1 
+		item.complejidad =  int(random.random()*10)+1
 		item.codigo = u'cod_'+str(i)
 		model.DBSession.add(item)
 
@@ -350,15 +350,16 @@ def cargar_items():
 		item.fase = 2
 		item.version = 1
 		item.prioridad = 1
-		item.complejidad = int(random.random()*10)+1 
+		item.complejidad = int(random.random()*10)+1
 		item.codigo = u'cod_'+str(i+10)
 		model.DBSession.add(item)
 
 	model.DBSession.flush()
 
 def cargar_permisos_proyecto(group21, group22, group23, group31):
+
     id = [group21.rol_id, group22.rol_id, group23.rol_id, group31.rol_id]
-    
+
     for i in range(len(__permisos__)):
         for j in range(len(id)):
             rpp = model.RolPermisoProyecto()
@@ -377,7 +378,7 @@ def cargar_permisos_proyecto(group21, group22, group23, group31):
         rpf.usuario_id = 2
 
         model.DBSession.add(rpf)
-        
+
         rpf2 = model.UsuarioPermisoFase()
         rpf2.fase_id = 2
         rpf2.permiso_id = i+1
@@ -387,7 +388,7 @@ def cargar_permisos_proyecto(group21, group22, group23, group31):
 
 def cargar_estado_lineabase():
     model.DBSession.flush()
-    
+
     estadoLineaBase = model.EstadoLineaBase()
     estadoLineaBase.id_estado_linea_base = 1
     estadoLineaBase.nombre = 'Cerrada'
@@ -413,7 +414,7 @@ def setup_app(command, conf, vars):
     manager.nombre = u'Administrador'
     manager.email_address = u'admin@somedomain.com'
     manager.password = u'admin'
-    
+
     model.DBSession.add(manager)
     ##usuarios
     usr, usr2, usr3 = cargar_usuarios()

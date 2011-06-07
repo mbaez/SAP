@@ -27,19 +27,18 @@ class ParticipanteFaseController(RestController):
 	@require(predicates.has_permission('administrar_participantes'))
 	def admin(self, id , **kw):
 		"""
-
 		@type  id : Integer
-		@param id : Identificador del proyecto.
+		@param id : Identificador de la fase.
 
-		@type  kw :
-		@param kw :
+		@type  kw : Hash
+		@param kw : Keywords
 
 		@rtype  : Diccionario
 		@return : El diccionario que sera utilizado en el template.
 		"""
 		fase = self._get_current_fase(id)
 
-		usuarios = util.get_usuarios_by_fase(fase.id_fase)
+		usuarios = util.get_usuarios_by_fase(id)
 
 		tmpl_context.widget = participantes_table
 
@@ -57,6 +56,7 @@ class ParticipanteFaseController(RestController):
 		self.params['modelname'] = 'Participantes'
 		self.params['text_header'] = 'Lista de roles'
 		self.params['fase'] = fase
+		self.params['idfase'] = id
 		self.params['usuarios'] = usuarios
 
 		return dict(value=value, params=self.params)
@@ -64,6 +64,17 @@ class ParticipanteFaseController(RestController):
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('administrar_participantes'))
 	def edit(self, id,**kw):
+		"""
+		@type  id : Integer
+		@param id : Identificador de la fase.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+		"""
+
 		tmpl_context.widget = rol_usuario_edit_form
 		rol = DBSession.query(Rol).get(id)
 		kw['rol_id'] = id
@@ -77,9 +88,7 @@ class ParticipanteFaseController(RestController):
 		fase = self._get_current_fase()
 		usuarios = util.get_usuarios_by_fase(fase.id_fase)
 
-		print "Usuarios "+ str(usuarios)
-
-		#self.params['fase'] = fase
+		self.params['fase'] = fase
 		self.params['usuarios'] = usuarios
 		self.params['modelname'] = 'Participantes'
 		self.params['header_file'] = 'proyecto'
@@ -89,16 +98,33 @@ class ParticipanteFaseController(RestController):
 	@expose()
 	@require(predicates.has_permission('administrar_participantes'))
 	def put(self, id, **kw):
-		#rol = DBSession.query(Rol).get(int(kw['rol_id']))
+		"""
+		@type  id : Integer
+		@param id : Identificador de la fase.
+
+		@type  kw : Hash
+		@param kw : Keywords
+		"""
+
 		fase = self._get_current_fase()
 		for usuario_id in kw['usuarios'] :
 			util.asociar_usuario_fase(usuario_id, fase.id_fase)
 
 		flash("Los Usuarios <"+str(kw['usuarios'])+"> fueron asignados a la fase "+ str(fase.id_fase)+".")
-		redirect("/miproyecto/fase/participantes/admin/" + str(fase.proyecto) )
+		redirect("/miproyecto/fase/participantes/admin/" + str(fase.id_fase) )
 
 	@expose()
 	def delete(self, id_fase ,id, **kw):
+		"""
+		@type  id_fase : Integer
+		@param id_fase : Identificador de la fase.
+
+		@type  id : Integer
+		@param id : Identificador del usuario a desvincular.
+
+		@type  kw : Hash
+		@param kw : Keywords
+		"""
 		fase = self._get_current_fase()
 		list = DBSession.query(UsuarioPermisoFase).\
 				filter(UsuarioPermisoFase.usuario_id == id).\
@@ -111,8 +137,17 @@ class ParticipanteFaseController(RestController):
 		redirect("/miproyecto/fase/get_all/"+ str(id_fase))
 
 	def _get_current_fase(self, id=0):
-		if self._current_fase == None:
-			self._current_fase = DBSession.query(Fase).get(id)
+		"""
+		@type  id : Integer
+		@param id : Identificador de la fase.
+
+		@rtype  : Fase
+		@return : La fase actual
+		"""
+		if self._current_fase == None or \
+		   self._current_fase.id_fase != id  and id != 0:
+
+				self._current_fase = DBSession.query(Fase).get(id)
 
 		return self._current_fase
 
@@ -129,12 +164,11 @@ class ParticipanteProyectoController(RestController):
 	@require(predicates.has_permission('administrar_participantes'))
 	def admin(self, idproyecto , **kw):
 		"""
-
 		@type  idproyecto : Integer
 		@param idproyecto : Identificador del proyecto.
 
-		@type  kw :
-		@param kw :
+		@type  kw : Hash
+		@param kw : Keyword
 
 		@rtype  : Diccionario
 		@return : El diccionario que sera utilizado en el template.
@@ -164,6 +198,17 @@ class ParticipanteProyectoController(RestController):
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('administrar_participantes'))
 	def edit(self, id,**kw):
+		"""
+		@type  id : Integer
+		@param id : Identificador del proyecto.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+		"""
+
 		tmpl_context.widget = rol_usuario_edit_form
 		kw['rol_id'] = id
 		rol = DBSession.query(Rol).get(id)
@@ -195,10 +240,20 @@ class ParticipanteProyectoController(RestController):
 			util.asignar_participante(user_id,rol.codigo,proyecto.id_proyecto)
 
 		flash("El rol ha sido "+rol.nombre+" modificado correctamente.")
-		redirect("/miproyecto/participantes/admin/" + str(proyecto.id_proyecto))
+		redirect("/miproyecto/ver/" + str(proyecto.id_proyecto))
 
 	@expose()
 	def delete(self, proyecto_id ,id, **kw):
+		"""
+		@type  proyecto_id : Integer
+		@param proyecto_id : Identificador del proyecto
+
+		@type  id : Integer
+		@param id : Identificador del usuario a desvincular.
+
+		@type  kw : Hash
+		@param kw : Keywords
+		"""
 		#se obtienen las relaciones del usuario sobre las fases del proyecto
 		list = DBSession.query(UsuarioPermisoFase).\
 				filter(UsuarioPermisoFase.usuario_id == id).\
@@ -221,7 +276,15 @@ class ParticipanteProyectoController(RestController):
 
 
 	def _get_current_proyect(self, id=0):
-		if self._current_proyect == None:
-			self._current_proyect = DBSession.query(Proyecto).get(id)
+		"""
+		@type  id : Integer
+		@param id : Identificador del proyecto.
+
+		@rtype  : Proyecto
+		@return : El proyecto actual
+		"""
+		if self._current_proyect == None or \
+		   self._current_proyect.id_proyecto != id and id != 0:
+				self._current_proyect = DBSession.query(Proyecto).get(id)
 
 		return self._current_proyect

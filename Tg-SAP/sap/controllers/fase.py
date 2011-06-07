@@ -155,7 +155,7 @@ class FaseController(RestController):
 		self.params['fase'] = DBSession.query(Fase).get(idfase)
 		self.params['new_url'] = '/miproyecto/fase/item/'+idfase+'/new/'
 		self.params['label'] = 'Agregar Atributo'
-		self.params['usuarios'] = util.get_usuarios_by_fase(self.params['fase'].proyecto)
+		self.params['usuarios'] = util.get_usuarios_by_fase(idfase)
 
 		return dict(value=value, params = self.params)
 
