@@ -199,7 +199,7 @@ class ProyectoModelDecorator(ExtendedTableList, Decorator):
 
 	def __init__(self, provider_hint=None, url=None, check_permiso=True ,**provider_hints):
 		super(ProyectoModelDecorator, self).__init__(provider_hint, **provider_hints)
-		
+
 		if url != None :
 			self.__url__ = url
 		if check_permiso !=True :
@@ -212,10 +212,10 @@ class ProyectoModelDecorator(ExtendedTableList, Decorator):
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
 		has_permiso = True
-		
+
 		if self.__check_permiso__ :
 			has_permiso = checker.check_proyecto_permiso(id,permiso_name,True)
-		
+
 		return super(ProyectoModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
 
 	def replace(self,action, url, id):
@@ -442,6 +442,34 @@ class RolModelDecorator(ExtendedTableList, Decorator):
 	def replace(self,action, url, id):
 		return super(RolModelDecorator, self).replace( action, url,id,
 														'rol',
+														self.check_permiso
+													  )
+
+
+class DetalleItemModelDecorator(ExtendedTableList, Decorator):
+	__model__ = DetalleItem
+	__add_fields__ = {'accion':None}
+	__url__ = "/miproyecto/fase/item/"
+
+	def __init__(self, provider_hint=None, url=None, check_permiso=True ,**provider_hints):
+		super(DetalleItemModelDecorator, self).__init__(provider_hint, **provider_hints)
+
+		if url == None :
+			return
+		self.__url__ = url
+
+	def accion (self, obj):
+		accion = super(DetalleItemModelDecorator, self).accion(obj)
+		accion = self.replace(accion,self.__url__, obj.id_item_detalle)
+		return accion
+
+	def check_permiso(self, id, permiso_name, has_permiso=None):
+		has_permiso = True
+		return super(DetalleItemModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
+
+	def replace(self,action, url, id):
+		return super(DetalleItemModelDecorator, self).replace( action, url,id,
+														'detalle',
 														self.check_permiso
 													  )
 

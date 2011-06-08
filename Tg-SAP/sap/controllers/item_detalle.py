@@ -29,9 +29,6 @@ class ItemDetalleController(RestController):
 	'idfase':'','permiso':'', 'cancelar_url':''}
 
 	"""
-	Encargado de carga el widget para crear nuevas instancias,
-	solo tienen acceso aquellos usuarios que posean el premiso de crear
-	"""
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('editar_item'))
 	def new(self, iditem, _method, **kw):
@@ -53,17 +50,13 @@ class ItemDetalleController(RestController):
 		kw['id_fase'] = iditem
 		return dict(value=kw, params = self.params)
 
-	"""
-	Evento invocado luego de un evento post en el form de crear
-	ecargado de persistir las nuevas instancias.
-	"""
 	#@validate(_widget, error_handler=new)
 	@require(predicates.has_permission('editar_item'))
 	@expose()
 	def post(self, iditem, _method, **kw):
 		#del kw['sprox_id']
 		item = DBSession.query(Item).get(iditem)
-		
+
 		'''
 		Se crean los detalles
 		'''
@@ -73,10 +66,42 @@ class ItemDetalleController(RestController):
 			detalle.recurso = None	#No estoy muy seguro si esta bien
 			detalle.valor = dic[d]
 			detalles.append(detalle)
-		
+
 		item.detalles = detalles
-		
+
 		DBSession.merge(item)
-		
+
 		redirect("/miproyecto/fase/item/ver/"+str(iditem))
-		
+	"""
+	@expose('sap.templates.edit')
+	@require(predicates.has_permission('editar_item'))
+	def edit(self, id,**kw):
+		kw['id_item_detalle'] = id
+
+		tmpl_context.widget = detalle_item_edit_form
+
+		value = detalle_item_edit_filler.get_value(kw)
+
+		self.params['modelname'] = 'Atributo de Item'
+		self.params['header_file'] = 'abstract'
+		return dict(value=value, params=self.params)
+
+	@validate(detalle_item_edit_form, error_handler=edit)
+	@require(predicates.has_permission('editar_item'))
+	@expose()
+	def put(self, id, **kw):
+		"""
+		Evento invocado luego de un evento post en el form de editar
+		encargado de persistir las modificaciones de las instancias.
+		"""
+		detalle =  DBSession.query(DetalleItem).get(id)
+		detalle.valor = kw['valor']
+		if kw ['adjunto'] != None:
+			detalle.adjunto = kw ['adjunto'].file.read()
+		detalle.observacion = kw ['observacion']
+
+		DBSession.merge(detalle)
+		DBSession.flush()
+
+		flash("El item atributo ha sido modificado correctamente.")
+		redirect('/miproyecto/fase/item/ver/'+str(detalle.id_item))

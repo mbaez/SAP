@@ -43,16 +43,15 @@ class ItemController(RestController):
 	@expose('sap.templates.item')
 	@require(predicates.has_permission('ver_item'))
 	def ver(self, id_item, **kw):
+		tmpl_context.widget = detalle_item_table
 
 		self.params['item'] = DBSession.query(Item).get(id_item)
-
-		self.params['atributos'] = DBSession.query(AtributoTipoItem).\
-			filter(AtributoTipoItem.tipo_item==self.params['item'].tipo_item)
-
 		progreso = self.params['item'].complejidad*10
 		self.params['progreso'] = progreso
 
-		return dict(params=self.params)
+		value = detalle_item_filler.get_value(self.params['item'].detalles)
+
+		return dict(value=value , params=self.params)
 
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_item'))
@@ -94,6 +93,7 @@ class ItemController(RestController):
 		for atributo in atributos:
 			detalle = DetalleItem()
 			detalle.nombre = atributo.nombre
+			detalle.id_atributo_tipo_item = atributo.id_atributo_tipo_item
 			detalle.valor = None
 			detalle.recurso = None
 			item.detalles.append(detalle)

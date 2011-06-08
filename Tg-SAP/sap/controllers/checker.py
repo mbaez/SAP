@@ -347,9 +347,10 @@ class SessionUtil() :
 					all()
 		for detalle in detalles:
 			historial_detalle = HistorialDetalleItem()
-			historial_detalle.id_detalle = detalle.id_detalle
+			historial_detalle.id_detalle = detalle.id_item_detalle
 			historial_detalle.id_item = detalle.id_item
-			historial_detalle.recurso = detalle.recurso
+			historial_detalle.adjunto = detalle.adjunto
+			historial_detalle.observacion = detalle.observacion
 			historial_detalle.valor = detalle.valor
 			historial.detalles.append(historial_detalle)
 
@@ -399,9 +400,10 @@ class SessionUtil() :
 
 		for hist_detalle in historial_detalles:
 			detalle = DetalleItem()
-			detalle.id_detalle = hist_detalle.id_detalle
+			detalle.id_item_detalle = hist_detalle.id_detalle
 			detalle.id_item = hist_detalle.id_item
-			detalle.recurso = hist_detalle.recurso
+			detalle.adjunto = hist_detalle.adjunto
+			detalle.observacion = hist_detalle.observacion
 			detalle.valor = hist_detalle.valor
 			item.detalles.append(detalle)
 

@@ -4,7 +4,7 @@ from sap.widgets.extended import ExtendedEditableForm
 
 from sprox.formbase import EditableForm
 from sprox.fillerbase import EditFormFiller
-from tw.forms import PasswordField
+from tw.forms import PasswordField, FileField
 
 ####################################################
 # Widgets del Usuario
@@ -120,3 +120,19 @@ class LineaBaseEditForm(ExtendedEditableForm):
 	__model__ = LineaBase
 
 linea_base_edit_form = LineaBaseEditForm(DBSession)
+
+###################################################
+# Widgets de los Detalles de item
+####################################################
+
+class DetalleItemEditForm(EditableForm):
+	__model__ = DetalleItem
+	__omit_fields__ = ['id_item', 'id_atributo_tipo_item'
+					   ,'atributo_tipo_item','item']
+
+detalle_item_edit_form = DetalleItemEditForm(DBSession)
+
+class DetalleItemEditFiller(EditFormFiller):
+	__model__ = DetalleItem
+
+detalle_item_edit_filler = DetalleItemEditFiller(DBSession)

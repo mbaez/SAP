@@ -100,6 +100,7 @@ class TipoItemTable(TableBase):
 	__model__ = TipoItem
 	__omit_fields__ = ['atributos','items',
 						'id_tipo_item', 'fase','__actions__']
+
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
 
@@ -116,6 +117,7 @@ class ParticipantesTable(TableBase):
 	__model__ = Rol
 	__omit_fields__ = ['__actions__','permisos', 'created', 'rol_id',
 						'codigo','is_template']
+
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
 
@@ -132,7 +134,8 @@ participantes_filler = create_widget(ParticipantesModelDecorator, LabelActionDec
 
 class AtributoTable(TableBase):
 	__model__ = AtributoTipoItem
-	__omit_fields__ = ['id_atributo_tipo_item', 'tipo_item_relacion', 'tipo_id', 'tipo_item']
+	__omit_fields__ = ['id_atributo_tipo_item', 'tipo_item_relacion',
+					   'tipo_id', 'tipo_item']
 
 class AtributoTableFiller(ExtendedTableFiller):
 	__model__ = AtributoTipoItem
@@ -195,8 +198,8 @@ class HistorialRevivirTable(TableBase):
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
 	__omit_fields__ = ['__actions__', 'fase', 'tipo_item', 'observacion',
-						'id_historial_item', 'id_item', 'linea_base', 'relaciones',
-						'detalles','estado']
+						'id_historial_item', 'id_item', 'linea_base',
+						'relaciones', 'detalles','estado']
 
 
 historial_revivir_table = HistorialRevivirTable(DBSession);
@@ -205,3 +208,25 @@ historial_revivir_filler = create_widget(HistorialModelDecorator,
 								'/miproyecto/fase/item/revivir/',
 								params={'__label__':'revivir', '__extra_url__':''}
 							)
+
+####################################################
+# Widgets de los detalles de los items
+####################################################
+class DetalleItemTable(TableBase):
+	__model__ = DetalleItem
+	__xml_fields__ = ['accion']
+	__add_fields__ = {'accion':None}
+	__omit_fields__ = ['__actions__','id_item_detalle','id_item',
+					   'item', 'id_atributo_tipo_item']
+
+	__field_order__ = ['atributo_tipo_item','valor', 'adjunto', 'observacion',
+					   'accion']
+	__headers__ = {'atributo_tipo_item':'Nombre','valor':'Valor'}
+
+detalle_item_table = DetalleItemTable(DBSession)
+
+detalle_item_filler = create_widget(DetalleItemModelDecorator,
+							LabelActionDecorator,
+							'/miproyecto/fase/item/item_detalle/',
+							params={'__label__':'Editar',
+								'__extra_url__':'/edit'})

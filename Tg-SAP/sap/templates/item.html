@@ -30,8 +30,6 @@
 						<p></p>
 						<li> <a class = "tag beige">Aprobar Item</a></li>
 						<p></p>
-						<li> <a class = "tag beige">Gestionar Atributos</a></li>
-						<p></p>
 					</ul>
 				</div>
 				<p></p>
@@ -86,13 +84,8 @@
 						<p></p>
 						<p>${params['item'].observacion}</p>
 					</li>
-					<li class="project-list-task">
-						<a>Atributos</a>
-						<li py:for="atributo in params['atributos']">
-							<a>${atributo.nombre}</a>
-							<a>Tipo : ${atributo.tipo.nombre}</a>
-						</li>
-					</li>
+					<h3><a>Atributos</a></h3>
+					${tmpl_context.widget(value=value)}
 				</ul>
 			</div>
 		</li>

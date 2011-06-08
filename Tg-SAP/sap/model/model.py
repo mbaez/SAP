@@ -222,18 +222,6 @@ class RelacionItem(DeclarativeBase):
 	item_2=relation('RelacionParentesco')
 	#}
 
-class Recurso(DeclarativeBase):
-
-	__tablename__ = 'recurso'
-	#{Columnas
-	id= Column ('id_recurso', Integer, autoincrement=True,
-				primary_key = True)
-
-	adjunto = Column ('adjunto', Binary, nullable = False)
-
-	observacion = Column ('observacion', Unicode(100))
-	#}
-
 class TipoAtributo(DeclarativeBase):
 
 	__tablename__ = 'tipo_atributo'
@@ -261,16 +249,17 @@ class DetalleItem(DeclarativeBase):
 
 	valor = Column('valor', Unicode(200))
 
+	adjunto = Column ('adjunto', Binary)
+
+	observacion = Column ('observacion', Unicode(100))
+
 	#{ForeignKey
 	id_item = Column ('id_item', Integer, ForeignKey ('item.id_item'))
 
 	id_atributo_tipo_item = Column( 'id_atributo_tipo_item', Integer,
-							ForeignKey ('.id_atributo_tipo_item'))
+							ForeignKey ('atributo_tipo_item.id_atributo_tipo_item'))
 
-	recurso_id = Column ('id_recurso', Integer,
-						ForeignKey('recurso.id_recurso'))
 	#{Relation
-	recurso = relation(Recurso, backref='item')
 
 	atributo_tipo_item = relation (AtributoTipoItem, backref='detalle_item')
 
@@ -347,7 +336,9 @@ class HistorialDetalleItem(DeclarativeBase):
 
 	id_item = Column ('id_item', Integer, nullable=False)
 
-	recurso = Column ('id_recurso', Integer)
+	adjunto = Column ('adjunto', Binary)
+
+	observacion = Column ('observacion', Unicode(100))
 
 	valor = Column('valor', Unicode(200))
 
