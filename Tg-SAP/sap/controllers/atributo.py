@@ -25,7 +25,7 @@ from sap.controllers.checker import *
 from tg.controllers import RestController
 
 class AtributoController(RestController):
-	
+
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 	'idtipo':'','permiso':'', 'label':'', 'cancelar_url': '', 'idfase':''}
 
@@ -33,12 +33,13 @@ class AtributoController(RestController):
 	Encargado de carga el widget para crear nuevas instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
 	"""
-	@expose('sap.templates.new')
+	@expose('sap.templates.tipo_item')
 	@require(predicates.has_permission('crear_tipo_item'))
 	def new(self, idtipo, modelname, **kw):
 		tmpl_context.widget = new_atributo_form
 		self.params['modelname'] = "Atributos del Tipo de Item"
 		self.params['idtipo'] = idtipo
+		self.params['tipo_item'] = DBSession.query(TipoItem).get(idtipo)
 		self.params['header_file'] = 'tipo_item'
 		self.params['cancelar_url'] = '/miproyecto/fase/tipo_item/atributos/list/'+str(idtipo)
 		return dict(value=kw, params=self.params)
@@ -50,7 +51,7 @@ class AtributoController(RestController):
 	@validate(new_atributo_form, error_handler=new)
 	@require(predicates.has_permission('crear_tipo_item'))
 	@expose()
-	def post(self, idtipo, **kw):
+	def post(self, idtipo,params={}, **kw):
 		del kw['sprox_id']
 		atributo_tipo_item = AtributoTipoItem()
 		atributo_tipo_item.tipo_item = idtipo
@@ -110,7 +111,7 @@ class AtributoController(RestController):
 		self.params['permiso'] = "crear_tipo_item"
 		self.params['new_url'] = "/miproyecto/fase/tipo_item/atributos/"+idtipo+"/new"
 		return dict(value=value, params=self.params)
-		
+
 	"""
 	Evento invocado desde el listado, se encarga de eliminar una instancia
 	de la base de datos.

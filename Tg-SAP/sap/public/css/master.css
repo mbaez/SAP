@@ -2302,3 +2302,12 @@ select[size], select[multiple], select[size][multiple] {
 	margin: 5px;
 	width: 300px;
 }
+
+#inner-content #new-sidebar .fieldcol input[type=text]{
+	margin: 5px;
+	width: 120px;
+}
+#inner-content #new-sidebar .labelcol label{
+	margin: 10px;
+	width:40px;
+}
