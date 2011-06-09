@@ -173,7 +173,7 @@ class LineaBaseTable(TableBase):
 linea_base_table = LineaBaseTable(DBSession);
 #
 linea_base_filler = create_widget(LineaBaseModelDecorator, LabelActionDecorator,
-									'/miproyecto/fase/linea_base/abrir/',
+									'/miproyecto/fase/linea_base/abrir_linea_base/',
 									params={'__label__':'Abrir','__extra_url__': ''})
 ####################################################
 # Widgets del historial

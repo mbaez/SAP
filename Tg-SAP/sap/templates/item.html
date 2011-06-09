@@ -28,7 +28,7 @@
 						<p></p>
 						<li> <a href="/miproyecto/fase/item/historial_versiones/${params['item'].id_item}" class="tag beige">Revertir</a></li>
 						<p></p>
-						<li> <a class = "tag beige">Aprobar Item</a></li>
+						<li> <a py:if="tg.predicates.has_permission('aprobar_item')" href="/miproyecto/fase/item/aprobar_item/${params['item'].id_item}" class = "tag beige">Aprobar Item</a></li>
 						<p></p>
 					</ul>
 				</div>

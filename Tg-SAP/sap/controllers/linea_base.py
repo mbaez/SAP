@@ -76,7 +76,7 @@ class LineaBaseController(RestController):
 		lineaBase = LineaBase()
 		lineaBase.codigo = 'LB' + str(numero+1)
 		lineaBase.estado = 1
-		lineaBase.fase = 1
+		lineaBase.fase = idfase
 
 		for i in listaItems:
 			lineaBase.items.append(i)
@@ -183,22 +183,16 @@ class LineaBaseController(RestController):
 		self.params['permiso'] = 'NO MOSTRAR BOTON NUEVO'
 		self.params['new_url'] = ""
 		value= item_filler.get_value(items)
-		"""
-		aux=[]
-		for item in items:
-			aux=[{'nombre': item.nombre, 'estado_actual': item.estado_actual,
-			'accion': '<div><a href="/miproyecto/fase/linea_base/agregarItem/'
-			+str(item.id_item)+'/'+str(idtipo)+'">Agregar Item a linea Base</a></div>'}]
-			value=value+aux
-		"""
+
 		return dict(value = value, params = self.params)
 
 	@expose()
-	def abrirLineaBase(self, idlineabase, **kw):
+	def abrir_linea_base(self, idlineabase, **kw):
 		"""
 		Metodo para abrir una linea base. Los de items de la linea base
 		se marcan con estado de revision
 		"""
+		linea_base = DBSession.query(LineaBase).get(idlineabase)
 		listaItems = DBSession.query(Item).\
 								filter(Item.id_linea_base == idlineabase).all()
 		if(listaItems==None):
@@ -210,10 +204,13 @@ class LineaBaseController(RestController):
 		for item in listaItems:
 			#item_controller.marcar_en_revision(grafo, item.id_item)
 			item.estado = 3
+			item.id_linea_base = None
 			DBSession.merge(item)
+		self.params['idfase'] = linea_base.fase
+		DBSession.delete(linea_base)
 
 		flash("La linea base ha sido abierta")
-		redirect("/miproyecto/fase/linea_base/list/1")
+		redirect("/miproyecto/fase/linea_base/list/" + str(self.params['idfase']))
 
 
 

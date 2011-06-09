@@ -333,7 +333,7 @@ def cargar_items():
 	for i in range(10):
 		item = model.Item()
 		item.nombre = u'item '+str(i)
-		item.estado = 1
+		item.estado = 2
 		item.tipo_item = 1
 		item.fase = 1
 		item.version = 1
@@ -345,7 +345,7 @@ def cargar_items():
 	for i in range(5):
 		item = model.Item()
 		item.nombre = u'item '+str(i)
-		item.estado = 1
+		item.estado = 2
 		item.tipo_item = 2
 		item.fase = 2
 		item.version = 1

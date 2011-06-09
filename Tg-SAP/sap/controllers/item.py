@@ -85,7 +85,7 @@ class ItemController(RestController):
 		item.prioridad = kw['prioridad']
 		item.observacion = kw['observacion']
 		item.fase = idfase
-		item.estado=1
+		item.estado=2 # Se crea con estado En Desarrollo por defecto
 		item.tipo_item = kw['tipo_item_relacion']
 		item.version=1
 		tipo = DBSession.query(TipoItem).get(item.tipo_item)
@@ -141,6 +141,7 @@ class ItemController(RestController):
 		item.prioridad = kw['prioridad']
 		item.observacion = kw['observacion']
 		item.version=int(item.version) + 1
+		item.estado = 2 # En Desarrollo
 		#Se persiste el item
 		DBSession.merge(item)
 		DBSession.flush()
@@ -423,7 +424,7 @@ class ItemController(RestController):
 		idfase = item.fase
 		DBSession.merge(item)
 		flash("El item " + item.codigo+ " ha sido aprobado correctamente")
-		redirect('/miproyecto/fase/get_all/'+idfase)
+		redirect('/miproyecto/fase/item/ver/'+str(iditem))
 
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('editar_item'))

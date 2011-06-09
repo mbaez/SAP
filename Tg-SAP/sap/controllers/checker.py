@@ -383,7 +383,7 @@ class SessionUtil() :
 		item.id_item = historial_item.id_item
 		item.nombre = historial_item.nombre
 		item.codigo = historial_item.codigo
- 		item.estado = historial_item.estado
+ 		item.estado = 3#historial_item.estado
 		item.tipo_item = historial_item.tipo_item
 		item.fase = historial_item.fase
 		item.version = version
