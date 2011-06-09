@@ -11,13 +11,14 @@ from sap.lib.pygraph.classes.digraph import *
 from sap.lib.pygraph.algorithms.cycles import *
 from sap.lib.pygraph.readwrite.dot import write
 # Import graphviz
+"""
 import sys
 sys.path.append('..')
 sys.path.append('/usr/lib/graphviz/python/')
 sys.path.append('/usr/lib64/graphviz/python/')
 import gv
 import pygraphviz as pgv
-
+"""
 #import de widgets
 from sap.widgets.createform import *
 from sap.widgets.listform import *
@@ -28,6 +29,7 @@ from sap.model import *
 from sap.model import DBSession, metadata
 #from sap.controllers.item_detalles import ItemDetallesController
 from sap.controllers.item_detalle import *
+from sap.controllers.checker import *
 from tg.controllers import RestController
 
 class ItemController(RestController):
@@ -36,7 +38,8 @@ class ItemController(RestController):
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 			  'idfase':'','permiso':'','progreso':0, 'cantidad':'', 'item':'',
-			  'impacto':'', 'atributos':''
+			  'impacto':'', 'atributos':'', 'permiso_editar':'', 
+			  'permiso_eliminar':''
 			 }
 
 
@@ -48,7 +51,13 @@ class ItemController(RestController):
 		self.params['item'] = DBSession.query(Item).get(id_item)
 		progreso = self.params['item'].complejidad*10
 		self.params['progreso'] = progreso
-
+		if self.params['item'].linea_base != None:
+			self.params['permiso_editar'] = 'NO EDITAR'
+			self.params['permiso_eliminar'] = 'NO ELIMINAR'
+		else:
+			self.params['permiso_editar'] = 'editar_item'
+			self.params['permiso_eliminar'] = 'eliminar_item'
+			
 		value = detalle_item_filler.get_value(self.params['item'].detalles)
 
 		return dict(value=value , params=self.params)
@@ -58,6 +67,8 @@ class ItemController(RestController):
 	def new(self, idfase, modelname="", **kw):
 		new_item_form.tipo_item_relacion.idfase = idfase
 		tmpl_context.widget = new_item_form
+		#se recomienda al usuario un codigo autogenerado
+		kw['codigo'] = util.gen_codigo('item')
 		header_file = "abstract"
 		self.params['title'] = 'Nuevo Item'
 		self.params['modelname'] = 'Item'
@@ -85,9 +96,10 @@ class ItemController(RestController):
 		item.prioridad = kw['prioridad']
 		item.observacion = kw['observacion']
 		item.fase = idfase
-		item.estado=2 # Se crea con estado En Desarrollo por defecto
+		# Se crea con estado En Desarrollo por defecto
+		item.estado = 2
 		item.tipo_item = kw['tipo_item_relacion']
-		item.version=1
+		item.version = 1
 		tipo = DBSession.query(TipoItem).get(item.tipo_item)
 		atributos = tipo.atributos
 		for atributo in atributos:
@@ -134,13 +146,13 @@ class ItemController(RestController):
 		# Se registra en el historial el item antes de ser modificado
 		util.audit_item(item)
 		# Se modifica el item
-		item.descripcion=kw['descripcion']
-		item.codigo=kw['codigo']
-		item.nombre=kw['nombre']
+		item.descripcion = kw['descripcion']
+		item.codigo = kw['codigo']
+		item.nombre = kw['nombre']
 		item.complejidad = kw['complejidad']
 		item.prioridad = kw['prioridad']
 		item.observacion = kw['observacion']
-		item.version=int(item.version) + 1
+		item.version = int(item.version) + 1
 		item.estado = 2 # En Desarrollo
 		#Se persiste el item
 		DBSession.merge(item)
@@ -158,12 +170,23 @@ class ItemController(RestController):
 		#se utiliza el campo estado para determinar en la tabla historial que
 		#esta muerto
 		item = DBSession.query(Item).get(id_item)
+		#validar que no pertenezca a una linea base
+		if item.linea_base != None:
+			flash('El item pertence a un linea base y no puede ser eliminado')
+			redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
+		
+		if self.deja_huerfanos(item):
+			flash('El item no puede ser eliminado ya que algun item de la fase siguiente depende de este')
+			redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
+		
+		#estado muerto
 		item.estado = 4
 		util.audit_item(item)
-		relaciones = DBSession.query(RelacionItem).filter((RelacionItem.id_item_actual or\
-													RelacionItem.id_item_actual) == id_item).\
-													all()
-
+		relaciones = DBSession.query(RelacionItem).\
+								filter((RelacionItem.id_item_actual or\
+								RelacionItem.id_item_actual) == id_item).\
+								all()
+		#se eliminan las relaciones que contienen al item
 		for relacion in relaciones:
 			DBSession.delete(relacion)
 
@@ -172,6 +195,45 @@ class ItemController(RestController):
 		DBSession.delete(item)
 		flash("El item fue eliminado con exito")
 		redirect("/miproyecto/fase/get_all/"+str(item.fase))
+	
+	def deja_huerfanos (self, item):
+		relaciones = DBSession.query(RelacionItem).\
+					filter(RelacionItem.id_item_actual==item.id_item).\
+					filter(RelacionItem.relacion_parentesco == 2).\
+					all()
+		#por cada sucesor se obtienen 
+		for relacion in relaciones:
+			antecesores = self.get_incidentes(relacion.id_item_relacionado)
+			if(len(antecesores) == 1):
+				return True
+		
+		return False
+		
+	
+	"""
+	metodo que retorna los antecesores de un item.
+	parametros:
+	- id_item Integer
+	retorna:
+	- antecesores : List []
+	"""
+	def get_incidentes (self, id_item):
+		#lista de padres
+		antecesores = []
+		#relaciones
+		relaciones = []
+
+		#se obtienen todas las relaciones del item. Si el id de la relacion
+		#hijo-padre es 1 se obtienen todas las relaciones de este tipo que
+		#tiene el item actual
+		relaciones = DBSession.query(RelacionItem).\
+			filter(RelacionItem.id_item_relacionado==id_item).\
+			all()
+		
+		for relacion in relaciones:
+			antecesores.append(relacion.id_item_actual)
+			
+		return antecesores
 
 	"""
 	metodo que retorna el padres de un item.
@@ -182,9 +244,9 @@ class ItemController(RestController):
 	"""
 	def getPadre (self, item):
 		#lista de padres
-		padre
+		padre = []
 		#relaciones
-		relacion
+		relacion = []
 
 		#se obtienen todas las relaciones del item. Si el id de la relacion
 		#hijo-padre es 1 se obtienen todas las relaciones de este tipo que

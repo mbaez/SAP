@@ -24,9 +24,9 @@
 				<div id="selected-tags">
 					<h5>Item: ${params['item'].nombre}</h5>
 					<ul>
-						<li> <a href="/miproyecto/fase/item/impacto/${params['item'].id_item}" class="tag beige">Calculo de Impacto</a></li>
+						<li> <a py:if="tg.predicates.has_permission('editar_item')" href="/miproyecto/fase/item/impacto/${params['item'].id_item}" class="tag beige">Calculo de Impacto</a></li>
 						<p></p>
-						<li> <a href="/miproyecto/fase/item/historial_versiones/${params['item'].id_item}" class="tag beige">Revertir</a></li>
+						<li> <a py:if="tg.predicates.has_permission('editar_item')" href="/miproyecto/fase/item/historial_versiones/${params['item'].id_item}" class="tag beige">Revertir</a></li>
 						<p></p>
 						<li> <a py:if="tg.predicates.has_permission('aprobar_item')" href="/miproyecto/fase/item/aprobar_item/${params['item'].id_item}" class = "tag beige">Aprobar Item</a></li>
 						<p></p>
@@ -40,13 +40,13 @@
 			<li class="main" style="width: 79%; ">
 				<div class="block">
 				<h3>
-					<a href="/miproyecto/fase/item/${params['item'].id_item}/edit">
+					<a>
 						Item : #${params['item'].id_item}
-						<img src= "/img/icons/document_edit_small.png"
+						<img py:if="tg.predicates.has_permission(params['permiso_editar'])" href="/miproyecto/fase/item/${params['item'].id_item}/edit" src= "/img/icons/document_edit_small.png"
 							 style= "float:left;">
 						</img>
 					</a>
-					<a style= "float:right;" href="/miproyecto/fase/item/eliminar/${params['item'].id_item}" >
+					<a py:if="tg.predicates.has_permission(params['permiso_eliminar'])" style= "float:right;" href="/miproyecto/fase/item/eliminar/${params['item'].id_item}" >
 						<img src= "/img/icons/trash.png"/>
 					</a>
 				</h3>

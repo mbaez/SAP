@@ -11,7 +11,7 @@
 			<li id="nav-dashboard" class="first">
 				<a href="/proyectos">Inicio</a>
 			</li>
-			 <li id="nav-dashboard" py:if="tg.predicates.has_permission('crear_tipo_item')" >
+			 <li id="nav-dashboard" py:if="tg.predicates.has_permission('ver_tipo_item')" >
 				<a href="/miproyecto/fase/tipo_item/list/${params['idfase']}">Tipos de Item</a>
 			</li>
 			<li id="nav-agenda" py:if="tg.predicates.has_permission('ver_item')" >

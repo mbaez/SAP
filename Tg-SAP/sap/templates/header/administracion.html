@@ -11,13 +11,13 @@
 			<li id="nav-dashboard" class="first">
 				<a href="/proyectos">Inicio</a>
 			</li>
-			 <li id="nav-dashboard" py:if="tg.predicates.has_permission('manage')" >
+			 <li id="nav-dashboard" py:if="tg.predicates.has_permission('admin_usuario')" >
 				<a href="${tg.url('/administracion/usuario/')}">Usuarios</a>
 			</li>
-			<li id="nav-agenda" py:if="tg.predicates.has_permission('manage')" >
+			<li id="nav-agenda" py:if="tg.predicates.has_permission('admin_proyecto')" >
 				<a href="${tg.url('/administracion/proyecto/')}">Proyectos</a>
 			</li>
-			<li id="nav-tasks" py:if="tg.predicates.has_permission('manage')" >
+			<li id="nav-tasks" py:if="tg.predicates.has_permission('admin_rol')" >
 				<a href="${tg.url('/administracion/rol/')}">Roles</a>
 			</li>
 		</ul>

@@ -39,6 +39,10 @@ class LineaBaseController(RestController):
 
 		#items = DBSession.query(Item).all()
 		items = util.get_aprobados_sin_lineas(idfase)
+		if items == []:
+			flash('No hay items aprobados en esta fase')
+			redirect("/miproyecto/fase/linea_base/list/"+str(idfase))
+			return
 		for i in items:
 		#fields.append( TextField('codigo', label_text='Lalala' + str(i) ) )
 			NewLineaBaseForm.fields.append( CheckBox(i.codigo) )
@@ -50,6 +54,7 @@ class LineaBaseController(RestController):
 		self.params['modelname'] = 'LineaBase'
 		self.params['header_file'] = 'abstract'
 		self.params['permiso'] = 'generar_lineabase'
+		self.params['cancelar_url'] = '/miproyecto/fase/linea_base/list/' + str(idfase)
 		kw['id_fase'] = idfase
 		return dict(value=kw, params = self.params)
 
@@ -63,35 +68,26 @@ class LineaBaseController(RestController):
 	def post(self, idfase, _method, **kw):
 		#del kw['sprox_id']
 		#linea_base = LineaBase(**kw)
-		listaCodigos = []
+		lista_codigos = []
 		dic = kw
 		for d in dic:
-			listaCodigos.append(d)
+			lista_codigos.append(d)
 
-		listaItems = DBSession.query(Item).filter( Item.codigo.in_(listaCodigos) ).\
+		lista_items = DBSession.query(Item).filter( Item.codigo.in_(lista_codigos) ).\
 											all()
 
-		numero = len(DBSession.query(LineaBase).all())
+		linea_base = LineaBase()
+		linea_base.codigo = util.gen_codigo('linea_base')
+		linea_base.estado = 1
+		linea_base.fase = idfase
 
-		lineaBase = LineaBase()
-		lineaBase.codigo = 'LB' + str(numero+1)
-		lineaBase.estado = 1
-		lineaBase.fase = idfase
+		for i in lista_items:
+			linea_base.items.append(i)
 
-		for i in listaItems:
-			lineaBase.items.append(i)
-
-		DBSession.add(lineaBase)
-		"""
 		DBSession.add(linea_base)
-		linea = DBSession.query(LineaBase).\
-							filter(LineaBase.codigo==linea_base.codigo).\
-							first()
-		"""
+		
 		redirect("/miproyecto/fase/linea_base/list/"+str(idfase))
-		#redirect("/miproyecto/fase/linea_base/generarLineaBase/"+
-		#						str(idfase)+'/'+str(linea.id_linea_base))
-
+		
 	"""
 	Encargado de carga el widget para editar las instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de editar
@@ -104,6 +100,7 @@ class LineaBaseController(RestController):
 		kw['id_linea_base'] = linea_base.id_linea_base
 		kw['fase'] = linea_base.fase
 		kw['estado'] = linea_base.estado
+		kw['codigo'] = linea_base.codigo
 		return dict(value=kw, modelname='LineaBase')
 
 	"""

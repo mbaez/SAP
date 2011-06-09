@@ -9,6 +9,9 @@ from tg import config
 from sap.config.environment import load_environment
 from sap import model
 
+#para generar el codigo de las entidades
+from sap.controllers import checker
+
 __all__ = ['setup_app']
 
 log = logging.getLogger(__name__)
@@ -20,8 +23,9 @@ __permisos__ = ['admin_usuario', 'admin_proyecto','admin_rol',
 				'crear_rol', 'eliminar_rol', 'editar_rol','ver_rol',
 				'ver_fase', 'crear_fase','editar_fase','eliminar_fase',
 				'administrar_participantes',
-				'generar_lineabase', 'abrir_lineabase',
+				'generar_lineabase', 'abrir_lineabase', 
 				'crear_tipo_item', 'eliminar_tipo_item', 'editar_tipo_item',
+				'ver_tipo_item'
 				'crear_item', 'eliminar_item', 'editar_item','aprobar_item',
 				'ver_item']
 
@@ -242,28 +246,28 @@ def cargar_tipo_item(fase1, fase2, fase3, fase4):
     tipodeitem1 = model.TipoItem()
     tipodeitem1.fase = fase1.id_fase
     tipodeitem1.nombre = u'Caso de Uso'
-    tipodeitem1.codigo = u'cod_1'
+    tipodeitem1.codigo = checker.util.gen_codigo('tipo_item')
 
     model.DBSession.add(tipodeitem1)
 
     tipodeitem2 = model.TipoItem()
     tipodeitem2.fase = fase2.id_fase
     tipodeitem2.nombre = u'Diagrama Secuencia'
-    tipodeitem2.codigo = u'cod_2'
+    tipodeitem2.codigo = checker.util.gen_codigo('tipo_item')
 
     model.DBSession.add(tipodeitem2)
 
     tipodeitem3 = model.TipoItem()
     tipodeitem3.fase = fase3.id_fase
     tipodeitem3.nombre = u'Documento'
-    tipodeitem3.codigo = u'cod_3'
+    tipodeitem3.codigo = checker.util.gen_codigo('tipo_item')
 
     model.DBSession.add(tipodeitem3)
 
     tipodeitem4 = model.TipoItem()
     tipodeitem4.fase = fase4.id_fase
     tipodeitem4.nombre = u'Diagrama BD'
-    tipodeitem4.codigo = u'cod_4'
+    tipodeitem4.codigo = checker.util.gen_codigo('tipo_item')
 
     model.DBSession.add(tipodeitem4)
     return tipodeitem1,tipodeitem2,tipodeitem3,tipodeitem4
@@ -339,7 +343,7 @@ def cargar_items():
 		item.version = 1
 		item.prioridad = 1
 		item.complejidad =  int(random.random()*10)+1
-		item.codigo = u'cod_'+str(i)
+		item.codigo = checker.util.gen_codigo('item')
 		model.DBSession.add(item)
 
 	for i in range(5):
@@ -351,7 +355,7 @@ def cargar_items():
 		item.version = 1
 		item.prioridad = 1
 		item.complejidad = int(random.random()*10)+1
-		item.codigo = u'cod_'+str(i+10)
+		item.codigo = checker.util.gen_codigo('item')
 		model.DBSession.add(item)
 
 	model.DBSession.flush()
