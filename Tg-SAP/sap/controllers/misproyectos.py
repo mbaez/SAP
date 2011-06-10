@@ -18,6 +18,8 @@ from sap.widgets.editform import *
 #impot del checker de permisos
 from sap.controllers.checker import *
 from sap.controllers.participante import ParticipanteProyectoController
+#import del util
+from sap.lib.util import *
 
 class ProyectosController(RestController):
 
@@ -45,8 +47,14 @@ class ProyectosController(RestController):
 		@rtype  : Diccionario
 		@return : El diccionario que sera utilizado en el template.
 		"""
-		tmpl_context.widget = fase_table
+		#se controla si posee el permiso de ver para el proyecto
+		has_permiso = proyecto_util.check_proyecto_permiso(idproyecto,
+														   'ver_proyecto',True)
+		if ( has_permiso == None) :
+			flash("No posee permisos para ver el proyecto #"+str(idproyecto),'error')
+			redirect('/proyectos')
 
+		tmpl_context.widget = fase_table
 		#listar todas las fases y mostrar unicamente el link de ver en aquellas
 		#fases en los que posee permisos.
 		#fases = checker.get_fases_by_proyecto_list(idproyecto, 'ver_fase')
@@ -57,8 +65,8 @@ class ProyectosController(RestController):
 									all()
 		value = fase_filler.get_value(fases)
 
-		proyecto = self._get_current_proyect(idproyecto)
-		usuarios = util.get_usuarios_by_permiso(idproyecto)
+		proyecto = proyecto_util.get_current(idproyecto)
+		usuarios = usuario_util.get_usuarios_by_permiso(idproyecto)
 		text_header='Listado de Fases del Proyecto'
 
 		#se verifica que el proyecto ya tenga la cantidad de fases
@@ -71,10 +79,10 @@ class ProyectosController(RestController):
 			permiso = 'NO MOSTRAR BOTON NUEVO'
 
 		#para saber si mostrar o no el boton editar
-		permiso_editar = checker.check_proyecto_permiso(idproyecto,
+		permiso_editar = proyecto_util.check_proyecto_permiso(idproyecto,
 												'editar_proyecto')
 		#para saber si mostrar o no el boton anhdir participante
-		permiso_anadir = checker.check_proyecto_permiso(idproyecto,
+		permiso_anadir = proyecto_util.check_proyecto_permiso(idproyecto,
 											'administrar_participantes')
 
 		self.params['modelname'] = 'Fases'

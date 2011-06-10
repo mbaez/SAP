@@ -20,7 +20,7 @@ from tg.controllers import RestController
 header_file="administracion"
 
 class RolController(RestController):
-	
+
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 	'idfase':'','permiso':'', 'label':'', 'cancelar_url':''}
 
@@ -52,7 +52,7 @@ class RolController(RestController):
 		redirect("/administracion/rol/get_all")
 
 	@expose('sap.templates.edit')
-	@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('editar_rol'))
 	def edit(self, id,**kw):
 		tmpl_context.widget = rol_edit_form
 		kw['rol_id'] = id
@@ -82,7 +82,7 @@ class RolController(RestController):
 
 
 	@expose('sap.templates.list')
-	@require(predicates.has_permission('ver_rol'))
+	@require(predicates.has_permission('admin_rol'))
 	def get_all(self, **kw):
 		"""Lista todos los roles de la base de datos"""
 		tmpl_context.widget = rol_table

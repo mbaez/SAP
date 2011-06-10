@@ -27,6 +27,7 @@ from tg.decorators import paginate
 #import del controlador
 from tg.controllers import RestController
 
+from sap.lib.util import *
 class FaseController(RestController):
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
@@ -79,6 +80,12 @@ class FaseController(RestController):
 		Encargado de carga el widget para editar las instancias,
 		solo tienen acceso aquellos usuarios que posean el premiso de editar
 		"""
+
+		has_permiso = fase_util.check_fase_permiso(id,'editar_fase',True)
+		if ( has_permiso == None) :
+			flash("No posee permisos editar la fase #"+str(id),'error')
+			redirect('/proyectos')
+
 		fase =  DBSession.query(Fase).get(id)
 		tmpl_context.widget = fase_edit_form
 		kw['id_fase'] = fase.id_fase
@@ -96,48 +103,39 @@ class FaseController(RestController):
 		Evento invocado luego de un evento post en el form de editar
 		encargado de persistir las modificaciones de las instancias.
 		"""
+
 		del kw['sprox_id']
 		fase = Fase(**kw)
 		DBSession.merge(fase)
 		flash("La fase '" + fase.nombre+ "'ha sido modificado correctamente.")
-		redirect("/miproyecto/fase/list")
-
-
-	@expose('sap.templates.list')
-	#@require( predicates.has_permission('ver_proyecto'))
-	def list(self, **kw):
-		"""
-		Encargado de cargar el widget de listado, pueden acceder unicamente
-		los usuarios que posena el permiso de ver, este widget se encuentra
-		acompanhado de enlaces de editar y eliminar
-		"""
-		"""
-		tmpl_context.widget = proyecto_table
-
-		se obtiene la lista de los proyectos en los cuales pose el
-		permiso de ver_proyecto
-
-		proyectos = checker.get_poyect_list('ver_proyecto')
-		value = proyecto_filler.get_value(proyectos)
-		"""
-		self.params['modelname'] = 'Fases'
-		return dict(modelname='Fases')
-
+		redirect("/miproyecto/fase/"+str(kw['id_fase']))
 
 	@expose()
-	def post_delete(self, id_fase, **kw):
+	def post_delete(self, id, **kw):
 		"""
 		Evento invocado desde el listado, se encarga de eliminar una instancia
 		de la base de datos.
 		"""
-		DBSession.delete(DBSession.query(Fase).get(id_fase))
-		flash("La fase "+ id_proyecto + "ha sido eliminada correctamente.")
-		redirect("/miproyecto/fase/")
+		has_permiso = fase_util.check_fase_permiso(id,'eliminar_fase',True)
+		if ( has_permiso == None) :
+			flash("No posee permisos eliminar la fase #"+str(id),'error')
+			redirect('/proyectos')
+
+		DBSession.delete(DBSession.query(Fase).get(id))
+		flash("La fase #"+ str(id) + "ha sido eliminada correctamente.")
+		redirect("/miproyecto/fase/"+ str(id))
 
 	@expose('sap.templates.fase')
 	@require(predicates.has_permission('ver_fase'))
 	def get_all(self, idfase, **kw):
 		"""Lista todos los items de la fase"""
+
+		has_permiso = fase_util.check_fase_permiso(idfase,'ver_fase',True)
+		if ( has_permiso == None) :
+			flash("No posee permisos ver la fase #"+str(idfase),'error')
+			redirect('/proyectos')
+
+
 		tmpl_context.widget = item_table
 		items = DBSession.query(Item).filter(Item.fase==idfase).all()
 		value = item_filler.get_value(items)

@@ -134,7 +134,7 @@ class ProyectoController(RestController):
 	metodo para listar todos los proyectos al administrador
 	"""
 	@expose('sap.templates.list')
-	@require( predicates.has_permission('ver_proyecto'))
+	@require( predicates.has_permission('admin_proyecto'))
 	def get_all(self, **kw):
 		tmpl_context.widget = proyecto_table
 		#se obtiene la lista de todos los proyectos

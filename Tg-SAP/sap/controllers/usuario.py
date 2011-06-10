@@ -20,7 +20,6 @@ from tg import tmpl_context, redirect, validate
 
 from tg.controllers import RestController
 
-header_file="administracion"
 
 
 class UsuarioContoller(RestController):
@@ -34,7 +33,7 @@ class UsuarioContoller(RestController):
 	"""
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 	'idfase':'','permiso':'', 'label': '', 'cancelar_url':''}
-	
+
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_usuario'))
 	def new(self, modelname='',**kw):
@@ -56,7 +55,7 @@ class UsuarioContoller(RestController):
 		redirect("/administracion/usuario/get_all")
 
 	@expose('sap.templates.edit')
-	@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('edit_usuario'))
 	def edit(self, id,**kw):
 		tmpl_context.widget = usuario_edit_form
 		kw['usuario_id'] = id
@@ -77,7 +76,7 @@ class UsuarioContoller(RestController):
 
 
 	@expose('sap.templates.list')
-	@require(predicates.has_permission('manage'))
+	@require(predicates.has_permission('admin_usuario'))
 	def get_all(self, **kw):
 		"""Lista todos los usuarios de la base de datos"""
 		tmpl_context.widget = usuario_table
@@ -91,6 +90,7 @@ class UsuarioContoller(RestController):
 		return dict(value=value,params=self.params)
 
 	@expose()
+	@require(predicates.has_permission('eliminar_usuario'))
 	def post_delete(self, id_usuario, **kw):
 		DBSession.delete(DBSession.query(Usuario).get(id_usuario))
 		flash("El usuario ha sido "+ id_usuario +" eliminado correctamente.")
