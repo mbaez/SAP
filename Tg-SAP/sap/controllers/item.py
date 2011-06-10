@@ -4,21 +4,21 @@
 
 from tg import expose, flash, require, url, request, redirect
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
-from repoze.what import predicates
+from repoze.what import predicates, authorize
 
 #import de la libreria de grafo
 from sap.lib.pygraph.classes.digraph import *
 from sap.lib.pygraph.algorithms.cycles import *
 from sap.lib.pygraph.readwrite.dot import write
 # Import graphviz
-"""
+
 import sys
 sys.path.append('..')
 sys.path.append('/usr/lib/graphviz/python/')
 sys.path.append('/usr/lib64/graphviz/python/')
 import gv
 import pygraphviz as pgv
-"""
+
 #import de widgets
 from sap.widgets.createform import *
 from sap.widgets.listform import *
@@ -32,32 +32,44 @@ from sap.controllers.item_detalle import *
 from sap.controllers.checker import *
 from tg.controllers import RestController
 
+from sap.lib.util import *
+
 class ItemController(RestController):
 
 	item_detalle = ItemDetalleController()
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 			  'idfase':'','permiso':'','progreso':0, 'cantidad':'', 'item':'',
-			  'impacto':'', 'atributos':'', 'permiso_editar':'', 
+			  'impacto':'', 'atributos':'', 'permiso_editar':'',
 			  'permiso_eliminar':''
 			 }
-
+	
 
 	@expose('sap.templates.item')
 	@require(predicates.has_permission('ver_item'))
 	def ver(self, id_item, **kw):
+		
 		tmpl_context.widget = detalle_item_table
+		self.params['item'] = item_util.get_current(id_item)
 
-		self.params['item'] = DBSession.query(Item).get(id_item)
+		has_permiso = fase_util.check_fase_permiso(self.params['item'].fase,'ver_item',True)
+		
+		if ( has_permiso == None) :
+			flash("No posee permisos sobre la fase #"+ \
+				str(self.params['item'].fase),'error')
+
+			redirect('/miproyecto/fase/item/error')
+
 		progreso = self.params['item'].complejidad*10
 		self.params['progreso'] = progreso
+
 		if self.params['item'].linea_base != None:
 			self.params['permiso_editar'] = 'NO EDITAR'
 			self.params['permiso_eliminar'] = 'NO ELIMINAR'
 		else:
 			self.params['permiso_editar'] = 'editar_item'
 			self.params['permiso_eliminar'] = 'eliminar_item'
-			
+
 		value = detalle_item_filler.get_value(self.params['item'].detalles)
 
 		return dict(value=value , params=self.params)
@@ -122,6 +134,14 @@ class ItemController(RestController):
 	@require(predicates.has_permission('editar_item'))
 	def edit(self, id,**kw):
 		item =  DBSession.query(Item).get(id)
+		
+		has_permiso = fase_util.check_fase_permiso(self.params['item'].fase,'ver_item',True)
+		if ( has_permiso == None) :
+			flash("No posee permisos sobre la fase #"+ \
+				str(self.params['item'].fase),'error')
+				
+			redirect('/miproyecto/fase/item/error')
+		
 		tmpl_context.widget = item_edit_form
 		kw['id_item'] = item.id_item
 		kw['descripcion'] = item.descripcion
@@ -169,16 +189,25 @@ class ItemController(RestController):
 	def eliminar(self, id_item):
 		#se utiliza el campo estado para determinar en la tabla historial que
 		#esta muerto
-		item = DBSession.query(Item).get(id_item)
+		item = item_util.get_current(id_item)
+
+		
+		has_permiso = fase_util.check_fase_permiso(items.fase,'ver_item',True)
+		if ( has_permiso == None) :
+			flash("No posee permisos sobre la fase #"+ \
+				str(self.params['item'].fase),'error')
+				
+			redirect('/miproyecto/fase/item/error')
+			
 		#validar que no pertenezca a una linea base
 		if item.linea_base != None:
 			flash('El item pertence a un linea base y no puede ser eliminado')
 			redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
-		
+
 		if self.deja_huerfanos(item):
 			flash('El item no puede ser eliminado ya que algun item de la fase siguiente depende de este')
 			redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
-		
+
 		#estado muerto
 		item.estado = 4
 		util.audit_item(item)
@@ -195,21 +224,21 @@ class ItemController(RestController):
 		DBSession.delete(item)
 		flash("El item fue eliminado con exito")
 		redirect("/miproyecto/fase/get_all/"+str(item.fase))
-	
+
 	def deja_huerfanos (self, item):
 		relaciones = DBSession.query(RelacionItem).\
 					filter(RelacionItem.id_item_actual==item.id_item).\
 					filter(RelacionItem.relacion_parentesco == 2).\
 					all()
-		#por cada sucesor se obtienen 
+		#por cada sucesor se obtienen
 		for relacion in relaciones:
 			antecesores = self.get_incidentes(relacion.id_item_relacionado)
 			if(len(antecesores) == 1):
 				return True
-		
+
 		return False
-		
-	
+
+
 	"""
 	metodo que retorna los antecesores de un item.
 	parametros:
@@ -229,10 +258,10 @@ class ItemController(RestController):
 		relaciones = DBSession.query(RelacionItem).\
 			filter(RelacionItem.id_item_relacionado==id_item).\
 			all()
-		
+
 		for relacion in relaciones:
 			antecesores.append(relacion.id_item_actual)
-			
+
 		return antecesores
 
 	"""

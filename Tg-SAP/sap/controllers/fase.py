@@ -28,6 +28,7 @@ from tg.decorators import paginate
 from tg.controllers import RestController
 
 from sap.lib.util import *
+
 class FaseController(RestController):
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
@@ -84,7 +85,7 @@ class FaseController(RestController):
 		has_permiso = fase_util.check_fase_permiso(id,'editar_fase',True)
 		if ( has_permiso == None) :
 			flash("No posee permisos editar la fase #"+str(id),'error')
-			redirect('/proyectos')
+			redirect('/miproyecto/fase/edit')
 
 		fase =  DBSession.query(Fase).get(id)
 		tmpl_context.widget = fase_edit_form
@@ -118,8 +119,8 @@ class FaseController(RestController):
 		"""
 		has_permiso = fase_util.check_fase_permiso(id,'eliminar_fase',True)
 		if ( has_permiso == None) :
-			flash("No posee permisos eliminar la fase #"+str(id),'error')
-			redirect('/proyectos')
+			flash("No posee permisos para eliminar la fase #"+str(id),'error')
+			redirect('/miproyecto/fase/error')
 
 		DBSession.delete(DBSession.query(Fase).get(id))
 		flash("La fase #"+ str(id) + "ha sido eliminada correctamente.")
@@ -131,9 +132,10 @@ class FaseController(RestController):
 		"""Lista todos los items de la fase"""
 
 		has_permiso = fase_util.check_fase_permiso(idfase,'ver_fase',True)
+		
 		if ( has_permiso == None) :
 			flash("No posee permisos ver la fase #"+str(idfase),'error')
-			redirect('/proyectos')
+			redirect('/miproyecto/fase/error')
 
 
 		tmpl_context.widget = item_table

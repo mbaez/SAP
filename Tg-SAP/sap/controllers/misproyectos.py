@@ -27,8 +27,6 @@ class ProyectosController(RestController):
 
 	participantes = ParticipanteProyectoController()
 
-	_current_proyect = None
-
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 			  'idfase':'','permiso':'', 'label': '', 'permiso':'',
 			'idproyecto':'', 'permiso_editar': '', 'permiso_anadir': '' }
@@ -52,7 +50,7 @@ class ProyectosController(RestController):
 														   'ver_proyecto',True)
 		if ( has_permiso == None) :
 			flash("No posee permisos para ver el proyecto #"+str(idproyecto),'error')
-			redirect('/proyectos')
+			redirect('/miproyecto/error')
 
 		tmpl_context.widget = fase_table
 		#listar todas las fases y mostrar unicamente el link de ver en aquellas
@@ -66,6 +64,7 @@ class ProyectosController(RestController):
 		value = fase_filler.get_value(fases)
 
 		proyecto = proyecto_util.get_current(idproyecto)
+		
 		usuarios = usuario_util.get_usuarios_by_permiso(idproyecto)
 		text_header='Listado de Fases del Proyecto'
 
@@ -96,17 +95,3 @@ class ProyectosController(RestController):
 		self.params['permiso_editar'] = permiso_editar
 		self.params['permiso_anadir'] = permiso_anadir
 		return dict(value=value, params=self.params)
-
-	def _get_current_proyect(self, id=0):
-		"""
-		@type  id : Integer
-		@param id : Identificador del proyecto.
-
-		@rtype  : Proyecto
-		@return : El proyecto actual
-		"""
-		if self._current_proyect == None or \
-		   self._current_proyect.id_proyecto != id and id != 0:
-				self._current_proyect = DBSession.query(Proyecto).get(id)
-
-		return self._current_proyect

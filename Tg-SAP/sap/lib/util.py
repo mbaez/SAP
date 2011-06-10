@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from repoze.what import predicates
+from repoze.what import predicates, authorize
 from tg import request
 # project specific imports
 from sap.model import DBSession, metadata
@@ -15,11 +15,16 @@ import time
    :mail: mxbg.py@gmail.com
 """
 
-class Util ():
+class Util :
 
-	__current = None
-	__model__ = None
-	__sec = 0
+	#__current = None
+	#__model__ = None
+	#__sec = 0
+	
+	def __init__(self, model=None, current=None, sec=0):
+		self.__current = current
+		self.__model__ = model
+		self.__sec = sec
 
 	def get_current (self, id):
 		"""
@@ -29,10 +34,10 @@ class Util ():
 		@rtype  : Entity
 		@return : Instancia actual
 		"""
-		if self.__current == None or self.get_primary_key() != id and id != 0 :
-
-				self.__current = DBSession.query(self.__model__).get(id)
-
+		
+		if self.__current == None or self.get_primary_key(self.__current) != id and id != 0 :
+			
+			self.__current = DBSession.query(self.__model__).get(id)
 		return self.__current
 
 	def gen_codigo(self, prefijo):
@@ -44,7 +49,7 @@ class Util ():
 
 	def get_by_codigo(self, codigo):
 
-		return DBSession.query(__model__).filter(self.cmp_codigo(codigo)).first()
+		return DBSession.query(self.__model__).filter(self.cmp_codigo(codigo)).first()
 
 	def distinct (self, list):
 		buff_list = []
@@ -54,8 +59,8 @@ class Util ():
 		return buff_list
 
 	# Funciones que interactuan con el current del modelo
-	def get_primary_key(self):
-		pass
+	#def get_primary_key(self):
+	#	pass
 
 	def cmp_codigo(self,codigo):
 		pass
@@ -63,11 +68,15 @@ class Util ():
 
 class ProyectoUtil(Util):
 
-	__model__ = Proyecto
-
+	def __init__(self):
+		Util.__init__(self,Proyecto)
+	
+	def get_current (self, id=0):
+		return Util.get_current(self, id)
+		
 	#Interactuan con el current
-	def get_primary_key(self):
-		return self.__current.id_proyecto
+	def get_primary_key(self, current):
+		return current.id_proyecto
 
 	def cmp_codigo(self, codigo):
 		return Proyecto.codigo == codigo
@@ -177,10 +186,14 @@ class ProyectoUtil(Util):
 
 class RolUtil(Util):
 
-	__model__ = Rol
-
-	def get_primary_key(self):
-		return self.__current.rol_id
+	def __init__(self):
+		Util.__init__(self,Rol)
+	
+	def get_current (self, id=0):
+		return Util.get_current(self, id)
+	
+	def get_primary_key(self, current):
+		return current.rol_id
 
 	def cmp_codigo(self, codigo):
 		return Rol.codigo == codigo
@@ -300,10 +313,14 @@ class RolUtil(Util):
 
 class FaseUtil(Util):
 
-	__model__ = Fase
-
-	def get_primary_key(self):
-		return self.__current.id_fase
+	def __init__(self):
+		Util.__init__(self,Fase)
+	
+	def get_current (self, id=0):
+		return Util.get_current(self, id)
+		
+	def get_primary_key(self, current):
+		return current.id_fase
 
 	def cmp_codigo(self, codigo):
 		return Fase.codigo == codigo
@@ -334,7 +351,7 @@ class FaseUtil(Util):
 		#se recupera el rol del lider del proyecto
 		rol = rol_util.get_by_codigo('lider_' + str(fase.proyecto))
 		#si el usuario es lider del proyecto se salta los controles
-		if util.usuario_has_rol(current_user.usuario_id, rol) :
+		if usuario_util.usuario_has_rol(current_user.usuario_id, rol) :
 			return predicates.has_permission(permiso_name)
 
 		usuario_permiso_fase = DBSession.query(UsuarioPermisoFase).\
@@ -353,7 +370,6 @@ class FaseUtil(Util):
 		if (len(usuario_permiso_fase) != 0):
 			return predicates.has_permission(permiso_name)
 		elif nuleable == False:
-			#return predicates.has_permission(permiso_name+' '+str(id_proyecto))
 			return predicates.has_permission('Sin permiso')
 		else:
 			return None
@@ -388,10 +404,14 @@ class FaseUtil(Util):
 
 class ItemUtil(Util):
 
-	__model__ = Item
-
-	def get_primary_key(self):
-		return self.__current.id_item
+	def __init__(self):
+		Util.__init__(self,Item)
+	
+	def get_current (self, id=0):
+		return Util.get_current(self, id)
+	
+	def get_primary_key(self, current):
+		return current.id_item
 
 	def cmp_codigo(self, codigo):
 		return Item.codigo == codigo
@@ -557,20 +577,28 @@ class ItemUtil(Util):
 
 class TipoItemUtil(Util):
 
-	__model__ = TipoItem
-
-	def get_primary_key(self):
-		return self.__current.id_tipo_item
+	def __init__(self):
+		Util.__init__(self,TipoItem)
+	
+	def get_current (self, id=0):
+		return Util.get_current(self, id)
+	
+	def get_primary_key(self, current):
+		return current.id_tipo_item
 
 	def cmp_codigo(self, codigo):
 		return TipoItem.codigo == codigo
 
 class UsuarioUtil(Util):
 
-	__model__ = Usuario
-
-	def get_primary_key(self):
-		return self.__current.usuario_id
+	def __init__(self):
+		return Util.__init__(self,Usuario)
+	
+	def get_current (self, id=0):
+		Util.get_current(self, id)
+	
+	def get_primary_key(self, current):
+		return current.usuario_id
 
 	def cmp_codigo(self, codigo):
 		return Usuario.codigo == codigo
@@ -649,13 +677,13 @@ class UsuarioUtil(Util):
 		return self.distinct(usuarios)
 
 class EstadoItemUtil(Util):
-	__model__ = EstadoItem
-
-	def get_primary_key(self):
-		return self.__current.id_estado_item
+	def __init__(self):
+		return Util.__init__(self,EstadoItem)
+	def get_primary_key(self, current):
+		return current.id_estado_item
 
 	def cmp_codigo(self, codigo):
-		return Usuario.nombre == nombre
+		return Usuario.nombre == codigo
 
 class SessionUtil():
 
@@ -682,6 +710,24 @@ class SessionUtil():
 			self.__username = username
 
 		return self.__current_user
+		
+	def authorize_fase(self, permiso, id=0, fase=None):
+		try:
+			if fase != None:
+				id = fase.id_fase
+			
+			return fase_util.check_fase_permiso(id,permiso, True)
+		except:
+			return None
+
+	def authorize_proyecto(self, permiso, id=0, proyecto=None):
+		try:
+			if proyecto != None:
+				id = proyecto.id_proyecto
+			return proyecto_util.check_proyecto_permiso(id,permiso, True)
+		except:
+			return None
+
 
 
 #Se instancian las clases

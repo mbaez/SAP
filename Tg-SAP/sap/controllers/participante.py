@@ -3,7 +3,7 @@
 
 from tg import expose, flash, require, url, request, redirect
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
-from repoze.what import predicates
+from repoze.what import predicates , authorize
 
 from tg.controllers import RestController
 from sap.model import *
@@ -15,6 +15,8 @@ from sap.widgets.editform import *
 #impot del checker de permisos
 from sap.controllers.checker import *
 
+from sap.lib.util import *
+
 
 class ParticipanteFaseController(RestController):
 
@@ -23,6 +25,8 @@ class ParticipanteFaseController(RestController):
 
 	_current_fase = None
 
+	allow_only = authorize.has_permission('administrar_participantes' )
+	
 	@expose('sap.templates.fase')
 	@require(predicates.has_permission('administrar_participantes'))
 	def admin(self, id , **kw):
@@ -36,20 +40,24 @@ class ParticipanteFaseController(RestController):
 		@rtype  : Diccionario
 		@return : El diccionario que sera utilizado en el template.
 		"""
-		fase = self._get_current_fase(id)
-
+		
+		has_permiso = session_util.authorize_fase('administrar_participantes', id) 
+		if ( has_permiso == None) :
+			flash("No posee permisos sobre la fase #"+str(id),'error')
+			redirect('/miproyecto/fase/participantes/error')
+		
+		#para saber si mostrar o no el boton editar
+		permiso_editar = fase_util.check_fase_permiso(id,
+												'editar_fase')
+		#para saber si mostrar o no el boton anhdir participante
+		permiso_anadir = fase_util.check_fase_permiso(id,
+											'administrar_participantes')
 		usuarios = util.get_usuarios_by_fase(id)
 
 		tmpl_context.widget = participantes_table
-
+		fase = fase_util.get_current(id)
 		roles = util.get_roles_by_proyectos(fase.proyecto)
 		value = participantes_fase_filler.get_value(roles)
-				#para saber si mostrar o no el boton editar
-		permiso_editar = checker.check_fase_permiso(id,
-												'editar_fase')
-		#para saber si mostrar o no el boton anhdir participante
-		permiso_anadir = checker.check_fase_permiso(id,
-											'administrar_participantes')
 
 		self.params['permiso_editar'] = permiso_editar
 		self.params['permiso_anadir'] = permiso_anadir
@@ -66,7 +74,7 @@ class ParticipanteFaseController(RestController):
 	def edit(self, id,**kw):
 		"""
 		@type  id : Integer
-		@param id : Identificador de la fase.
+		@param id : Identificador del Rol
 
 		@type  kw : Hash
 		@param kw : Keywords
@@ -74,7 +82,13 @@ class ParticipanteFaseController(RestController):
 		@rtype  : Diccionario
 		@return : El diccionario que sera utilizado en el template.
 		"""
-
+		fase = fase_util.get_current()
+		
+		has_permiso = session_util.authorize_fase('administrar_participantes', fase=fase) 
+		if ( has_permiso == None) :
+			flash("No posee permisos sobre la fase #"+str(id),'error')
+			redirect('/miproyecto/fase/participantes/error')
+		
 		tmpl_context.widget = rol_usuario_edit_form
 		rol = DBSession.query(Rol).get(id)
 		kw['rol_id'] = id
@@ -85,7 +99,6 @@ class ParticipanteFaseController(RestController):
 		else:
 			value = rol_usuario_edit_filler.get_value(kw)
 
-		fase = self._get_current_fase()
 		usuarios = util.get_usuarios_by_fase(fase.id_fase)
 
 		self.params['fase'] = fase
@@ -100,13 +113,17 @@ class ParticipanteFaseController(RestController):
 	def put(self, id, **kw):
 		"""
 		@type  id : Integer
-		@param id : Identificador de la fase.
+		@param id : Identificador del Rol
 
 		@type  kw : Hash
 		@param kw : Keywords
 		"""
-
-		fase = self._get_current_fase()
+		fase = fase_util.get_current()
+		has_permiso = session_util.authorize_fase('administrar_participantes', fase=fase) 
+		if ( has_permiso == None) :
+			flash("No posee permisos sobre la fase #"+str(id),'error')
+			redirect('/miproyecto/fase/participantes/error')
+		
 		for usuario_id in kw['usuarios'] :
 			util.asociar_usuario_fase(usuario_id, fase.id_fase)
 
@@ -117,7 +134,7 @@ class ParticipanteFaseController(RestController):
 	def delete(self, id_fase ,id, **kw):
 		"""
 		@type  id_fase : Integer
-		@param id_fase : Identificador de la fase.
+		@param id_fase : Identificador del Rol
 
 		@type  id : Integer
 		@param id : Identificador del usuario a desvincular.
@@ -125,7 +142,7 @@ class ParticipanteFaseController(RestController):
 		@type  kw : Hash
 		@param kw : Keywords
 		"""
-		fase = self._get_current_fase()
+		fase = fase_util.get_current()
 		list = DBSession.query(UsuarioPermisoFase).\
 				filter(UsuarioPermisoFase.usuario_id == id).\
 				filter(UsuarioPermisoFase.fase_id == id_fase)
@@ -136,29 +153,14 @@ class ParticipanteFaseController(RestController):
 		flash("El usuario '"+ str(id) +"' ha sido desvinculado de la fase.")
 		redirect("/miproyecto/fase/get_all/"+ str(id_fase))
 
-	def _get_current_fase(self, id=0):
-		"""
-		@type  id : Integer
-		@param id : Identificador de la fase.
-
-		@rtype  : Fase
-		@return : La fase actual
-		"""
-		if self._current_fase == None or \
-		   self._current_fase.id_fase != id  and id != 0:
-
-				self._current_fase = DBSession.query(Fase).get(id)
-
-		return self._current_fase
-
 
 
 class ParticipanteProyectoController(RestController):
 
-	_current_proyect = None
-
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 			  'idfase':'','permiso':''}
+	
+	allow_only = authorize.has_permission('administrar_participantes' )
 
 	@expose('sap.templates.miproyecto')
 	@require(predicates.has_permission('administrar_participantes'))
@@ -173,20 +175,28 @@ class ParticipanteProyectoController(RestController):
 		@rtype  : Diccionario
 		@return : El diccionario que sera utilizado en el template.
 		"""
-		proyecto = self._get_current_proyect(idproyecto)
+		has_permiso = session_util.authorize_proyecto('administrar_participantes', id=idproyecto) 
+		if ( has_permiso == None) :
+			flash("No posee permisos sobre la fase #"+str(idproyecto),'error')
+			redirect('/miproyecto/participantes/error')
+		
+		#para saber si mostrar o no el boton editar
+		permiso_editar = proyecto_util.check_proyecto_permiso(idproyecto,
+												'editar_proyecto')
+		#para saber si mostrar o no el boton anhdir participante
+		permiso_anadir = proyecto_util.check_proyecto_permiso(idproyecto,
+											'administrar_participantes')
+
 		usuarios = util.get_usuarios_by_permiso(idproyecto)
 
 		tmpl_context.widget = participantes_table
 
 		roles = util.get_roles_by_proyectos(idproyecto)
+		
 		value = participantes_filler.get_value(roles)
-		#para saber si mostrar o no el boton editar
-		permiso_editar = checker.check_proyecto_permiso(idproyecto,
-												'editar_proyecto')
-		#para saber si mostrar o no el boton anhdir participante
-		permiso_anadir = checker.check_proyecto_permiso(idproyecto,
-											'administrar_participantes')
-
+		
+		proyecto = proyecto_util.get_current(idproyecto)
+		
 		self.params['modelname'] = 'Participantes'
 		self.params['text_header'] = 'Lista de roles'
 		self.params['proyecto'] = proyecto
@@ -219,7 +229,7 @@ class ParticipanteProyectoController(RestController):
 		else:
 			value = rol_usuario_edit_filler.get_value(kw)
 
-		proyecto = self._get_current_proyect()
+		proyecto = proyecto_util.get_current()
 		usuarios = util.get_usuarios_by_permiso(proyecto.id_proyecto)
 
 		self.params['modelname'] = 'Participantes'
@@ -232,7 +242,7 @@ class ParticipanteProyectoController(RestController):
 	def put(self, id, **kw):
 		rol = DBSession.query(Rol).get(int(kw['rol_id']))
 
-		proyecto = self._get_current_proyect()
+		proyecto = proyecto_util.get_current()
 
 		rol.usuarios = []
 
@@ -275,16 +285,3 @@ class ParticipanteProyectoController(RestController):
 		redirect("/miproyecto/ver/"+str(proyecto_id))
 
 
-	def _get_current_proyect(self, id=0):
-		"""
-		@type  id : Integer
-		@param id : Identificador del proyecto.
-
-		@rtype  : Proyecto
-		@return : El proyecto actual
-		"""
-		if self._current_proyect == None or \
-		   self._current_proyect.id_proyecto != id and id != 0:
-				self._current_proyect = DBSession.query(Proyecto).get(id)
-
-		return self._current_proyect
