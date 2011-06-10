@@ -42,9 +42,11 @@
 				<h3>
 					<a>
 						Item : #${params['item'].id_item}
-						<img py:if="tg.predicates.has_permission(params['permiso_editar'])" href="/miproyecto/fase/item/${params['item'].id_item}/edit" src= "/img/icons/document_edit_small.png"
-							 style= "float:left;">
-						</img>
+						<a py:if="tg.predicates.has_permission(params['permiso_editar'])" href="/miproyecto/fase/item/${params['item'].id_item}/edit" >
+							<img src= "/img/icons/document_edit_small.png"
+								 style= "float:left;">
+							</img>
+						</a>
 					</a>
 					<a py:if="tg.predicates.has_permission(params['permiso_eliminar'])" style= "float:right;" href="/miproyecto/fase/item/eliminar/${params['item'].id_item}" >
 						<img src= "/img/icons/trash.png"/>

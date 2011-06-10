@@ -5,13 +5,14 @@
       xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <xi:include href="master.html" />
-
+<xi:include href="header/abstract.html" />
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
   <title>A ${code} Error has Occurred </title>
 </head>
 
 <body>
+${sub_header()}
 <h1>Error ${code}</h1>
 
 <div>${XML(message)}</div>

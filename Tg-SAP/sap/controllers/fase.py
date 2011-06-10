@@ -131,10 +131,9 @@ class FaseController(RestController):
 	def get_all(self, idfase, **kw):
 		"""Lista todos los items de la fase"""
 
-		has_permiso = fase_util.check_fase_permiso(idfase,'ver_fase',True)
-		
+		has_permiso = session_util.authorize_fase('ver_fase', idfase)
 		if ( has_permiso == None) :
-			flash("No posee permisos ver la fase #"+str(idfase),'error')
+			flash("No posee permisos sobre la fase #"+str(idfase),'error')
 			redirect('/miproyecto/fase/error')
 
 
@@ -142,8 +141,8 @@ class FaseController(RestController):
 		items = DBSession.query(Item).filter(Item.fase==idfase).all()
 		value = item_filler.get_value(items)
 
-		permiso_editar = checker.check_fase_permiso(idfase, 'editar_fase')
-		permiso_anadir = checker.check_fase_permiso(idfase, 'administrar_participantes')
+		permiso_editar = fase_util.check_fase_permiso(idfase, 'editar_fase')
+		permiso_anadir = fase_util.check_fase_permiso(idfase, 'administrar_participantes')
 
 		self.params['title'] = 'Titulo'
 		self.params['permiso_editar'] = permiso_editar
