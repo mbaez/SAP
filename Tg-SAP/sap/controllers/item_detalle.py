@@ -21,6 +21,7 @@ from sap.controllers.item import *
 #import del controlador
 from tg.controllers import RestController
 
+from sap.controllers.util import *
 _widget = None
 
 class ItemDetalleController(RestController):
@@ -28,51 +29,6 @@ class ItemDetalleController(RestController):
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 	'idfase':'','permiso':'', 'cancelar_url':''}
 
-	"""
-	@expose('sap.templates.new')
-	@require(predicates.has_permission('editar_item'))
-	def new(self, iditem, _method, **kw):
-		NewItemDetalleForm.fields = []
-
-		#items = DBSession.query(Item).all()
-		item = DBSession.query(Item).get(iditem)
-		detalles = item.detalles
-		for detalle in detalles:
-			NewItemDetalleForm.fields.append( TextField('atributo', label_text='Atributo') )
-
-		new_item_detalle_form = NewItemDetalleForm("new_item_detalle_form", action = 'post')
-		tmpl_context.widget = new_item_detalle_form
-
-		self.params['title'] = 'Detalles de item'
-		self.params['modelname'] = 'DetalleItem'
-		self.params['header_file'] = 'abstract'
-		self.params['permiso'] = 'editar_item'
-		kw['id_fase'] = iditem
-		return dict(value=kw, params = self.params)
-
-	#@validate(_widget, error_handler=new)
-	@require(predicates.has_permission('editar_item'))
-	@expose()
-	def post(self, iditem, _method, **kw):
-		#del kw['sprox_id']
-		item = DBSession.query(Item).get(iditem)
-
-		'''
-		Se crean los detalles
-		'''
-		for d in dic:
-			detalle = DetalleItem()
-			detalle.id_item = iditem
-			detalle.recurso = None	#No estoy muy seguro si esta bien
-			detalle.valor = dic[d]
-			detalles.append(detalle)
-
-		item.detalles = detalles
-
-		DBSession.merge(item)
-
-		redirect("/miproyecto/fase/item/ver/"+str(iditem))
-	"""
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('editar_item'))
 	def edit(self, id,**kw):
@@ -102,6 +58,8 @@ class ItemDetalleController(RestController):
 
 		DBSession.merge(detalle)
 		DBSession.flush()
+		item = DBSession.query(Item).get(detalle.id_item)
+		item_util.audit_item(item)
 
 		flash("El item atributo ha sido modificado correctamente.")
-		redirect('/miproyecto/fase/item/ver/'+str(detalle.id_item))
+		redirect('/miproyecto/fase/item/poner_en_revision/'+str(detalle.id_item))

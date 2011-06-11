@@ -15,7 +15,8 @@ from sap.widgets.editform import *
 #impot del checker de permisos
 from sap.controllers.checker import *
 
-from sap.lib.util import *
+from sap.controllers.util import *
+
 
 
 class ParticipanteFaseController(RestController):

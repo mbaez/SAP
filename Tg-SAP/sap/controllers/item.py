@@ -32,7 +32,7 @@ from sap.controllers.item_detalle import *
 from sap.controllers.checker import *
 from tg.controllers import RestController
 
-from sap.lib.util import *
+from sap.controllers.util import *
 
 class ItemController(RestController):
 
@@ -43,17 +43,17 @@ class ItemController(RestController):
 			  'impacto':'', 'atributos':'', 'permiso_editar':'',
 			  'permiso_eliminar':''
 			 }
-	
+
 
 	@expose('sap.templates.item')
 	@require(predicates.has_permission('ver_item'))
 	def ver(self, id_item, **kw):
-		
-		tmpl_context.widget = detalle_item_table
-		self.params['item'] = item_util.get_current(id_item)
 
+		tmpl_context.widget = detalle_item_table
+		self.params['item'] = DBSession.query(Item).get(id_item)
+		print "HAS_PERMISO : "+str(self.params['item'])
 		has_permiso = fase_util.check_fase_permiso(self.params['item'].fase,'ver_item',True)
-		
+
 		if ( has_permiso == None) :
 			flash("No posee permisos sobre la fase #"+ \
 				str(self.params['item'].fase),'error')
@@ -112,15 +112,6 @@ class ItemController(RestController):
 		item.estado = 2
 		item.tipo_item = kw['tipo_item_relacion']
 		item.version = 1
-		tipo = DBSession.query(TipoItem).get(item.tipo_item)
-		atributos = tipo.atributos
-		for atributo in atributos:
-			detalle = DetalleItem()
-			detalle.nombre = atributo.nombre
-			detalle.id_atributo_tipo_item = atributo.id_atributo_tipo_item
-			detalle.valor = None
-			detalle.recurso = None
-			item.detalles.append(detalle)
 		DBSession.add(item)
 		DBSession.flush()
 		flash("El item se ha creado correctamente")
@@ -134,14 +125,14 @@ class ItemController(RestController):
 	@require(predicates.has_permission('editar_item'))
 	def edit(self, id,**kw):
 		item =  DBSession.query(Item).get(id)
-		
+
 		has_permiso = fase_util.check_fase_permiso(self.params['item'].fase,'ver_item',True)
 		if ( has_permiso == None) :
 			flash("No posee permisos sobre la fase #"+ \
 				str(self.params['item'].fase),'error')
-				
+
 			redirect('/miproyecto/fase/item/error')
-		
+
 		tmpl_context.widget = item_edit_form
 		kw['id_item'] = item.id_item
 		kw['descripcion'] = item.descripcion
@@ -177,8 +168,23 @@ class ItemController(RestController):
 		#Se persiste el item
 		DBSession.merge(item)
 		DBSession.flush()
+		#fase = DBSession.query(Fase).get(item.fase)
+		#grafo = self.proyectGraphConstructor(fase.proyecto)
+		#self.marcar_en_revision(grafo, item.id_item)
 
 		flash("El item " +str(item.nombre)+ " ha sido modificado correctamente.")
+		redirect('/miproyecto/fase/item/poner_en_revision/'+str(item.id_item))
+
+	@expose()
+	def poner_en_revision(self, id_item):
+
+		item = DBSession.query(Item).get(id_item)
+		fase = DBSession.query(Fase).get(item.fase)
+		grafo = self.proyectGraphConstructor(fase.proyecto)
+
+		self.marcar_en_revision(grafo, item.id_item)
+
+		flash("El item " +str(item.nombre)+ " fue puesto en revision.", 'warning')
 		redirect('/miproyecto/fase/item/ver/'+str(item.id_item))
 
 	"""
@@ -191,14 +197,14 @@ class ItemController(RestController):
 		#esta muerto
 		item = item_util.get_current(id_item)
 
-		
+
 		has_permiso = fase_util.check_fase_permiso(items.fase,'ver_item',True)
 		if ( has_permiso == None) :
 			flash("No posee permisos sobre la fase #"+ \
 				str(self.params['item'].fase),'error')
-				
+
 			redirect('/miproyecto/fase/item/error')
-			
+
 		#validar que no pertenezca a una linea base
 		if item.linea_base != None:
 			flash('El item pertence a un linea base y no puede ser eliminado')
@@ -540,10 +546,14 @@ class ItemController(RestController):
 		historial = DBSession.query(HistorialItem).get(id_historial)
 		item = DBSession.query(Item).get(historial.id_item)
 		# Se registra en el historial el item antes de ser revertido
-		util.audit_item(item)
+		if item.linea_base != None :
+			flash("El item pertenece a una linea base!", 'error')
+			redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
+
+		item_util.audit_item(item)
 		#se revierte
-		util.revertir_item(historial)
-		redirect("/miproyecto/fase/item/ver/"+str(historial.id_item))
+		item_util.revertir_item(historial)
+		redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
 
 	@expose('sap.templates.impacto')
 	@require(predicates.has_permission('editar_item'))

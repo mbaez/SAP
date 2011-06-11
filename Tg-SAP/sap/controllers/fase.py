@@ -27,7 +27,8 @@ from tg.decorators import paginate
 #import del controlador
 from tg.controllers import RestController
 
-from sap.lib.util import *
+from sap.controllers.util import *
+
 
 class FaseController(RestController):
 

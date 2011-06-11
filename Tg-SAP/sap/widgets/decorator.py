@@ -308,7 +308,7 @@ class TipoItemModelDecorator(ExtendedTableList, Decorator):
 
 	__model__ = TipoItem
 	__add_fields__ = {'accion':None}
-	__url__ = '/miproyecto/fase/tipo_item/atributos/list/'
+	__url__ = '/miproyecto/fase/tipo_item/atributos/'
 
 	def __init__(self, provider_hint=None, url=None,check_permiso=True ,**provider_hints):
 		super(TipoItemModelDecorator, self).__init__(provider_hint, **provider_hints)

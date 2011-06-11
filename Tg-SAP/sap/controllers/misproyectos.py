@@ -19,7 +19,8 @@ from sap.widgets.editform import *
 from sap.controllers.checker import *
 from sap.controllers.participante import ParticipanteProyectoController
 #import del util
-from sap.lib.util import *
+from sap.controllers.util import *
+
 
 class ProyectosController(RestController):
 
@@ -73,7 +74,9 @@ class ProyectosController(RestController):
 		limite_fase = DBSession.query(Fase).\
 									filter(Fase.proyecto==idproyecto).\
 									all().count(Fase.id_fase)
+		
 		permiso = 'crear_fase'
+		print "LIMITE "+ str(proyecto.nro_fases)
 		if (proyecto.nro_fases == limite_fase):
 			permiso = 'NO MOSTRAR BOTON NUEVO'
 

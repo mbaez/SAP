@@ -20,8 +20,10 @@ from sap.controllers.atributo import AtributoController
 #import del controlador
 from tg.controllers import RestController
 
+from sap.controllers.util import *
+
 class TipoItemController(RestController):
-	
+
 	atributos = AtributoController()
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 	'idfase':'','permiso':'','label': '', 'cancelar_url':''}
@@ -97,7 +99,7 @@ class TipoItemController(RestController):
 	los usuarios que posena el permiso de ver, este widget se encuentra
 	acompanhado de enlaces de editar y eliminar
 	"""
-	@expose('sap.templates.list')
+	@expose('sap.templates.fase')
 	@require( predicates.has_permission('editar_tipo_item'))
 	def list(self, idfase, **kw):
 		'''
@@ -108,7 +110,18 @@ class TipoItemController(RestController):
 		tmpl_context.widget = tipo_item_table
 		tipo_items = DBSession.query(TipoItem).filter(TipoItem.fase==idfase).all()
 		value = tipo_item_filler.get_value(tipo_items)
+
 		new_url = "/miproyecto/fase/tipo_item/"+idfase+"/new"
+
+		permiso_editar = fase_util.check_fase_permiso(idfase, 'editar_fase')
+		permiso_anadir = fase_util.check_fase_permiso(idfase, 'administrar_participantes')
+
+		self.params['permiso_editar'] = permiso_editar
+		self.params['permiso_anadir'] = permiso_anadir
+		self.params['fase'] = DBSession.query(Fase).get(idfase)
+		self.params['new_url'] = '/miproyecto/fase/item/'+idfase+'/new/'
+		self.params['usuarios'] = util.get_usuarios_by_fase(idfase)
+
 		self.params['modelname'] = "Tipos de Items"
 		self.params['header_file'] = 'tipo_item'
 		self.params['new_url'] = "/miproyecto/fase/tipo_item/"+idfase+"/new"
@@ -134,23 +147,23 @@ class TipoItemController(RestController):
 	@require( predicates.has_permission('editar_tipo_item'))
 	def importar(self, idfase, **kw):
 		"""
-		Recuperar de la BD todas a las fases del proyecto actual  
+		Recuperar de la BD todas a las fases del proyecto actual
 		"""
 		fase = DBSession.query(Fase).get(idfase)
 		fases = DBSession.query(Fase).filter(Fase.proyecto!=fase.proyecto).\
 										all()
-		
+
 		"""
 		Copiar los ids de las fases a una lista
 		"""
 		fases_id = []
-		for fase in fases: 
+		for fase in fases:
 			fases_id.append(fase.id_fase)
-		
+
 		"""
-		Se obtinene de la BD todos aquellos items que no sean de ninguna 
+		Se obtinene de la BD todos aquellos items que no sean de ninguna
 		de las fases de este proyecto
-		""" 
+		"""
 		tmpl_context.widget = tipo_item_table
 		tipo_items = DBSession.query(TipoItem).\
 								filter(TipoItem.fase.in_(fases_id)).all()
@@ -161,20 +174,20 @@ class TipoItemController(RestController):
 		value=[]
 		aux=[]
 		for tipo in tipo_items:
-			aux=[{'codigo': tipo.codigo, 'nombre': tipo.nombre, 
+			aux=[{'codigo': tipo.codigo, 'nombre': tipo.nombre,
 			'descripcion': tipo.descripcion,
 			'accion': '<div><a href="/miproyecto/fase/tipo_item/importar_este_tipo/'
 			+str(tipo.id_tipo_item)+'/'+idfase+'">Importar este Item</a></div>'}]
 			value=value+aux
-			
+
 		self.params['header_file'] = "tipo_item"
 		self.params['new_url'] = '/'
 		self.params['idfase'] = idfase
-		self.params['modelname'] = "Tipos de Items de Otros Proyectos" 
+		self.params['modelname'] = "Tipos de Items de Otros Proyectos"
 		self.params['permiso'] = 'NO SE MUESTRA EL BOTON NUEVO'
 		self.params['label'] = ''
 		return dict(value=value, params=self.params)
-	
+
 	@require( predicates.has_permission('editar_tipo_item'))
 	@expose()
 	def importar_este_tipo(self, idtipo, idfase):
@@ -192,10 +205,10 @@ class TipoItemController(RestController):
 		copia_tipo.nombre = tipo.nombre
 		copia_tipo.descripcion = tipo.descripcion
 		copia_tipo.fase = idfase
-		copia_tipo.codigo = 'coddddd'
+		copia_tipo.codigo = tipo_item_util.gen_codigo('TIPO_ITEM')
 		"""
 		Se settean los valores para cada copia_atributo
-		
+
 		for atributo in atributos:
 			copia_atributo = AtributoTipoItem()
 			copia_atributo.nombre = atributo.nombre

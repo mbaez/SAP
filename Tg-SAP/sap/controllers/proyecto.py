@@ -19,6 +19,8 @@ from sap.controllers.checker import *
 #import del controlador
 from tg.controllers import RestController
 
+from sap.controllers.util import *
+
 import transaction
 
 header_file = "administracion"
@@ -53,7 +55,7 @@ class ProyectoController(RestController):
 	def post(self,**kw):
 		del kw['sprox_id']
 		kw['lider'] = DBSession.query(Usuario).get(kw['lider'])
-		kw['estado'] = DBSession.query(EstadoProyecto).get(kw['estado'])
+		kw['estado'] = estado_proyecto_util.get_by_codigo('Inicial')#DBSession.query(EstadoProyecto).get(kw['estado'])
 		proyecto = Proyecto(**kw)
 		#persiste el proyecto
 		DBSession.add(proyecto)

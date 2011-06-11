@@ -58,6 +58,19 @@ class AtributoController(RestController):
 		atributo_tipo_item.nombre = kw['nombre']
 		atributo_tipo_item.tipo_id = kw['tipo']
 		DBSession.add(atributo_tipo_item)
+		
+		items = DBSession.query(Item).filter(Item.tipo_item==idtipo)
+		
+		for item in items :
+			detalle = DetalleItem()
+			detalle.nombre = atributo_tipo_item.nombre
+			detalle.id_atributo_tipo_item = atributo_tipo_item.id_atributo_tipo_item
+			detalle.valor = None
+			detalle.recurso = None
+			item.detalles.append(detalle)
+			DBSession.merge(item)
+		DBSession.flush()
+		
 		flash("El Atributo del tipo de Item ha sido creado correctamente")
 		redirect('/miproyecto/fase/tipo_item/atributos/'+idtipo+'/new')
 

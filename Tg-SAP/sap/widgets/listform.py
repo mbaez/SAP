@@ -108,7 +108,7 @@ tipo_item_table = TipoItemTable(DBSession);
 #Crea el table filler de los tipos de items
 tipo_item_filler = create_widget(TipoItemModelDecorator, LabelActionDecorator,
 								params={'__label__':'Ver Atributos',
-									'__extra_url__':''})
+									'__extra_url__':'/new'})
 
 ####################################################
 # Widgets de los Participantes

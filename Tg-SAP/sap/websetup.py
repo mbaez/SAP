@@ -25,9 +25,21 @@ __permisos__ = ['admin_usuario', 'admin_proyecto','admin_rol',
 				'administrar_participantes',
 				'generar_lineabase', 'abrir_lineabase', 
 				'crear_tipo_item', 'eliminar_tipo_item', 'editar_tipo_item',
-				'ver_tipo_item'
+				'ver_tipo_item',
 				'crear_item', 'eliminar_item', 'editar_item','aprobar_item',
 				'ver_item']
+
+__permisos_sistema__ = ['admin_usuario', 'admin_proyecto','admin_rol',
+						'crear_usuario', 'eliminar_usuario', 'editar_usuario', 'ver_usuario',
+						'crear_rol', 'eliminar_rol', 'editar_rol','ver_rol',
+						'crear_proyecto','editar_proyecto','eliminar_proyecto']
+
+__permisos_proyecto__ = ['ver_proyecto','administrar_participantes']
+
+__permisos_fase__ = ['ver_fase', 'crear_fase','editar_fase','eliminar_fase',
+					 'administrar_participantes','generar_lineabase', 'abrir_lineabase',
+					 'crear_tipo_item', 'eliminar_tipo_item', 'editar_tipo_item','ver_tipo_item',
+					 'crear_item', 'eliminar_item', 'editar_item','aprobar_item','ver_item']
 
 #lista de tipos de relacion
 __relaciones__= ['padre_hijo','antecesor_sucesor']
@@ -126,25 +138,32 @@ def cargar_roles(manager,usr, usr2, usr3):
     return group, group2, group3, group21, group31, group22, group23
 
 def cargar_estados():
-    activo = model.EstadoProyecto()
-    activo.nombre = u'Activo'
-    activo.descripcion = u'Estado que indica que un proyecto esta activo'
-
-    model.DBSession.add(activo)
-
+    inicial = model.EstadoProyecto()
+    inicial.nombre = u'Inicial'
+    inicial.descripcion = u'Estado que indica que un proyecto esta en estado inicial'
+    model.DBSession.add(inicial)
+    
+    desarrollo = model.EstadoProyecto()
+    desarrollo.nombre = u'Desarrollo'
+    desarrollo.descripcion = u'Estado que indica que un proyecto esta en desarrollo'
+    model.DBSession.add(desarrollo)
 
     cancelado = model.EstadoProyecto()
     cancelado.nombre = u'Cancelado'
     cancelado.descripcion = u'Estado que indica que un proyecto esta cancelado'
-
     model.DBSession.add(cancelado)
 
     pausado = model.EstadoProyecto()
     pausado.nombre = u'Pausado'
     pausado.descripcion = u'Estado que indica que un proyecto esta pausado'
-
     model.DBSession.add(pausado)
-    return activo, cancelado, pausado
+    
+    finalizado = model.EstadoProyecto()
+    finalizado.nombre = u'Finalizado'
+    finalizado.descripcion = u'Estado que indica que un proyecto esta finalizado'
+    model.DBSession.add(finalizado)
+    
+    return inicial, desarrollo, cancelado, pausado, finalizado
 
 def cargar_permisos(group, group2, group3, group21, group31, group22,group23):
 	permiso = model.Permiso()
@@ -426,7 +445,7 @@ def setup_app(command, conf, vars):
     group, group2, group3,group21, group31,group22,group23 = cargar_roles(manager,
                                                        usr, usr2, usr3)
     #estados
-    activo, cancelado, pausado = cargar_estados()
+    inicial, desarrollo, cancelado, pausado, finalizado = cargar_estados()
     #Permisos
     cargar_permisos(group, group2, group3, group21, group31, group22, group23)
     #Proyectos

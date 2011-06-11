@@ -3,7 +3,7 @@ from repoze.what import predicates, authorize
 from tg import request
 # project specific imports
 from sap.model import DBSession, metadata
-
+from tg.controllers import RestController
 from sap.model import *
 
 #import para la generacion del codigo
@@ -15,12 +15,8 @@ import time
    :mail: mxbg.py@gmail.com
 """
 
-class Util :
+class Util ():
 
-	#__current = None
-	#__model__ = None
-	#__sec = 0
-	
 	def __init__(self, model=None, current=None, sec=0):
 		self.__current = current
 		self.__model__ = model
@@ -34,10 +30,16 @@ class Util :
 		@rtype  : Entity
 		@return : Instancia actual
 		"""
-		
+		print "#### IN CURRENT " + str(self.__current)
+		if self.__current != None :
+			print "#### IN PK" + str(self.get_primary_key(self.__current))
 		if self.__current == None or self.get_primary_key(self.__current) != id and id != 0 :
-			
-			self.__current = DBSession.query(self.__model__).get(id)
+			try:
+				self.__current = DBSession.query(self.__model__).get(id)
+			except:
+				print "ID "+str(id)+" ERROR!!! "+str(__model__)
+
+		print "@@@@@ OUT CURRENT " + str(self.__current)
 		return self.__current
 
 	def gen_codigo(self, prefijo):
@@ -49,7 +51,9 @@ class Util :
 
 	def get_by_codigo(self, codigo):
 
-		return DBSession.query(self.__model__).filter(self.cmp_codigo(codigo)).first()
+		instance = DBSession.query(self.__model__).filter(self.cmp_codigo(codigo)).first()
+		print "GET "+str(instance)
+		return instance
 
 	def distinct (self, list):
 		buff_list = []
@@ -65,15 +69,14 @@ class Util :
 	def cmp_codigo(self,codigo):
 		pass
 
-
 class ProyectoUtil(Util):
 
 	def __init__(self):
 		Util.__init__(self,Proyecto)
-	
+
 	def get_current (self, id=0):
 		return Util.get_current(self, id)
-		
+
 	#Interactuan con el current
 	def get_primary_key(self, current):
 		return current.id_proyecto
@@ -183,20 +186,22 @@ class ProyectoUtil(Util):
 					all()
 		return proyectos
 
-
 class RolUtil(Util):
 
 	def __init__(self):
 		Util.__init__(self,Rol)
-	
+
 	def get_current (self, id=0):
 		return Util.get_current(self, id)
-	
+
 	def get_primary_key(self, current):
 		return current.rol_id
 
 	def cmp_codigo(self, codigo):
 		return Rol.codigo == codigo
+	def get_by_codigo(self, codigo):
+		return Util.get_by_codigo(self, codigo)
+
 
 	def asignar_rol_usuario(self,usuario_id , cod_rol, id_proyecto):
 		"""
@@ -310,15 +315,14 @@ class RolUtil(Util):
 				roles[i] = __rol
 		return roles
 
-
 class FaseUtil(Util):
 
 	def __init__(self):
 		Util.__init__(self,Fase)
-	
+
 	def get_current (self, id=0):
 		return Util.get_current(self, id)
-		
+
 	def get_primary_key(self, current):
 		return current.id_fase
 
@@ -401,20 +405,22 @@ class FaseUtil(Util):
 					all()
 		return fases
 
-
 class ItemUtil(Util):
 
 	def __init__(self):
-		Util.__init__(self,Item)
-	
+		return Util.__init__(self,Item)
+
 	def get_current (self, id=0):
 		return Util.get_current(self, id)
-	
+
 	def get_primary_key(self, current):
 		return current.id_item
 
 	def cmp_codigo(self, codigo):
 		return Item.codigo == codigo
+
+	def get_by_codigo(self, codigo):
+		return Util.get_by_codigo(self, codigo)
 
 	def audit_item(self, item):
 		"""
@@ -465,6 +471,7 @@ class ItemUtil(Util):
 			historial.relaciones.append(historial_relacion)
 
 		DBSession.add(historial)
+		DBSession.flush()
 
 	def revertir_item (self, historial_item):
 		"""
@@ -473,28 +480,28 @@ class ItemUtil(Util):
 		esa version para que el item recupere los valores de esa version
 		"""
 		#debe ser una version posterior a la actual
-		#item = self.get_current(historial_item.id_item)
-		#version = int(item.version) + 1
-
-		item = Item()
-		item.id_item = historial_item.id_item
+		item = DBSession.query(Item).get(historial_item.id_item)
+		print "Recuperar el item "+str(item)
 		item.nombre = historial_item.nombre
 		item.codigo = historial_item.codigo
- 		item.estado_actual = estado_item_util.get_by_codigo('Revsion')
-		item.estado_actual = item.estado_actual.id_estado_item
+ 		item.estado_actual = estado_item_util.get_by_codigo('Revision')
+		#item.estado = item.estado_actual.id_estado_item
 		item.tipo_item = historial_item.tipo_item
 		item.fase = historial_item.fase
-		item.version = historial_item.version+1
+		item.version += 1
 		item.prioridad = historial_item.prioridad
 		item.complejidad = historial_item.complejidad
 		item.descripcion = historial_item.descripcion
 		item.observacion = historial_item.observacion
-		item.linea_base = historial_item.linea_base
-
+		item.linea_base = None
+		print "Recuperar los detalles"
 		#recuperar los detalles
 		historial_detalles = DBSession.query(HistorialDetalleItem).\
 			filter(HistorialDetalleItem.id_historial == historial_item.id_historial_item).\
 			all()
+		#Se eliminan los detalles anteriores
+		for detalle in item.detalles :
+			DBSession.delete(detalle)
 
 		for hist_detalle in historial_detalles:
 			detalle = DetalleItem()
@@ -505,6 +512,7 @@ class ItemUtil(Util):
 			detalle.valor = hist_detalle.valor
 			item.detalles.append(detalle)
 
+		print "Recuperar las relaciones"
 		#recuperar los relaciones
 		historial_relaciones = DBSession.query(HistorialRelacion).\
 			filter((HistorialRelacion.id_item_1 or
@@ -519,8 +527,11 @@ class ItemUtil(Util):
 				relacion.id_item_relacionado = hist_relacion.id_item_2
 				relacion.relacion_parentesco = hist_relacion.id_tipo_relacion
 				DBSession.merge(relacion)
-
+		print "Merge"
 		DBSession.merge(item)
+		print "Flush"
+		DBSession.flush()
+		return
 
 	def revivir_item (self, historial_item):
 		"""
@@ -575,29 +586,30 @@ class ItemUtil(Util):
 		detalles = item.detalles
 		return detalles
 
-
 class TipoItemUtil(Util):
 
 	def __init__(self):
 		Util.__init__(self,TipoItem)
-	
+
 	def get_current (self, id=0):
 		return Util.get_current(self, id)
-	
+
 	def get_primary_key(self, current):
 		return current.id_tipo_item
 
 	def cmp_codigo(self, codigo):
 		return TipoItem.codigo == codigo
+	def get_by_codigo(self, codigo):
+		return Util.get_by_codigo(self, codigo)
 
 class UsuarioUtil(Util):
 
 	def __init__(self):
 		return Util.__init__(self,Usuario)
-	
+
 	def get_current (self, id=0):
 		return Util.get_current(self, id)
-	
+
 	def get_primary_key(self, current):
 		return current.usuario_id
 
@@ -684,8 +696,12 @@ class EstadoItemUtil(Util):
 		return current.id_estado_item
 
 	def cmp_codigo(self, codigo):
+		print "CODIGO:"+codigo
 		return EstadoItem.nombre == codigo
-		
+
+	def get_by_codigo(self, codigo):
+		return Util.get_by_codigo(self, codigo)
+
 class EstadoProyectoUtil(Util):
 	def __init__(self):
 		return Util.__init__(self,EstadoProyecto)
@@ -694,6 +710,9 @@ class EstadoProyectoUtil(Util):
 
 	def cmp_codigo(self, codigo):
 		return EstadoProyecto.nombre == codigo
+
+	def get_by_codigo(self, codigo):
+		return Util.get_by_codigo(self, codigo)
 
 class SessionUtil():
 
@@ -720,12 +739,12 @@ class SessionUtil():
 			self.__username = username
 
 		return self.__current_user
-		
+
 	def authorize_fase(self, permiso, id=0, fase=None):
 		try:
 			if fase != None:
 				id = fase.id_fase
-			
+
 			return fase_util.check_fase_permiso(id,permiso, True)
 		except:
 			return None

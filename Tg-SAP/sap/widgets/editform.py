@@ -16,8 +16,14 @@ usuario_edit_filler = UsuarioEditFiller(DBSession)
 
 class UsuarioEditForm(EditableForm):
 	__model__ = Usuario
-	__omit_fields__ = ['proyectos','roles']
-	contrasenha = PasswordField
+	__omit_fields__ = ['proyectos','roles','created', '_password']
+	__field_order__ = ['usuario_id','user_name','nombre','email_address',
+					   'password']
+	__field_attrs__ = {'nombre':{'rows':'2'},
+					   'email_address':{'rows':'2'}}
+
+	password = PasswordField
+	
 
 usuario_edit_form = UsuarioEditForm(DBSession)
 
@@ -31,7 +37,7 @@ proyecto_edit_filler = ProyectoEditFiller(DBSession)
 
 class ProyectoEditForm(EditableForm):
 	__model__ = Proyecto
-	__omit_fields__ = ['lider_id','lider','estado_id', 'permisos_proyectos']
+	__omit_fields__ = ['lider_id','lider','estado_id', 'permisos_proyectos','estado']
 
 proyecto_edit_form = ProyectoEditForm(DBSession)
 

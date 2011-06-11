@@ -19,8 +19,8 @@ from sap.model import *
 from tg import tmpl_context, redirect, validate
 
 from tg.controllers import RestController
-
-
+#import del util
+from sap.controllers.util import *
 
 class UsuarioContoller(RestController):
 	"""
@@ -55,7 +55,7 @@ class UsuarioContoller(RestController):
 		redirect("/administracion/usuario/get_all")
 
 	@expose('sap.templates.edit')
-	@require(predicates.has_permission('edit_usuario'))
+	@require(predicates.has_permission('editar_usuario'))
 	def edit(self, id,**kw):
 		tmpl_context.widget = usuario_edit_form
 		kw['usuario_id'] = id
@@ -67,9 +67,16 @@ class UsuarioContoller(RestController):
 
 	@validate(usuario_edit_form, error_handler=edit)
 	@expose()
-	def put(self, _method, **kw):
-		del kw['sprox_id']
-		usuario = Usuario(**kw)
+	def put(self, id, **kw):
+		usuario = DBSession.query(Usuario).get( int(id) )
+		
+		usuario.nombre = kw['nombre']
+		usuario.email_address = kw['email_address']
+		
+		if usuario._password != kw['password'] :
+			print 'Actualizando la contrasenha'
+			usuario._set_password(kw['password'])
+		
 		DBSession.merge(usuario)
 		flash("El usuario '"+usuario.nombre+"' ha sido modificado correctamente.")
 		redirect("/administracion/usuario/get_all")

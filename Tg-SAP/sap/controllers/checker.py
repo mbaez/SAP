@@ -10,7 +10,7 @@ from tg import tmpl_context, redirect, validate
 
 from sap.model import *
 import time
-import transaction
+
 
 """Modulo que contiene un conjunto de metodos de uso frecuente
 
@@ -35,9 +35,9 @@ class SessionUtil() :
 	sec = 0
 	def gen_codigo (self, prefijo):
 		t = time.localtime()
-		self.sec += 1 
+		self.sec += 1
 		return prefijo + str(t.tm_sec) + str(t.tm_min) + str(self.sec)
-		
+
 	def get_rol_by_codigo(self, cod_rol):
 		"""
 		Obtiene el rol que posee el nombre especificado

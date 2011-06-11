@@ -67,6 +67,13 @@ class RelacionController(RestController):
 		#VALIDACION: si los items son o no de la misma fase
 		item1=DBSession.query(Item).get(relacion.id_item_actual)
 		item2=DBSession.query(Item).get(relacion.id_item_relacionado)
+		
+		#Validar que el item antecesor (item1) pertenezca a una linea base
+		if(item1.id_linea_base == None):
+			flash('El item antecesor no pertenece a ninguna linea base', 'error')
+			redirect("/miproyecto/fase/relacion/list/"+idfase)
+			return
+			
 		if(item1.fase==item2.fase):
 			relacion.relacion_parentesco=1
 			#VALIDACION: que no formen un ciclo en el caso de ser relacion dentro

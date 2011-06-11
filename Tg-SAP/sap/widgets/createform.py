@@ -27,7 +27,7 @@ new_usuario_form = NewUsuarioForm(DBSession)
 ####################################################
 class NewProyectoForm(AddRecordForm):
 	__model__ = Proyecto
-	__omit_fields__ = ['id_proyecto','lider_id','estado_id']
+	__omit_fields__ = ['id_proyecto','lider_id','estado_id','estado']
 	__dropdown_field_names__ = {'estado':'nombre'}
 
 new_proyecto_form = NewProyectoForm(DBSession)
