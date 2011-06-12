@@ -488,6 +488,9 @@ class ItemController(RestController):
 
 	def marcar_en_revision(self, grafo, itemId):
 		"""
+		Se marca en revision los items relacionados hacia atras y adelante.
+		Las lineas base de los items relacionados se marcan con estado
+		Comprometida.
 		obtener la lista de todos antecesores directos e indirectos
 		el list(set()) es para que elimine los repetidos
 		los metodos listBackwards y listForward retornan listas con elementos
@@ -505,11 +508,20 @@ class ItemController(RestController):
 
 		#suma de listas
 		items = antecesores + item + sucesores
+		relacionados = antecesores + sucesores
 
 		for idItem in items:
 			itemActual = DBSession.query(Item).get(idItem)
 			itemActual.estado = 3
 			DBSession.merge(itemActual)
+		
+		# Se marca con estado comprometido cada linea base de los items 
+		# sucesores y antecesores.
+		for item in relacionados:
+			linea_base = DBSession.query(LineaBase).get(item.id_linea_base)
+			linea_base.estado = estado_linea_base_util.get_by_codigo('Comprometida')
+			DBSession.merge(linea_base)
+
 
 	@expose()
 	def aprobar_item(self, iditem, **kw):

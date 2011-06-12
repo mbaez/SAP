@@ -413,17 +413,14 @@ def cargar_estado_lineabase():
     model.DBSession.flush()
 
     estadoLineaBase = model.EstadoLineaBase()
-    estadoLineaBase.id_estado_linea_base = 1
     estadoLineaBase.nombre = 'Comprometida'
     model.DBSession.add(estadoLineaBase)
 
     estadoLineaBase = model.EstadoLineaBase()
-    estadoLineaBase.id_estado_linea_base = 2
     estadoLineaBase.nombre = 'Cerrada'
     model.DBSession.add(estadoLineaBase)
     
     estadoLineaBase = model.EstadoLineaBase()
-    estadoLineaBase.id_estado_linea_base = 2
     estadoLineaBase.nombre = 'Abierta'
     model.DBSession.add(estadoLineaBase)
 
