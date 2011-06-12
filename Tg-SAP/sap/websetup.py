@@ -414,9 +414,14 @@ def cargar_estado_lineabase():
 
     estadoLineaBase = model.EstadoLineaBase()
     estadoLineaBase.id_estado_linea_base = 1
-    estadoLineaBase.nombre = 'Cerrada'
+    estadoLineaBase.nombre = 'Comprometida'
     model.DBSession.add(estadoLineaBase)
 
+    estadoLineaBase = model.EstadoLineaBase()
+    estadoLineaBase.id_estado_linea_base = 2
+    estadoLineaBase.nombre = 'Cerrada'
+    model.DBSession.add(estadoLineaBase)
+    
     estadoLineaBase = model.EstadoLineaBase()
     estadoLineaBase.id_estado_linea_base = 2
     estadoLineaBase.nombre = 'Abierta'

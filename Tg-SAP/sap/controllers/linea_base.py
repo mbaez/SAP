@@ -21,6 +21,8 @@ from sap.controllers.item import *
 #import del controlador
 from tg.controllers import RestController
 
+from sap.controllers.util import *
+
 _widget = None
 
 class LineaBaseController(RestController):
@@ -78,7 +80,7 @@ class LineaBaseController(RestController):
 
 		linea_base = LineaBase()
 		linea_base.codigo = util.gen_codigo('linea_base')
-		linea_base.estado = 1
+		linea_base.estado = estado_linea_base_util.get_by_codigo('Cerrada')
 		linea_base.fase = idfase
 
 		for i in lista_items:
@@ -201,10 +203,12 @@ class LineaBaseController(RestController):
 		for item in listaItems:
 			#item_controller.marcar_en_revision(grafo, item.id_item)
 			item.estado = 3
-			item.id_linea_base = None
+			#item.id_linea_base = None
 			DBSession.merge(item)
 		self.params['idfase'] = linea_base.fase
-		DBSession.delete(linea_base)
+		
+		linea_base.estado = estado_linea_base_util.get_by_codigo('Comprometida')
+		DBSession.merge(linea_base)
 
 		flash("La linea base ha sido abierta")
 		redirect("/miproyecto/fase/linea_base/list/" + str(self.params['idfase']))

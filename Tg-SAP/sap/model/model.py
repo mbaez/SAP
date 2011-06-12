@@ -274,12 +274,14 @@ class LineaBase (DeclarativeBase):
 
 	codigo = Column ('codigo', Unicode(50), unique = True, nullable = False)
 
-	estado = Column ('id_estado_lineabase',Integer,
+	id_estado_linea_base = Column ('id_estado_lineabase',Integer,
 				ForeignKey('estado_linea_base.id_estado_linea_base'))
 
 	fase = Column ('id_fase', Integer, ForeignKey ('fase.id_fase'))
 
 	items = relation(Item, backref='linea_base')
+	
+	estado = relation(EstadoLineaBase, backref='linea_base')
 
 
 ###############################################################################

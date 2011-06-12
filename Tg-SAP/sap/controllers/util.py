@@ -714,6 +714,18 @@ class EstadoProyectoUtil(Util):
 	def get_by_codigo(self, codigo):
 		return Util.get_by_codigo(self, codigo)
 
+class EstadoLineaBaseUtil(Util):
+	def __init__(self):
+		return Util.__init__(self,EstadoLineaBase)
+	def get_primary_key(self, current):
+		return current.id_estado_linea_base
+
+	def cmp_codigo(self, codigo):
+		return EstadoLineaBase.nombre == codigo
+
+	def get_by_codigo(self, codigo):
+		return Util.get_by_codigo(self, codigo)
+		
 class SessionUtil():
 
 	__current = None
@@ -766,6 +778,7 @@ fase_util = FaseUtil()
 item_util = ItemUtil()
 estado_item_util = EstadoItemUtil()
 estado_proyecto_util = EstadoProyectoUtil()
+estado_linea_base_util = EstadoLineaBaseUtil()
 tipo_item_util = TipoItemUtil()
 usuario_util = UsuarioUtil()
 session_util = SessionUtil()
