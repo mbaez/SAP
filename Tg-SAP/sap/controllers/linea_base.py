@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from tg import expose, flash, require, url, request, redirect
+from tg import expose, flash, require, url, request, redirect, response
 from repoze.what import predicates
 
 from sap.lib.base import BaseController
@@ -22,6 +22,8 @@ from sap.controllers.item import *
 from tg.controllers import RestController
 
 from sap.controllers.util import *
+
+from reportlab.pdfgen import canvas
 
 _widget = None
 
@@ -209,6 +211,26 @@ class LineaBaseController(RestController):
 
 		flash("La linea base ha sido abierta")
 		redirect("/miproyecto/fase/linea_base/list/" + str(self.params['idfase']))
+		
+	@expose()
+	def generar_reporte(self, **kW):
+		"""
+		Metodo para generar reporte de lineas base
+		"""
+		# Se setea el objeto response con el encabezado apropiado 
+		response.headers["Content-Type"] = "application/pdf"
+		response.headers["Content-disposition"] = "attachment; filename=report.pdf"
+		#res = HttpResponse(mimetype='application/pdf')
+		#res['Content-Disposition'] = 'attachment; filename=somefilename.pdf'
+		
+		# Se crea el objeto pdf utilizando el objeto response
+		p = canvas.Canvas(response)
+		
+		# Se imprime un Hello world en el pdf utilizando la API de reportlab
+		p.drawString(100, 100, "Hello world.")
+		p.showPage()
+		p.save()
+		return response
 
 
 
