@@ -198,16 +198,13 @@ class LineaBaseController(RestController):
 			flash("La linea base no tiene items asociados")
 			return
 
-		#fase = DBSession.query(Fase).get(listaItems[0].fase)
-		#grafo = item_controller.proyectGraphConstructor(fase.proyecto)
 		for item in listaItems:
-			#item_controller.marcar_en_revision(grafo, item.id_item)
 			item.estado = 3
 			#item.id_linea_base = None
 			DBSession.merge(item)
 		self.params['idfase'] = linea_base.fase
 		
-		linea_base.estado = estado_linea_base_util.get_by_codigo('Comprometida')
+		linea_base.estado = estado_linea_base_util.get_by_codigo('Abierta')
 		DBSession.merge(linea_base)
 
 		flash("La linea base ha sido abierta")

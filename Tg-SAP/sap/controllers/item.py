@@ -41,7 +41,7 @@ class ItemController(RestController):
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 			  'idfase':'','permiso':'','progreso':0, 'cantidad':'', 'item':'',
 			  'impacto':'', 'atributos':'', 'permiso_editar':'',
-			  'permiso_eliminar':''
+			  'permiso_eliminar':'', 'linea_base':''
 			 }
 
 
@@ -63,12 +63,24 @@ class ItemController(RestController):
 		progreso = self.params['item'].complejidad*10
 		self.params['progreso'] = progreso
 
-		if self.params['item'].linea_base != None:
-			self.params['permiso_editar'] = 'NO EDITAR'
-			self.params['permiso_eliminar'] = 'NO ELIMINAR'
-		else:
+		if (self.params['item'].linea_base == None):
 			self.params['permiso_editar'] = 'editar_item'
 			self.params['permiso_eliminar'] = 'eliminar_item'
+			self.params['linea_base'] = 'No posee linea base'
+		elif(self.params['item'].linea_base != None):
+			linea_base = DBSession.query(LineaBase).get(self.params['item'].id_linea_base)
+			estado_linea_base = DBSession.query(EstadoLineaBase).get(linea_base.id_estado_linea_base)
+			if(estado_linea_base.nombre == 'Abierta'):
+				self.params['permiso_editar'] = 'editar_item'
+				self.params['permiso_eliminar'] = 'eliminar_item'
+				self.params['linea_base'] = 'Abierta'
+			elif(estado_linea_base.nombre == 'Cerrada' or estado_linea_base.nombre == 'Comprometida'):
+				self.params['permiso_editar'] = 'NO EDITAR'
+				self.params['permiso_eliminar'] = 'NO ELIMINAR'
+				if(estado_linea_base.nombre == 'Cerrada'):
+					self.params['linea_base'] = 'Cerrada'
+				elif(estado_linea_base.nombre == 'Comprometida'):
+					self.params['linea_base'] = 'Comprometida'
 
 		value = detalle_item_filler.get_value(self.params['item'].detalles)
 
@@ -168,9 +180,9 @@ class ItemController(RestController):
 		#Se persiste el item
 		DBSession.merge(item)
 		DBSession.flush()
-		#fase = DBSession.query(Fase).get(item.fase)
-		#grafo = self.proyectGraphConstructor(fase.proyecto)
-		#self.marcar_en_revision(grafo, item.id_item)
+		fase = DBSession.query(Fase).get(item.fase)
+		grafo = self.proyectGraphConstructor(fase.proyecto)
+		self.marcar_en_revision(grafo, item.id_item)
 
 		flash("El item " +str(item.nombre)+ " ha sido modificado correctamente.")
 		redirect('/miproyecto/fase/item/poner_en_revision/'+str(item.id_item))
@@ -517,11 +529,17 @@ class ItemController(RestController):
 		
 		# Se marca con estado comprometido cada linea base de los items 
 		# sucesores y antecesores.
-		for item in relacionados:
-			linea_base = DBSession.query(LineaBase).get(item.id_linea_base)
-			linea_base.estado = estado_linea_base_util.get_by_codigo('Comprometida')
-			DBSession.merge(linea_base)
-
+		'''
+		if(relacionados != None):
+			for iditem in relacionados:
+				itemActual = DBSession.query(Item).get(iditem)
+				linea_base = DBSession.query(LineaBase).get(itemActual.id_linea_base)
+				linea_base.estado = estado_linea_base_util.get_by_codigo('Comprometida')
+				DBSession.merge(linea_base)
+			flash('Lineas base comprometidas')
+		else:
+			flash('El item no posee relaciones')
+		'''
 
 	@expose()
 	def aprobar_item(self, iditem, **kw):

@@ -308,8 +308,10 @@ class HistorialItem(DeclarativeBase):
 
 	tipo_item = Column ('id_tipo_item', Integer, nullable=False)
 
-	linea_base = Column ('id_linea', Integer)
-
+	#linea_base = Column ('id_linea', Integer)
+	id_linea_base = Column ('id_linea_base', Integer,
+					ForeignKey('linea_base.id_linea_base'))
+	
 	fase = Column ('id_fase', Integer, nullable=False)
 
 	version = Column ('version', Integer, nullable=False)

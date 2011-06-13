@@ -443,7 +443,7 @@ class ItemUtil(Util):
 		historial.complejidad = item.complejidad
 		historial.descripcion = item.descripcion
 		historial.observacion = item.observacion
-		historial.linea_base = item.linea_base
+		historial.id_linea_base = item.id_linea_base
 		#historial de detalles
 		detalles = DBSession.query(DetalleItem).\
 					filter(DetalleItem.id_item==historial.id_item).\
