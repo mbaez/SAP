@@ -23,7 +23,10 @@ from tg.controllers import RestController
 
 from sap.controllers.util import *
 
+
 from reportlab.pdfgen import canvas
+from geraldo.generators import PDFGenerator
+from reporte import *
 
 _widget = None
 
@@ -230,6 +233,24 @@ class LineaBaseController(RestController):
 		p.drawString(100, 100, "Hello world.")
 		p.showPage()
 		p.save()
+		return response
+	
+	@expose()
+	def reporte_linea_base(self, **kW):
+		datos = [
+			{'name': 'item001', 'age': 29, 'weight': 55.7, 'genre': 'female', 'status': 'parent'}
+		]
+		response.headers["Content-Type"] = "application/pdf"
+		response.headers["Content-disposition"] = "attachment; filename=report.pdf"
+		
+		items = DBSession.query(Item).all()
+		for item in items:
+			item_params = {'name': item.codigo, 'age': item.complejidad, 'weight': 55.7, 'genre': 'female', 'status': 'parent'}
+			datos.append(item_params)
+
+		report = LineaBaseReport(queryset=datos)
+		report.generate_by(PDFGenerator, filename=response)
+		
 		return response
 
 
