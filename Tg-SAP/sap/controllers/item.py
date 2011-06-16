@@ -200,9 +200,14 @@ class ItemController(RestController):
 		fase = DBSession.query(Fase).get(item.fase)
 		grafo = self.proyectGraphConstructor(fase.proyecto)
 		self.marcar_en_revision(grafo, item.id_item)
-
+		
+		#la linea del item modificado permanece abierta
+		if item.id_linea_base != None:
+			linea = DBSession.query(LineaBase).get(item.id_linea_base)
+			linea.estado = estado_linea_base_util.get_by_codigo('Abierta')
+ 
 		flash("El item " +str(item.nombre)+ " ha sido modificado correctamente.")
-		redirect('/miproyecto/fase/item/poner_en_revision/'+str(item.id_item))
+		redirect('/miproyecto/fase/item/ver/'+str(item.id_item))
 
 	@expose()
 	def poner_en_revision(self, id_item):
@@ -539,24 +544,24 @@ class ItemController(RestController):
 		items = antecesores + item + sucesores
 		relacionados = antecesores + sucesores
 
-		for idItem in items:
-			itemActual = DBSession.query(Item).get(idItem)
-			itemActual.estado = 3
-			DBSession.merge(itemActual)
+		for id_item in items:
+			item_actual = DBSession.query(Item).get(id_item)
+			item_actual.estado = 3
+			DBSession.merge(item_actual)
 		
 		# Se marca con estado comprometido cada linea base de los items 
 		# sucesores y antecesores.
-		'''
 		if(relacionados != None):
-			for iditem in relacionados:
-				itemActual = DBSession.query(Item).get(iditem)
-				linea_base = DBSession.query(LineaBase).get(itemActual.id_linea_base)
-				linea_base.estado = estado_linea_base_util.get_by_codigo('Comprometida')
-				DBSession.merge(linea_base)
+			for id_item in relacionados:
+				item_actual = DBSession.query(Item).get(id_item)
+				if item_actual.id_linea_base != None:
+					linea_base = DBSession.query(LineaBase).get(item_actual.id_linea_base)
+					linea_base.estado = estado_linea_base_util.get_by_codigo('Comprometida')
+					DBSession.merge(linea_base)
+
 			flash('Lineas base comprometidas')
 		else:
 			flash('El item no posee relaciones')
-		'''
 
 	@expose()
 	def aprobar_item(self, iditem, **kw):
