@@ -180,7 +180,10 @@ class Item(DeclarativeBase):
 	estado = Column ('id_estado_item', Integer,
 						ForeignKey('estado_item.id_estado_item'),
 						nullable=False)
-
+	
+	relaciones_id = Column ('id_item_relacion', Integer,
+						ForeignKey('item.id_item'),
+						nullable=True)
 	#{Relaciones
 	tipo_item_relacion = relation('TipoItem', backref='items')
 
@@ -188,7 +191,12 @@ class Item(DeclarativeBase):
 
 	detalles = relation ('DetalleItem', backref = 'item')
 
+	relaciones = relation('Item')
 	#}
+	"""
+	relacion = relation('RelacionItem', primaryjoin = and_(relacion == Item.id,\
+	 version_item_1 == Item.version), backref = backref('relaciones_a', cascade="all,delete,delete-orphan"))
+    """
 
 class RelacionParentesco(DeclarativeBase):
 
@@ -221,7 +229,7 @@ class RelacionItem(DeclarativeBase):
 	item_1=relation('RelacionParentesco')
 	item_2=relation('RelacionParentesco')
 	#}
-
+	
 class TipoAtributo(DeclarativeBase):
 
 	__tablename__ = 'tipo_atributo'

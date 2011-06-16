@@ -90,6 +90,7 @@ class ItemController(RestController):
 	@require(predicates.has_permission('crear_item'))
 	def new(self, idfase, modelname="", **kw):
 		new_item_form.tipo_item_relacion.idfase = idfase
+		new_item_form.relaciones.idfase = idfase 
 		tmpl_context.widget = new_item_form
 		#se recomienda al usuario un codigo autogenerado
 		kw['codigo'] = util.gen_codigo('item')
@@ -126,7 +127,23 @@ class ItemController(RestController):
 		item.version = 1
 		DBSession.add(item)
 		DBSession.flush()
-		flash("El item se ha creado correctamente")
+		# Se guarda la relacion elegida en el formulario
+		if(kw['relaciones'] != None):
+			relacion = RelacionItem()
+			relacion.id_item_actual = item.id_item
+			relacion.id_item_relacionado = kw['relaciones']
+			item_relacionado = DBSession.query(Item).get(kw['relaciones'])
+			
+			if(item_relacionado.fase == int(idfase)):
+				#relacion padre-hijo
+				relacion.relacion_parentesco = 1
+			else:
+				relacion.relacion_parentesco = 2
+ 			
+ 			DBSession.add(relacion)
+			DBSession.flush()
+		
+		#flash("El item se ha creado correctamente")
 		redirect('/miproyecto/fase/item/ver/'+str(item.id_item))
 
 	"""

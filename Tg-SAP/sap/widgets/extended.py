@@ -125,6 +125,46 @@ class ExtendedItemDeFaseSiguienteField(PropertySingleSelectField):
 		d['options']= options
 		return d
 
+
+class ExtendedItemDeFaseAnteriorField(PropertySingleSelectField):
+
+	idfase=0
+
+	def _my_update_params(self, d, nullable=False):
+		items = DBSession.query(Item).filter(Item.fase==self.idfase).all()
+		fase_actual = DBSession.query(Fase).get(self.idfase)
+		proyectoid = fase_actual.proyecto
+		fases_anteriores = DBSession.query(Fase).filter(Fase.id_fase<self.idfase).\
+												filter(Fase.proyecto==proyectoid).\
+												order_by(Fase.id_fase).\
+												all()
+		new_option = []
+		item_list = []
+		#se verifica si existen fases anteriores
+		if(len(fases_anteriores) > 0 ):
+			fase_anterior = fases_anteriores[len(fases_anteriores)-1] 
+			items_fase_anterior = DBSession.query(Item).filter(Item.fase==fase_anterior.id_fase).\
+												all()
+			#solo se pueden mostrar los items de la fase anterior que 
+			#pertenezcan a una linea base "cerrada"
+			for item in items_fase_anterior:
+				if (item.linea_base != None):
+					linea = DBSession.query(LineaBase).get(item.linea_base)
+					#se pregunta si esta cerrada la linea
+					if(linea.id_estado_linea_base == 2):
+						item_list = item_list + item 
+		
+			items = items + item_list
+		else:
+			new_option = [(None, 'sin relacion')]
+		
+		options = [(item.id_item, '%s' %(item.codigo))
+							for item in items]
+
+		options = options + new_option
+		d['options']= options
+		return d
+
 class ExtendedTipoItemField(PropertySingleSelectField):
 
 	idfase=0
