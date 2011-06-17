@@ -12,6 +12,7 @@ from sap.model import DBSession, metadata
 #import de widgets
 from sap.widgets.listform import *
 from sap.widgets.editform import *
+from sap.widgets.createform import *
 #impot del checker de permisos
 from sap.controllers.checker import *
 
@@ -89,8 +90,28 @@ class ParticipanteFaseController(RestController):
 		if ( has_permiso == None) :
 			flash("No posee permisos sobre la fase #"+str(id),'error')
 			redirect('/miproyecto/fase/participantes/error')
+		"""
+		Se construye el widget, se obtiene la lista de todos los usuarios que se 
+		encuentran relacionados con el proyecto al cual pertenece la fase
+		y se anaden los combos por cada participante del proyecto.
+		"""
+		_usuarios = usuario_util.get_usuarios_by_permiso(fase.proyecto)
+		NewFaseParticipanteFrom.fields = []
+	
+		for usuario in _usuarios :
+			NewFaseParticipanteFrom.fields.append(CheckBox(usuario.nombre))
 		
-		tmpl_context.widget = rol_usuario_edit_form
+		new_participante_form = NewFaseParticipanteFrom("new_participante_form",action = 'post')
+
+		tmpl_context.widget = new_participante_form
+		"""
+		Se marcan como seleccionados todos los usuarios que ya se encuentran
+		asociados a la fase
+		"""
+		usuarios = util.get_usuarios_by_fase(fase.id_fase)
+		for usuario in usuarios :
+			kw[usuario.nombre] = True
+		
 		rol = DBSession.query(Rol).get(id)
 		kw['rol_id'] = id
 		if rol.is_template == True :
@@ -100,13 +121,12 @@ class ParticipanteFaseController(RestController):
 		else:
 			value = rol_usuario_edit_filler.get_value(kw)
 
-		usuarios = util.get_usuarios_by_fase(fase.id_fase)
 
 		self.params['fase'] = fase
 		self.params['usuarios'] = usuarios
 		self.params['modelname'] = 'Participantes'
 		self.params['header_file'] = 'proyecto'
-		return dict(value=value, params=self.params)
+		return dict(value=kw, params=self.params)
 
 	@validate(rol_usuario_edit_form, error_handler=edit)
 	@expose()
@@ -130,9 +150,28 @@ class ParticipanteFaseController(RestController):
 
 		flash("Los Usuarios <"+str(kw['usuarios'])+"> fueron asignados a la fase "+ str(fase.id_fase)+".")
 		redirect("/miproyecto/fase/get_all/" + str(fase.id_fase) )
-
 	@expose()
-	def delete(self, id_fase ,id, **kw):
+	def post(self, id, **kw):
+		fase = fase_util.get_current()
+		_usuarios = util.get_usuarios_by_fase(fase.id_fase)
+		for usuario in _usuarios:
+			print "Delete User:"+str(usuario)
+			self.delete(fase.id_fase ,usuario.usuario_id, False)
+		
+		usuarios = []
+		for key in kw:
+			print "KEY:"+str(key)
+			usuarios.append(key)
+		
+		list = DBSession.query(Usuario).filter(Usuario.nombre.in_(usuarios) ).\
+											all()
+		for usuario in list:
+			print "Add User:"+str(usuario)
+			util.asociar_usuario_fase(usuario.usuario_id, fase.id_fase)
+		
+		redirect("/miproyecto/fase/get_all/" + str(fase.id_fase) )
+	@expose()
+	def delete(self, id_fase ,id, show=True, **kw):
 		"""
 		@type  id_fase : Integer
 		@param id_fase : Identificador del Rol
@@ -150,9 +189,9 @@ class ParticipanteFaseController(RestController):
 
 		for element in list :
 			DBSession.delete(element)
-
-		flash("El usuario '"+ str(id) +"' ha sido desvinculado de la fase.")
-		redirect("/miproyecto/fase/get_all/"+ str(id_fase))
+		if show :
+			flash("El usuario '"+ str(id) +"' ha sido desvinculado de la fase.")
+			redirect("/miproyecto/fase/get_all/"+ str(id_fase))
 
 
 

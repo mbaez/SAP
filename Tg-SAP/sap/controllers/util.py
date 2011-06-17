@@ -30,16 +30,17 @@ class Util ():
 		@rtype  : Entity
 		@return : Instancia actual
 		"""
-		print "#### IN CURRENT " + str(self.__current)
+		#print "#### IN CURRENT " + str(self.__current)
 		if self.__current != None :
-			print "#### IN PK" + str(self.get_primary_key(self.__current))
+			#print "#### IN PK" + str(self.get_primary_key(self.__current))
+			pass
 		if self.__current == None or self.get_primary_key(self.__current) != id and id != 0 :
 			try:
 				self.__current = DBSession.query(self.__model__).get(id)
 			except:
 				print "ID "+str(id)+" ERROR!!! "+str(__model__)
 
-		print "@@@@@ OUT CURRENT " + str(self.__current)
+		#print "@@@@@ OUT CURRENT " + str(self.__current)
 		return self.__current
 
 	def gen_codigo(self, prefijo):
@@ -63,8 +64,6 @@ class Util ():
 		return buff_list
 
 	# Funciones que interactuan con el current del modelo
-	#def get_primary_key(self):
-	#	pass
 
 	def cmp_codigo(self,codigo):
 		pass

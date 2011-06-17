@@ -1,11 +1,13 @@
 """Create Form"""
 
 from tw.api import WidgetsList
-from tw.forms import TableForm, SingleSelectField, TextField, TextArea, PasswordField, SubmitButton, Spacer
+from tw.forms import TableForm, SingleSelectField, TextField, TextArea, PasswordField, SubmitButton, Spacer,CheckBox
 from sprox.formbase import AddRecordForm
 from sap.model import *
 from sprox.widgets import *
 from sap.widgets.extended import *
+
+from sap.controllers.util import *
 
 ##Form definition
 
@@ -94,6 +96,18 @@ class NewParticipanteForm(ExtendedAddRecordForm):
 
 new_participante_form = NewParticipanteForm(DBSession)
 
+class NewFaseParticipanteFrom(TableForm):
+	fields = []
+	
+	submit_text = 'Guardar'
+	
+def add_usuarios_combobox(id):
+		usuarios = usuario_util.get_usuarios_by_permiso(id)
+		NewFaseParticipanteFrom.fields = []
+		for usuario in usuarios :
+			NewFaseParticipanteFrom.fields.append(CheckBox(usuario.nombre, value=True))
+			
+
 ####################################################
 # Widgets de las Relaciones
 ####################################################
@@ -116,11 +130,6 @@ class NewLineaBaseForm(TableForm):
 		TextField('cod_usuario', label_text='Codigo'),
 		Spacer()]
 
-	#fields.append( TextField('codigo', label_text='Lalala') )
-	#items = DBSession.query(Item).all()
-	#for i in items:
-		#fields.append( TextField('codigo', label_text='Lalala' + str(i) ) )
-		#fields.append( CheckBox('Item_' + str(i.id_item)) )
 
 	submit_text = 'Generar'
 

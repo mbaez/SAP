@@ -44,14 +44,12 @@ class LineaBaseController(RestController):
 	def new(self, idfase, _method, **kw):
 		NewLineaBaseForm.fields = []
 
-		#items = DBSession.query(Item).all()
 		items = util.get_aprobados_sin_lineas(idfase)
 		if items == []:
 			flash('No hay items aprobados en esta fase')
 			redirect("/miproyecto/fase/linea_base/list/"+str(idfase))
 			return
 		for i in items:
-		#fields.append( TextField('codigo', label_text='Lalala' + str(i) ) )
 			NewLineaBaseForm.fields.append( CheckBox(i.codigo) )
 
 		new_linea_base_form = NewLineaBaseForm("new_linea_base_form", action = 'post')

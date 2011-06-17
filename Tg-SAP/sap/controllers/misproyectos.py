@@ -54,11 +54,7 @@ class ProyectosController(RestController):
 			redirect('/miproyecto/error')
 
 		tmpl_context.widget = fase_table
-		#listar todas las fases y mostrar unicamente el link de ver en aquellas
-		#fases en los que posee permisos.
-		#fases = checker.get_fases_by_proyecto_list(idproyecto, 'ver_fase')
 
-		#prueba
 		fases = DBSession.query(Fase).\
 									filter(Fase.proyecto==idproyecto).\
 									all()
