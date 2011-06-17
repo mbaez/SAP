@@ -90,10 +90,10 @@ class ItemController(RestController):
 	@require(predicates.has_permission('crear_item'))
 	def new(self, idfase, modelname="", **kw):
 		new_item_form.tipo_item_relacion.idfase = idfase
-		new_item_form.relaciones.idfase = idfase 
+		new_item_form.relaciones.idfase = idfase
 		tmpl_context.widget = new_item_form
 		#se recomienda al usuario un codigo autogenerado
-		kw['codigo'] = util.gen_codigo('item')
+		#kw['codigo'] = util.gen_codigo('item')
 		header_file = "abstract"
 		self.params['title'] = 'Nuevo Item'
 		self.params['modelname'] = 'Item'
@@ -115,7 +115,6 @@ class ItemController(RestController):
 		del kw['sprox_id']
 		item = Item()
 		item.nombre = kw['nombre']
-		item.codigo = kw['codigo']
 		item.descripcion = kw['descripcion']
 		item.complejidad = kw['complejidad']
 		item.prioridad = kw['prioridad']
@@ -125,6 +124,10 @@ class ItemController(RestController):
 		item.estado = 2
 		item.tipo_item = kw['tipo_item_relacion']
 		item.version = 1
+
+		tipo_item = DBSession.query(TipoItem).get(item.tipo_item)
+
+		item.codigo = util.gen_codigo(tipo_item.codigo + "-")
 		DBSession.add(item)
 		DBSession.flush()
 		# Se guarda la relacion elegida en el formulario
@@ -133,16 +136,16 @@ class ItemController(RestController):
 			relacion.id_item_actual = item.id_item
 			relacion.id_item_relacionado = kw['relaciones']
 			item_relacionado = DBSession.query(Item).get(kw['relaciones'])
-			
+
 			if(item_relacionado.fase == int(idfase)):
 				#relacion padre-hijo
 				relacion.relacion_parentesco = 1
 			else:
 				relacion.relacion_parentesco = 2
- 			
+
  			DBSession.add(relacion)
 			DBSession.flush()
-		
+
 		#flash("El item se ha creado correctamente")
 		redirect('/miproyecto/fase/item/ver/'+str(item.id_item))
 
@@ -200,12 +203,12 @@ class ItemController(RestController):
 		fase = DBSession.query(Fase).get(item.fase)
 		grafo = self.proyectGraphConstructor(fase.proyecto)
 		self.marcar_en_revision(grafo, item.id_item)
-		
+
 		#la linea del item modificado permanece abierta
 		if item.id_linea_base != None:
 			linea = DBSession.query(LineaBase).get(item.id_linea_base)
 			linea.estado = estado_linea_base_util.get_by_codigo('Abierta')
- 
+
 		flash("El item " +str(item.nombre)+ " ha sido modificado correctamente.")
 		redirect('/miproyecto/fase/item/ver/'+str(item.id_item))
 
@@ -548,8 +551,8 @@ class ItemController(RestController):
 			item_actual = DBSession.query(Item).get(id_item)
 			item_actual.estado = 3
 			DBSession.merge(item_actual)
-		
-		# Se marca con estado comprometido cada linea base de los items 
+
+		# Se marca con estado comprometido cada linea base de los items
 		# sucesores y antecesores.
 		if(relacionados != None):
 			for id_item in relacionados:

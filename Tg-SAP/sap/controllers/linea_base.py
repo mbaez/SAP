@@ -24,9 +24,9 @@ from tg.controllers import RestController
 from sap.controllers.util import *
 
 
-from reportlab.pdfgen import canvas
-from geraldo.generators import PDFGenerator
-from reporte import *
+#from reportlab.pdfgen import canvas
+#from geraldo.generators import PDFGenerator
+#from reporte import *
 
 _widget = None
 
@@ -92,9 +92,9 @@ class LineaBaseController(RestController):
 			linea_base.items.append(i)
 
 		DBSession.add(linea_base)
-		
+
 		redirect("/miproyecto/fase/linea_base/list/"+str(idfase))
-		
+
 	"""
 	Encargado de carga el widget para editar las instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de editar
@@ -208,33 +208,33 @@ class LineaBaseController(RestController):
 			#item.id_linea_base = None
 			DBSession.merge(item)
 		self.params['idfase'] = linea_base.fase
-		
+
 		linea_base.estado = estado_linea_base_util.get_by_codigo('Abierta')
 		DBSession.merge(linea_base)
 
 		flash("La linea base ha sido abierta")
 		redirect("/miproyecto/fase/linea_base/list/" + str(self.params['idfase']))
-		
+
 	@expose()
 	def generar_reporte(self, **kW):
 		"""
 		Metodo para generar reporte de lineas base
 		"""
-		# Se setea el objeto response con el encabezado apropiado 
+		# Se setea el objeto response con el encabezado apropiado
 		response.headers["Content-Type"] = "application/pdf"
 		response.headers["Content-disposition"] = "attachment; filename=report.pdf"
 		#res = HttpResponse(mimetype='application/pdf')
 		#res['Content-Disposition'] = 'attachment; filename=somefilename.pdf'
-		
+
 		# Se crea el objeto pdf utilizando el objeto response
 		p = canvas.Canvas(response)
-		
+
 		# Se imprime un Hello world en el pdf utilizando la API de reportlab
 		p.drawString(100, 100, "Hello world.")
 		p.showPage()
 		p.save()
 		return response
-	
+
 	@expose()
 	def reporte_linea_base(self, **kW):
 		datos = [
@@ -242,7 +242,7 @@ class LineaBaseController(RestController):
 		]
 		response.headers["Content-Type"] = "application/pdf"
 		response.headers["Content-disposition"] = "attachment; filename=report.pdf"
-		
+
 		items = DBSession.query(Item).all()
 		for item in items:
 			item_params = {'name': item.codigo, 'age': item.complejidad, 'weight': 55.7, 'genre': 'female', 'status': 'parent'}
@@ -250,7 +250,7 @@ class LineaBaseController(RestController):
 
 		report = LineaBaseReport(queryset=datos)
 		report.generate_by(PDFGenerator, filename=response)
-		
+
 		return response
 
 

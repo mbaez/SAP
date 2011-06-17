@@ -38,7 +38,7 @@ class TipoItemController(RestController):
 		self.params['modelname'] = "Tipo de Item"
 		self.params['header_file'] = 'tipo_item'
 		self.params['idfase'] = idfase
-		self.params['codigo'] = util.gen_codigo('tipo_item')
+		#self.params['codigo'] = util.gen_codigo('tipo_item')
 		self.params['cancelar_url'] = '/miproyecto/fase/tipo_item/list/'+str(idfase)
 		return dict(value=kw, params=self.params)
 

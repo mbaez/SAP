@@ -79,7 +79,6 @@ class ProyectoController(RestController):
 		kw['id_proyecto'] = proyecto.id_proyecto
 		kw['nombre'] = proyecto.nombre
 		kw['lider'] = proyecto.lider
-		kw['estado'] = DBSession.query(EstadoProyecto).all()
 		kw['lider_id'] = proyecto.lider_id
 		kw['estado_id'] = proyecto.estado_id
 		kw['nro_fases'] = proyecto.nro_fases
@@ -103,7 +102,6 @@ class ProyectoController(RestController):
 		proyecto.nombre=kw['nombre']
 		proyecto.nro_fases = kw['nro_fases']
 		proyecto.descripcion = kw['descripcion']
-		proyecto.estado=DBSession.query(EstadoProyecto).get(int(kw['estado']))
 		DBSession.merge(proyecto)
 		flash("El proyecto ha sido '" +proyecto.nombre+ "' modificado correctamente.")
 		redirect("/administracion/proyecto/list")
