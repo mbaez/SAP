@@ -19,10 +19,9 @@
 <div id="container">
 	${header()}
 	<h2>
-		<a py:if="request.identity" id="login" href="javascript: history.back()"><img src ="/img/back.png" /> </a>
-		<a py:if="request.identity" id="login" href="javascript: history.forward()"> <img src ="/img/next.png"/> </a>
+		<a py:if="request.identity" id="login" href="/proyectos">Proyectos</a>
 	</h2>
-
+	<br/>
 	<section id="content" class="shade">
 		<div class="wrapper">
 			<py:if test="defined('page')">

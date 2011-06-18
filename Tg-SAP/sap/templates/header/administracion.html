@@ -25,4 +25,30 @@
 </header>
 
 </py:def>
+
+<py:def function="sidebar">
+	<aside id="dashboard-sidebar">
+		<div class="project-info">
+			<h4>Perfil de ${params['usuario'].user_name}
+				<span>
+					<a class="edit-project"
+					   href="/administracion/usuario/${params['usuario'].usuario_id}/edit">Edit</a>
+				</span>
+			</h4>
+			<h5>Nombre </h5>
+			<p></p>
+			<p>${params['usuario'].nombre}</p>
+			<p></p>
+			<h5>Email</h5>
+			<p></p>
+			<p>${params['usuario'].email_address }</p>
+			<p></p>
+			<h5>Miembro desde</h5>
+			<p></p>
+			<p>${params['usuario'].created }</p>
+			<p></p>
+		</div>
+	</aside>
+</py:def>
+
 </html>

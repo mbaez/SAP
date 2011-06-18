@@ -5,26 +5,27 @@
   xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <xi:include href="master.html" />
-<xi:include href="header/fase.html" />
+<xi:include href="header/administracion.html" />
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-  <title>Mi proyecto </title>
+  <title>Mis Proyectos </title>
 </head>
 
 <body>
 	${sub_header()}
 	<section id="inner-content">
 		${sidebar()}
-		<h2>Listado de ${params['modelname']}</h2>
+		<h2>Mis Proyectos</h2>
+
 		<div style="float:left; width: 60%">
 			${tmpl_context.widget(value=value)}
 			<a class = "add-button" py:if="tg.predicates.has_permission(params['permiso'])"
 			style="width:120px; margin-top:10px" href="${params['new_url']}">
-				+ Nuevo
+				${params['label']}
 			</a>
 		</div>
-
 	</section>
-
 </body>
 </html>
+
+

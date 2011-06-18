@@ -24,6 +24,8 @@ from sap.controllers.checker import *
 from tg import tmpl_context
 from sap.widgets.listform import *
 
+from sap.controllers.util import  *
+
 __all__ = ['RootController']
 
 
@@ -49,38 +51,18 @@ class RootController(BaseController):
 
 	miproyecto = ProyectosController()
 
-	params = {'title':'','header_file':'','modelname':'', 
+	params = {'title':'','header_file':'','modelname':'',
 				'new_url':'','permiso':'', 'label':''}
 
 	@expose('sap.templates.index')
 	def index(self):
 		"""Handle the front-page."""
-		return dict(page='index')
+		redirect('/proyectos')
 
 	@expose('sap.templates.about')
 	def about(self):
 		"""Handle the 'about' page."""
 		return dict(page='about')
-	"""
-	Solamente el usuario con el permiso de modificacion puede visualizar
-	el link ver master.html
-	"""
-	@expose('sap.templates.authentication')
-	def auth(self):
-		"""Display some information about auth* on this application."""
-		return dict(page='auth')
-
-	@expose('sap.templates.index')
-	@require(predicates.has_permission('manage', msg=l_('Only for managers')))
-	def manage_permission_only(self, **kw):
-		"""Illustrate how a page for managers only works."""
-		return dict(page='managers stuff')
-
-	@expose('sap.templates.index')
-	@require(predicates.is_user('editor', msg=l_('Only for the editor')))
-	def editor_user_only(self, **kw):
-		"""Illustrate how a page exclusive for the editor works."""
-		return dict(page='editor stuff')
 
 	@expose('sap.templates.login')
 	def login(self, came_from=url('/')):
@@ -111,10 +93,9 @@ class RootController(BaseController):
 		goodbye as well.
 
 		"""
-		#flash(_('We hope to see you soon!'))
 		redirect(url('/login'))
 
-	@expose('sap.templates.list')
+	@expose('sap.templates.proyectos')
 	@require(predicates.has_permission('ver_proyecto'))
 	def proyectos(self, **kw):
 		tmpl_context.widget = admin_proyecto_table
@@ -123,15 +104,8 @@ class RootController(BaseController):
 		new_url = "/administracion/proyecto/new"
 		self.params['title'] = 'Titulo'
 		self.params['modelname'] = 'Proyectos'
-		self.params['header_file'] = 'administracion'
 		self.params['new_url'] = '/administracion/proyecto/new'
 		self.params['permiso'] = 'crear_proyecto'
-		self.params['label'] = 'Nuevo Proyecto'
+		self.params['label'] = '+Nuevo'
+		self.params['usuario'] = session_util.get_current_user()
 		return dict(value=value, params = self.params)
-	"""
-	metodo para probar el calculo de impacto
-	"""
-	@expose('sap.templates.prueba')
-	def prueba(self, **kw):
-		#contruye el grafo del proyecto 1 en este caso
-		return dict(value=kw)

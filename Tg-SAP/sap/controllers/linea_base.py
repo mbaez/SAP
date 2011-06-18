@@ -127,7 +127,7 @@ class LineaBaseController(RestController):
 	los usuarios que posena el permiso de ver, este widget se encuentra
 	acompanhado de enlaces de editar y eliminar
 	"""
-	@expose('sap.templates.list')
+	@expose('sap.templates.fase')
 	#@require( predicates.has_permission('ver_proyecto'))
 	def list(self, idfase, **kw):
 		"""
@@ -136,14 +136,35 @@ class LineaBaseController(RestController):
 		tmpl_context.widget = linea_base_table
 		lineas = DBSession.query(LineaBase).filter(LineaBase.fase==idfase).all()
 		value = linea_base_filler.get_value(lineas)
-		header_file = "abstract"
+
+		self.init_params(idfase)
+
 		self.params['title'] = 'Lineas Base de esta fase'
 		self.params['modelname'] = 'Linea Base'
-		self.params['header_file'] = 'abstract'
+		self.params['header_file'] = 'fase'
 		self.params['permiso'] = 'generar_lineabase'
 		self.params['new_url'] = "/miproyecto/fase/linea_base/"+ str(idfase)+"/new/"
 		self.params['label'] = 'Nuevo'
 		return dict(value=value, params = self.params)
+
+	def init_params(self, id):
+		#para saber si mostrar o no el boton editar
+		permiso_editar = fase_util.check_fase_permiso(id,
+												'editar_fase')
+		#para saber si mostrar o no el boton anhdir participante
+		permiso_anadir = fase_util.check_fase_permiso(id,
+											'administrar_participantes')
+		usuarios = util.get_usuarios_by_fase(id)
+
+		fase = fase_util.get_current(id)
+		roles = util.get_roles_by_proyectos(fase.proyecto)
+		value = participantes_fase_filler.get_value(roles)
+
+		self.params['permiso_editar'] = permiso_editar
+		self.params['permiso_anadir'] = permiso_anadir
+		self.params['fase'] = fase
+		self.params['idfase'] = id
+		self.params['usuarios'] = usuarios
 
 	"""
 	Evento invocado desde el listado, se encarga de eliminar una instancia

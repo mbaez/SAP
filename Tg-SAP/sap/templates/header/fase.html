@@ -11,7 +11,10 @@
 			<li id="nav-dashboard" class="first">
 				<a href="/proyectos">Inicio</a>
 			</li>
-			 <li id="nav-dashboard" py:if="tg.predicates.has_permission('ver_tipo_item')" >
+			<li id="nav-dashboard" py:if="tg.predicates.has_permission('ver_item')" >
+				<a href="/miproyecto/fase/get_all/${params['idfase']}">Items</a>
+			</li>
+			<li id="nav-dashboard" py:if="tg.predicates.has_permission('ver_tipo_item')" >
 				<a href="/miproyecto/fase/tipo_item/list/${params['idfase']}">Tipos de Item</a>
 			</li>
 			<li id="nav-agenda" py:if="tg.predicates.has_permission('ver_item')" >
@@ -26,6 +29,47 @@
 		</ul>
 	</nav>
 </header>
-
 </py:def>
+
+<py:def function="sidebar">
+	<aside id="dashboard-sidebar">
+		<div class="project-info">
+			<h4>Fase info
+				<span>
+					<a class="edit-project" py:if="params['permiso_editar']">Edit</a>
+				</span>
+			</h4>
+			<h5>Nombre </h5>
+			<p></p>
+			<p>${params['fase'].nombre}</p>
+			<p></p>
+			<h5>Descripcion </h5>
+			<div id="selected-tags">
+			</div>
+			<p></p>
+			<p>${params['fase'].descripcion}</p>
+			<p></p>
+		</div>
+		<div class="project-info">
+			<h4>Participantes
+				<span>
+					<a class="add-member" py:if="params['permiso_anadir']"
+						href="/miproyecto/fase/participantes/admin/${params['idfase']}">A&ntilde;adir</a>
+				</span>
+			</h4>
+			<ul id="team">
+
+				<li py:for="usuario in params['usuarios']">
+					<img src="/img/saved_resource" alt="">${usuario.user_name}
+						<div class="member-edit">
+							<a href="/miproyecto/fase/participantes/delete/${params['idfase']}/${usuario.usuario_id}">Delete</a>
+						</div>
+					</img>
+				</li>
+
+			</ul>
+		</div>
+	</aside>
+</py:def>
+
 </html>

@@ -8,52 +8,13 @@
 <xi:include href="header/proyecto.html" />
 <head>
   <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
-	<link type="text/css" href="${tg.url('/css/redmond/jquery-ui-1.8.13.custom.css')}" rel="stylesheet" />
-	<script type="text/javascript" src="${tg.url('/jquery/jquery-1.5.1.min.js')}"></script>
-	<script type="text/javascript" src="${tg.url('/jquery/jquery-ui-1.8.13.custom.min.js')}"></script>
-	<script type="text/javascript" src="${tg.url('/jquery/sap-ui.js')}"></script>
   <title>Mi proyecto </title>
 </head>
 
 <body>
 	${sub_header()}
 	<section id="inner-content">
-		<aside id="dashboard-sidebar">
-			<div class="project-info">
-				<h4>Proyecto info
-					<span><a class="edit-project" py:if="params['permiso_editar']"
-						href = "/administracion/proyecto/${params['proyecto'].id_proyecto}/edit">Edit</a>
-					</span></h4>
-				<h5>Nombre </h5>
-				<p></p>
-				<p>${params['proyecto'].nombre}</p>
-				<p></p>
-				<h5>Descripcion </h5>
-				<div id="selected-tags">
-				</div>
-				<p></p>
-				<p> ${params['proyecto'].descripcion} </p>
-				<p></p>
-			</div>
-			<div class="project-info">
-				<h4>Participantes
-					<span>
-						<a py:if="params['permiso_anadir']" href="/miproyecto/participantes/admin/${params['proyecto'].id_proyecto}" class="add-member">A&ntilde;adir</a>
-					</span>
-				</h4>
-				<ul id="team">
-
-					<li py:for="usuario in params['usuarios']">
-						<img src="/img/saved_resource" alt="">${usuario.user_name}
-							<div class="member-edit">
-								<a href="/miproyecto/participantes/delete/${params['proyecto'].id_proyecto}/${usuario.usuario_id}">Delete</a>
-							</div>
-						</img>
-					</li>
-
-				</ul>
-			</div>
-		</aside>
+		${sidebar()}
 		<h2> ${params['text_header']}</h2>
 
 		<div style="float:left; width: 60%">

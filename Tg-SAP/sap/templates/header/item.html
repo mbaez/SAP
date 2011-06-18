@@ -7,13 +7,35 @@
 <py:def function="sub_header">
 <header class="content-header">
 	<nav>
-		<ul> 
+		<ul>
 			<li id="nav-dashboard" class="first">
-				<a href="/miproyecto/fase/item/relaciones">Administrar Relaciones</a>
-			</li> 
+				<a href="/proyectos">Inicio</a>
+			</li>
+			<li id="nav-dashboard" py:if="tg.predicates.has_permission('ver_item')" >
+				<a href="/miproyecto/fase/get_all/${params['idfase']}">Items</a>
+			</li>
 		</ul>
 	</nav>
 </header>
+</py:def>
 
+<py:def function="sidebar">
+	<aside id="content-sidebar">
+		<div class="filters">
+			<h4>Operaciones</h4>
+			<div id="selected-tags">
+				<h5>Item: ${params['item'].nombre}</h5>
+				<ul>
+					<li> <a py:if="tg.predicates.has_permission('editar_item')" href="/miproyecto/fase/item/impacto/${params['item'].id_item}" class="tag beige">Calculo de Impacto</a></li>
+					<p></p>
+					<li> <a py:if="tg.predicates.has_permission('editar_item')" href="/miproyecto/fase/item/historial_versiones/${params['item'].id_item}" class="tag beige">Revertir</a></li>
+					<p></p>
+					<li> <a py:if="tg.predicates.has_permission('aprobar_item')" href="/miproyecto/fase/item/aprobar_item/${params['item'].id_item}" class = "tag beige">Aprobar Item</a></li>
+					<p></p>
+				</ul>
+			</div>
+			<p></p>
+		</div>
+	</aside>
 </py:def>
 </html>

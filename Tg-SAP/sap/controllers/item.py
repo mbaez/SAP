@@ -51,7 +51,7 @@ class ItemController(RestController):
 
 		tmpl_context.widget = detalle_item_table
 		self.params['item'] = DBSession.query(Item).get(id_item)
-		print "HAS_PERMISO : "+str(self.params['item'])
+
 		has_permiso = fase_util.check_fase_permiso(self.params['item'].fase,'ver_item',True)
 
 		if ( has_permiso == None) :
@@ -67,23 +67,28 @@ class ItemController(RestController):
 			self.params['permiso_editar'] = 'editar_item'
 			self.params['permiso_eliminar'] = 'eliminar_item'
 			self.params['linea_base'] = 'No posee linea base'
+
 		elif(self.params['item'].linea_base != None):
 			linea_base = DBSession.query(LineaBase).get(self.params['item'].id_linea_base)
 			estado_linea_base = DBSession.query(EstadoLineaBase).get(linea_base.id_estado_linea_base)
+
 			if(estado_linea_base.nombre == 'Abierta'):
 				self.params['permiso_editar'] = 'editar_item'
 				self.params['permiso_eliminar'] = 'eliminar_item'
 				self.params['linea_base'] = 'Abierta'
+
 			elif(estado_linea_base.nombre == 'Cerrada' or estado_linea_base.nombre == 'Comprometida'):
 				self.params['permiso_editar'] = 'NO EDITAR'
 				self.params['permiso_eliminar'] = 'NO ELIMINAR'
+
 				if(estado_linea_base.nombre == 'Cerrada'):
 					self.params['linea_base'] = 'Cerrada'
+
 				elif(estado_linea_base.nombre == 'Comprometida'):
 					self.params['linea_base'] = 'Comprometida'
 
 		value = detalle_item_filler.get_value(self.params['item'].detalles)
-
+		self.params['idfase'] = self.params['item'].fase
 		return dict(value=value , params=self.params)
 
 	@expose('sap.templates.new')
@@ -667,7 +672,7 @@ class ItemController(RestController):
 		gr.layout()
 		gr.draw('sap/public/img/calculo_impacto.svg')
 
-	@expose('sap.templates.list')
+	@expose('sap.templates.fase')
 	@require(predicates.has_permission('editar_item'))
 	def items_borrados(self, id_fase):
 		#se obtienen los items borrados de esta fase que tengan estado
@@ -679,13 +684,34 @@ class ItemController(RestController):
 
 		tmpl_context.widget = historial_revivir_table
 		value = historial_revivir_filler.get_value(muertos)
+		self.init_params(id_fase)
+
 		self.params['title'] = 'Items borrados '
 		self.params['modelname'] = 'Items Borrados'
-		self.params['header_file'] = 'abstract'
+		self.params['header_file'] = 'fase'
 		self.params['new_url'] = '/'
 		self.params['permiso'] = 'NONE'
-		self.params['idfase'] = 'NONE'
+		#self.params['idfase'] = 'NONE'
 		return dict (value=value, params=self.params)
+
+	def init_params(self, id):
+		#para saber si mostrar o no el boton editar
+		permiso_editar = fase_util.check_fase_permiso(id,
+												'editar_fase')
+		#para saber si mostrar o no el boton anhdir participante
+		permiso_anadir = fase_util.check_fase_permiso(id,
+											'administrar_participantes')
+		usuarios = util.get_usuarios_by_fase(id)
+
+		fase = fase_util.get_current(id)
+		roles = util.get_roles_by_proyectos(fase.proyecto)
+		value = participantes_fase_filler.get_value(roles)
+
+		self.params['permiso_editar'] = permiso_editar
+		self.params['permiso_anadir'] = permiso_anadir
+		self.params['fase'] = fase
+		self.params['idfase'] = id
+		self.params['usuarios'] = usuarios
 
 	@expose()
 	@require(predicates.has_permission('editar_item'))

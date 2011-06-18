@@ -11,10 +11,47 @@
 			<li id="nav-dashboard" class="first">
 				<a href="/proyectos">Inicio</a>
 			</li>
-			<li id="nav-agenda"><a>Configuraci&oacute;n</a></li>
 		</ul>
 	</nav>
 </header>
 
+</py:def>
+<py:def function="sidebar">
+	<aside id="dashboard-sidebar">
+		<div class="project-info">
+			<h4>Proyecto info
+				<span><a class="edit-project" py:if="params['permiso_editar']"
+					href = "/administracion/proyecto/${params['proyecto'].id_proyecto}/edit">Edit</a>
+				</span></h4>
+			<h5>Nombre </h5>
+			<p></p>
+			<p>${params['proyecto'].nombre}</p>
+			<p></p>
+			<h5>Descripcion </h5>
+			<div id="selected-tags">
+			</div>
+			<p></p>
+			<p> ${params['proyecto'].descripcion} </p>
+			<p></p>
+		</div>
+		<div class="project-info">
+			<h4>Participantes
+				<span>
+					<a py:if="params['permiso_anadir']" href="/miproyecto/participantes/admin/${params['proyecto'].id_proyecto}" class="add-member">A&ntilde;adir</a>
+				</span>
+			</h4>
+			<ul id="team">
+
+				<li py:for="usuario in params['usuarios']">
+					<img src="/img/saved_resource" alt="">${usuario.user_name}
+						<div class="member-edit">
+							<a href="/miproyecto/participantes/delete/${params['proyecto'].id_proyecto}/${usuario.usuario_id}">Delete</a>
+						</div>
+					</img>
+				</li>
+
+			</ul>
+		</div>
+	</aside>
 </py:def>
 </html>
