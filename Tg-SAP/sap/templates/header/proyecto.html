@@ -54,4 +54,10 @@
 		</div>
 	</aside>
 </py:def>
+<py:def function="come_history">
+	<h2 class="module-title" >
+		<a py:if="request.identity" id="login" href="/proyectos">Proyectos </a>
+		${params['proyecto'].nombre}
+	</h2>
+</py:def>
 </html>

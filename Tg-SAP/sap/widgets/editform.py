@@ -23,7 +23,7 @@ class UsuarioEditForm(EditableForm):
 					   'email_address':{'rows':'2'}}
 
 	password = PasswordField
-	
+
 
 usuario_edit_form = UsuarioEditForm(DBSession)
 
@@ -37,7 +37,8 @@ proyecto_edit_filler = ProyectoEditFiller(DBSession)
 
 class ProyectoEditForm(EditableForm):
 	__model__ = Proyecto
-	__omit_fields__ = ['lider_id','lider','estado_id', 'permisos_proyectos','estado']
+	__omit_fields__ = ['lider_id','lider','estado_id',
+					   'permisos_proyectos','estado']
 
 proyecto_edit_form = ProyectoEditForm(DBSession)
 
@@ -66,6 +67,7 @@ fase_edit_filler = RolEditFiller(DBSession)
 
 class FaseEditForm(EditableForm):
 	__model__ = Fase
+	__omit_fields__ = ['items']
 
 fase_edit_form = RolEditForm(DBSession)
 
@@ -96,7 +98,7 @@ class ItemEditForm(ExtendedEditableForm):
 	__omit_fields__ = ['tipo_item_relacion','tipo_item', '__actions__',
 					'id_item', 'fase', 'version','estado', 'linea_base',
 					'estado_actual', 'id_linea_base' , 'detalles', 'relaciones_id',
-					'relaciones']
+					'relaciones','fase_actual']
 
 item_edit_form = ItemEditForm(DBSession)
 

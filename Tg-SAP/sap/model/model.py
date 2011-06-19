@@ -180,7 +180,7 @@ class Item(DeclarativeBase):
 	estado = Column ('id_estado_item', Integer,
 						ForeignKey('estado_item.id_estado_item'),
 						nullable=False)
-	
+
 	relaciones_id = Column ('id_item_relacion', Integer,
 						ForeignKey('item.id_item'),
 						nullable=True)
@@ -192,6 +192,8 @@ class Item(DeclarativeBase):
 	detalles = relation ('DetalleItem', backref = 'item')
 
 	relaciones = relation('Item')
+
+	fase_actual = relation ('Fase', backref = 'items')
 	#}
 	"""
 	relacion = relation('RelacionItem', primaryjoin = and_(relacion == Item.id,\
@@ -229,7 +231,7 @@ class RelacionItem(DeclarativeBase):
 	item_1=relation('RelacionParentesco')
 	item_2=relation('RelacionParentesco')
 	#}
-	
+
 class TipoAtributo(DeclarativeBase):
 
 	__tablename__ = 'tipo_atributo'
@@ -288,7 +290,7 @@ class LineaBase (DeclarativeBase):
 	fase = Column ('id_fase', Integer, ForeignKey ('fase.id_fase'))
 
 	items = relation(Item, backref='linea_base')
-	
+
 	estado = relation(EstadoLineaBase, backref='linea_base')
 
 
@@ -319,7 +321,7 @@ class HistorialItem(DeclarativeBase):
 	#linea_base = Column ('id_linea', Integer)
 	id_linea_base = Column ('id_linea_base', Integer,
 					ForeignKey('linea_base.id_linea_base'))
-	
+
 	fase = Column ('id_fase', Integer, nullable=False)
 
 	version = Column ('version', Integer, nullable=False)

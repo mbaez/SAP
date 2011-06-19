@@ -47,7 +47,7 @@ new_rol_form = NewRolForm(DBSession)
 ####################################################
 class NewFaseForm(AddRecordForm):
 	__model__ = Fase
-	__omit_fields__ = ['id_fase', 'proyecto']
+	__omit_fields__ = ['id_fase', 'proyecto', 'items']
 
 new_fase_form = NewFaseForm(DBSession)
 
@@ -78,7 +78,7 @@ class NewItemForm(ExtendedAddRecordForm):
 	__model__ = Item
 	__omit_fields__ = ['__actions__','id_item', 'tipo_item', 'fase', 'version',
 					   'estado', 'linea_base', 'detalles', 'estado_actual',
-					   'relaciones_id','id_linea_base', 'codigo']
+					   'relaciones_id','id_linea_base', 'codigo', 'fase_actual']
 
 	__dropdown_field_names__ = {'tipo_item_relacion':'nombre',
 								'estado_actual':'nombre'}
@@ -98,15 +98,15 @@ new_participante_form = NewParticipanteForm(DBSession)
 
 class NewFaseParticipanteFrom(TableForm):
 	fields = []
-	
+
 	submit_text = 'Guardar'
-	
+
 def add_usuarios_combobox(id):
 		usuarios = usuario_util.get_usuarios_by_permiso(id)
 		NewFaseParticipanteFrom.fields = []
 		for usuario in usuarios :
 			NewFaseParticipanteFrom.fields.append(CheckBox(usuario.nombre, value=True))
-			
+
 
 ####################################################
 # Widgets de las Relaciones

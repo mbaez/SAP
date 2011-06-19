@@ -56,7 +56,7 @@ admin_proyecto_filler = create_widget(ProyectoModelDecorator, VerActionDecorator
 ####################################################
 class FaseAdminTable(TableBase):
 	__model__ = Fase
-	__omit_fields__ = ['id_fase', '__actions__'  ]
+	__omit_fields__ = ['id_fase', '__actions__', 'items']
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
 
@@ -84,7 +84,7 @@ class ItemTable(TableBase):
 	__omit_fields__ = ['tipo_item','fase','id_item','__actions__',
 						'id_linea_base','descripcion','detalles',
 						'tipo_item_relacion', 'linea_base',
-						'estado', 'relaciones']
+						'estado', 'relaciones','fase_actual']
 
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}

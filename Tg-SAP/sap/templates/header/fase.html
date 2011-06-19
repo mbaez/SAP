@@ -72,4 +72,12 @@
 	</aside>
 </py:def>
 
+<py:def function="come_history">
+	<h2 class="module-title" py:if="request.identity" id="login" >
+		<a href="/proyectos">Proyectos </a>
+		<a href="/miproyecto/ver/${params['fase'].proyecto}">Fases </a>
+		${params['fase'].nombre}
+	</h2>
+</py:def>
+
 </html>
