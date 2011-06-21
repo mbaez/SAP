@@ -62,7 +62,7 @@ class RelacionController(RestController):
 
 		#VALIDACION: relacion consigo mismo
 		if(relacion.id_item_actual==relacion.id_item_relacionado):
-			flash("No se puede establecer una relacion consigo mismo")
+			flash("No se puede establecer una relacion consigo mismo", 'error')
 			redirect('/miproyecto/fase/relacion/'+idfase+'/new/')
 		#VALIDACION: si los items son o no de la misma fase
 		item1=DBSession.query(Item).get(relacion.id_item_actual)

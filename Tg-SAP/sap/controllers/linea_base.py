@@ -50,7 +50,7 @@ class LineaBaseController(RestController):
 			redirect("/miproyecto/fase/linea_base/list/"+str(idfase))
 			return
 		for i in items:
-			NewLineaBaseForm.fields.append( CheckBox(i.codigo) )
+			NewLineaBaseForm.fields.append( CheckBox(i.codigo.replace('-', '_')) )
 
 		new_linea_base_form = NewLineaBaseForm("new_linea_base_form", action = 'post')
 		tmpl_context.widget = new_linea_base_form
@@ -76,7 +76,8 @@ class LineaBaseController(RestController):
 		lista_codigos = []
 		dic = kw
 		for d in dic:
-			lista_codigos.append(d)
+			print 'dddddd = '+ d
+			lista_codigos.append(d.replace('_', '-'))
 
 		lista_items = DBSession.query(Item).filter( Item.codigo.in_(lista_codigos) ).\
 											all()

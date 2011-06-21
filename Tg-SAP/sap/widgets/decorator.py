@@ -129,9 +129,9 @@ class EditActionDecorator(Decorator):
 						<input type='hidden' name='_method'
 							value='DELETE' >
 						</input>
-						<a class='delete-row'
+						<input class='delete-row'
 							onclick="return confirm('Are you sure?');"
-							value='eliminar' type='delete' > eliminar</a>
+							value='eliminar' type='submit' ></input>
 					</form>
 				</div>
 				"""

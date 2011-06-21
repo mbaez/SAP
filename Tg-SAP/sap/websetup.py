@@ -23,7 +23,7 @@ __permisos__ = ['admin_usuario', 'admin_proyecto','admin_rol',
 				'crear_rol', 'eliminar_rol', 'editar_rol','ver_rol',
 				'ver_fase', 'crear_fase','editar_fase','eliminar_fase',
 				'administrar_participantes',
-				'generar_lineabase', 'abrir_lineabase', 
+				'generar_lineabase', 'abrir_lineabase',
 				'crear_tipo_item', 'eliminar_tipo_item', 'editar_tipo_item',
 				'ver_tipo_item',
 				'crear_item', 'eliminar_item', 'editar_item','aprobar_item',
@@ -35,6 +35,7 @@ __permisos_sistema__ = ['admin_usuario', 'admin_proyecto','admin_rol',
 						'crear_proyecto','editar_proyecto','eliminar_proyecto']
 
 __permisos_proyecto__ = ['ver_proyecto','administrar_participantes']
+
 
 __permisos_fase__ = ['ver_fase', 'crear_fase','editar_fase','eliminar_fase',
 					 'administrar_participantes','generar_lineabase', 'abrir_lineabase',
@@ -142,7 +143,7 @@ def cargar_estados():
     inicial.nombre = u'Inicial'
     inicial.descripcion = u'Estado que indica que un proyecto esta en estado inicial'
     model.DBSession.add(inicial)
-    
+
     desarrollo = model.EstadoProyecto()
     desarrollo.nombre = u'Desarrollo'
     desarrollo.descripcion = u'Estado que indica que un proyecto esta en desarrollo'
@@ -157,12 +158,12 @@ def cargar_estados():
     pausado.nombre = u'Pausado'
     pausado.descripcion = u'Estado que indica que un proyecto esta pausado'
     model.DBSession.add(pausado)
-    
+
     finalizado = model.EstadoProyecto()
     finalizado.nombre = u'Finalizado'
     finalizado.descripcion = u'Estado que indica que un proyecto esta finalizado'
     model.DBSession.add(finalizado)
-    
+
     return inicial, desarrollo, cancelado, pausado, finalizado
 
 def cargar_permisos(group, group2, group3, group21, group31, group22,group23):
@@ -419,7 +420,7 @@ def cargar_estado_lineabase():
     estadoLineaBase = model.EstadoLineaBase()
     estadoLineaBase.nombre = 'Cerrada'
     model.DBSession.add(estadoLineaBase)
-    
+
     estadoLineaBase = model.EstadoLineaBase()
     estadoLineaBase.nombre = 'Abierta'
     model.DBSession.add(estadoLineaBase)

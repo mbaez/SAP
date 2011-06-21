@@ -102,6 +102,11 @@ class ProyectoController(RestController):
 		proyecto.nombre=kw['nombre']
 		proyecto.nro_fases = kw['nro_fases']
 		proyecto.descripcion = kw['descripcion']
+
+		#asignar lider
+		proyecto.lider = DBSession.query(Usuario).get(kw['lider'])
+		util.asignar_lider(proyecto)
+
 		DBSession.merge(proyecto)
 		flash("El proyecto ha sido '" +proyecto.nombre+ "' modificado correctamente.")
 		redirect("/administracion/proyecto/list")

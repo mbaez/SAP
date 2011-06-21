@@ -159,8 +159,9 @@ class ParticipanteFaseController(RestController):
 
 		flash("Los Usuarios <"+str(kw['usuarios'])+"> fueron asignados a la fase "+ str(fase.id_fase)+".")
 		redirect("/miproyecto/fase/get_all/" + str(fase.id_fase) )
+
 	@expose()
-	def post(self, id, **kw):
+	def post(self, id, params={}, **kw):
 		fase = fase_util.get_current()
 		_usuarios = util.get_usuarios_by_fase(fase.id_fase)
 		for usuario in _usuarios:

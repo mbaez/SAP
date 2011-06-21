@@ -584,7 +584,23 @@ class ItemUtil(Util):
 		item = self.get_current(iditem)
 		detalles = item.detalles
 		return detalles
-	
+
+	def anadir_detalles (self, tipo_item):
+		"""
+		Crea los detalles que corresponden al item segun el tipo de item
+		al cual corresponda
+		"""
+		detalles = []
+		for atributo in tipo_item.atributos:
+			detalle = DetalleItem()
+			detalle.nombre = atributo.nombre
+			detalle.id_atributo_tipo_item = atributo.id_atributo_tipo_item
+			detalle.valor = None
+			detalle.recurso = None
+			detalles.append(detalle)
+
+		return detalles
+
 	def get_items_aprobados (self, idfase):
 		#lista de items aprobados de la fase. Suponiendo que el id del estado "aprobado"
 		#sea 1
@@ -744,7 +760,7 @@ class EstadoLineaBaseUtil(Util):
 
 	def get_by_codigo(self, codigo):
 		return Util.get_by_codigo(self, codigo)
-		
+
 class SessionUtil():
 
 	__current = None

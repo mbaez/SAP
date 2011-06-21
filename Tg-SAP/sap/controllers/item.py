@@ -132,14 +132,20 @@ class ItemController(RestController):
 
 		tipo_item = DBSession.query(TipoItem).get(item.tipo_item)
 
+		#anhadir detalles al item segun el tipo de item al cual corresponda
+		item.detalles = item_util.anadir_detalles(tipo_item)
+
 		item.codigo = util.gen_codigo(tipo_item.codigo + "-")
 		DBSession.add(item)
 		DBSession.flush()
+
 		# Se guarda la relacion elegida en el formulario
 		if(kw['relaciones'] != None):
 			relacion = RelacionItem()
-			relacion.id_item_actual = item.id_item
-			relacion.id_item_relacionado = kw['relaciones']
+			#el padre es el item que se selecciono en el combo
+			relacion.id_item_actual = kw['relaciones']
+			#el item nuevo es el hijo
+			relacion.id_item_relacionado = item.id_item
 			item_relacionado = DBSession.query(Item).get(kw['relaciones'])
 
 			if(item_relacionado.fase == int(idfase)):
@@ -210,8 +216,8 @@ class ItemController(RestController):
 		self.marcar_en_revision(grafo, item.id_item)
 
 		#la linea del item modificado permanece abierta
-		if item.linea_base != None:
-			linea = item.linea_base #DBSession.query(LineaBase).get(item.id_linea_base)
+		if item.id_linea_base != None:
+			linea = DBSession.query(LineaBase).get(item.id_linea_base)
 			linea.estado = estado_linea_base_util.get_by_codigo('Abierta')
 
 		flash("El item " +str(item.nombre)+ " ha sido modificado correctamente.")
@@ -240,7 +246,7 @@ class ItemController(RestController):
 		item = item_util.get_current(id_item)
 
 
-		has_permiso = fase_util.check_fase_permiso(items.fase,'ver_item',True)
+		has_permiso = fase_util.check_fase_permiso(item.fase,'ver_item',True)
 		if ( has_permiso == None) :
 			flash("No posee permisos sobre la fase #"+ \
 				str(self.params['item'].fase),'error')
