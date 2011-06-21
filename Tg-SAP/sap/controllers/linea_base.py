@@ -44,7 +44,7 @@ class LineaBaseController(RestController):
 	def new(self, idfase, _method, **kw):
 		NewLineaBaseForm.fields = []
 
-		items = util.get_aprobados_sin_lineas(idfase)
+		items = item_util.get_items_aprobados(idfase)
 		if items == []:
 			flash('No hay items aprobados en esta fase')
 			redirect("/miproyecto/fase/linea_base/list/"+str(idfase))

@@ -584,6 +584,26 @@ class ItemUtil(Util):
 		item = self.get_current(iditem)
 		detalles = item.detalles
 		return detalles
+	
+	def get_items_aprobados (self, idfase):
+		#lista de items aprobados de la fase. Suponiendo que el id del estado "aprobado"
+		#sea 1
+		items_aprobados = DBSession.query(Item).filter(Item.fase==idfase).\
+												filter(Item.estado==EstadoItem.id_estado_item).\
+												filter(EstadoItem.nombre == 'Aprobado').\
+												all()
+		items = []
+		for item in items_aprobados:
+			linea_base = item.linea_base
+			
+			if(linea_base == None):
+				items.append(item)
+			else:
+				estado_linea_base = DBSession.query(EstadoLineaBase).get(linea_base.id_estado_linea_base)
+				if(estado_linea_base.nombre == 'Abierta'):
+					items.append(item)
+
+		return items
 
 class TipoItemUtil(Util):
 

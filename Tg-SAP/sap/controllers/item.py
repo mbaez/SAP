@@ -210,8 +210,8 @@ class ItemController(RestController):
 		self.marcar_en_revision(grafo, item.id_item)
 
 		#la linea del item modificado permanece abierta
-		if item.id_linea_base != None:
-			linea = DBSession.query(LineaBase).get(item.id_linea_base)
+		if item.linea_base != None:
+			linea = item.linea_base #DBSession.query(LineaBase).get(item.id_linea_base)
 			linea.estado = estado_linea_base_util.get_by_codigo('Abierta')
 
 		flash("El item " +str(item.nombre)+ " ha sido modificado correctamente.")
@@ -562,8 +562,8 @@ class ItemController(RestController):
 		if(relacionados != None):
 			for id_item in relacionados:
 				item_actual = DBSession.query(Item).get(id_item)
-				if item_actual.id_linea_base != None:
-					linea_base = DBSession.query(LineaBase).get(item_actual.id_linea_base)
+				if item_actual.linea_base != None:
+					linea_base = item_actual.linea_base #DBSession.query(LineaBase).get(item_actual.id_linea_base)
 					linea_base.estado = estado_linea_base_util.get_by_codigo('Comprometida')
 					DBSession.merge(linea_base)
 
