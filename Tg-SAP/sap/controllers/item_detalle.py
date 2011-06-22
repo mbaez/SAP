@@ -60,6 +60,8 @@ class ItemDetalleController(RestController):
 		DBSession.flush()
 		item = DBSession.query(Item).get(detalle.id_item)
 		item_util.audit_item(item)
+		item.version += 1
+		DBSession.merge(item)
 
 		flash("El item atributo ha sido modificado correctamente.")
 		redirect('/miproyecto/fase/item/poner_en_revision/'+str(detalle.id_item))

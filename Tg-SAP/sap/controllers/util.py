@@ -480,6 +480,7 @@ class ItemUtil(Util):
 		"""
 		#debe ser una version posterior a la actual
 		item = DBSession.query(Item).get(historial_item.id_item)
+		detalles = item.detalles
 		print "Recuperar el item "+str(item)
 		item.nombre = historial_item.nombre
 		item.codigo = historial_item.codigo
@@ -498,10 +499,20 @@ class ItemUtil(Util):
 		historial_detalles = DBSession.query(HistorialDetalleItem).\
 			filter(HistorialDetalleItem.id_historial == historial_item.id_historial_item).\
 			all()
-		#Se eliminan los detalles anteriores
-		for detalle in item.detalles :
-			DBSession.delete(detalle)
-
+			
+		"""
+		Se establecen los detalles actuales del item a None
+		para que el item conserve los campos definidos por su tipo de 
+		item. El item recuperara los valores de la version a la cual se
+		quiere revertir
+		"""
+		for detalle in item.detalles:
+			detalle.valor = None
+			detalle.adjunto = None
+			detalle.observacion = None
+		
+		DBSession.merge(item)
+			
 		for hist_detalle in historial_detalles:
 			detalle = DetalleItem()
 			detalle.id_item_detalle = hist_detalle.id_detalle
@@ -509,8 +520,9 @@ class ItemUtil(Util):
 			detalle.adjunto = hist_detalle.adjunto
 			detalle.observacion = hist_detalle.observacion
 			detalle.valor = hist_detalle.valor
-			item.detalles.append(detalle)
-
+			DBSession.merge(detalle)
+			#item.detalles.append(detalle)
+		
 		print "Recuperar las relaciones"
 		#recuperar los relaciones
 		historial_relaciones = DBSession.query(HistorialRelacion).\
@@ -620,7 +632,24 @@ class ItemUtil(Util):
 					items.append(item)
 
 		return items
-
+	
+	def verificar_linea_base(self, item):
+		"""
+		Verifica si un item no pertenece a una linea base o si no 
+		pertenece a una linea base Comprometida o Cerrdada
+		"""
+		linea_base = item.linea_base
+		if(linea_base == None):
+			return True
+			
+		estado_linea_base = linea_base.estado
+		if(estado_linea_base.nombre == "Cerrada" or \
+			estado_linea_base.nombre == "Comprometida"):
+			print "ENTROOOO"
+			return False
+		elif(estado_linea_base.nombre == "Abierta"):
+			return True
+			
 class TipoItemUtil(Util):
 
 	def __init__(self):

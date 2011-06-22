@@ -6,6 +6,7 @@ __author__ = "mbaez"
 __date__ = "2011-05-28 04:18:55"
 
 from sap.controllers.checker import *
+from sap.controllers.util import *
 
 class ExtendedTableList(TableFiller):
 	entity_list = None
@@ -110,7 +111,7 @@ class AcctionDecorator (Decorator):
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
 
-		if(has_permiso ==None):
+		if(has_permiso == None or has_permiso == False):
 			return 'visibility: hidden'
 		return ''
 
@@ -464,8 +465,14 @@ class DetalleItemModelDecorator(ExtendedTableList, Decorator):
 		return accion
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
-		has_permiso = True
-		return super(DetalleItemModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
+		detalle_item = DBSession.query(DetalleItem).get(id)
+		item = detalle_item.item
+		has_permiso = item_util.verificar_linea_base(item)
+		
+		print has_permiso
+		
+		return super(DetalleItemModelDecorator,self).\
+			check_permiso(id, permiso_name, has_permiso)
 
 	def replace(self,action, url, id):
 		return super(DetalleItemModelDecorator, self).replace( action, url,id,

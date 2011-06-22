@@ -612,10 +612,14 @@ class ItemController(RestController):
 		historial = DBSession.query(HistorialItem).get(id_historial)
 		item = DBSession.query(Item).get(historial.id_item)
 		# Se registra en el historial el item antes de ser revertido
-		if item.linea_base != None :
-			flash("El item pertenece a una linea base!", 'error')
-			redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
-
+		
+		linea_base = item.linea_base
+		if linea_base != None :
+			estado_linea_base = linea_base.estado
+			if(estado_linea_base.nombre == 'Cerrada' or estado_linea_base.nombre == 'Comprometida'):
+				flash("El item pertenece a una linea base Cerrada!", 'error')
+				redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
+				
 		item_util.audit_item(item)
 		#se revierte
 		item_util.revertir_item(historial)
