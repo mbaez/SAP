@@ -164,6 +164,7 @@ def cargar_estados():
     finalizado.descripcion = u'Estado que indica que un proyecto esta finalizado'
     model.DBSession.add(finalizado)
 
+    model.DBSession.flush()
     return inicial, desarrollo, cancelado, pausado, finalizado
 
 def cargar_permisos(group, group2, group3, group21, group31, group22,group23):
@@ -431,10 +432,10 @@ def setup_app(command, conf, vars):
     # Load the models
     engine = config['pylons.app_globals'].sa_engine
     print "Droping tables"
-    model.metadata.drop_all(engine)
+    #model.metadata.drop_all(engine)
     print "Finish..\nCreating tables"
     model.metadata.create_all(bind=engine)
-
+    """
     manager = model.Usuario()
     manager.user_name = u'admin'
     manager.nombre = u'Administrador'
@@ -465,11 +466,12 @@ def setup_app(command, conf, vars):
     estadoItem1,estadoItem2,estadoItem3, estadoItem4 = cargar_estados_item()
     #items
     cargar_items()
-	#relaciones
+    #relaciones
     cargar_relaciones()
     #Permisos del rol de proyecto
     cargar_permisos_proyecto(group21,group22,group23,group31)
     #estado linea base
     cargar_estado_lineabase()
+    """
     transaction.commit()
     print "Successfully setup"

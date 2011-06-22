@@ -442,14 +442,16 @@ class ItemUtil(Util):
 		historial.complejidad = item.complejidad
 		historial.descripcion = item.descripcion
 		historial.observacion = item.observacion
-		historial.id_linea_base = item.id_linea_base
-		#historial de detalles
-		detalles = DBSession.query(DetalleItem).\
-					filter(DetalleItem.id_item==historial.id_item).\
-					all()
-		for detalle in detalles:
+
+		#~ #historial de detalles
+		#~ detalles = DBSession.query(DetalleItem).\
+					#~ filter(DetalleItem.id_item==item.id_item).\
+					#~ all()
+
+		for detalle in item.detalles:
 			historial_detalle = HistorialDetalleItem()
 			historial_detalle.id_detalle = detalle.id_item_detalle
+			historial_detalle.id_atributo_tipo_item = detalle.id_atributo_tipo_item
 			historial_detalle.id_item = detalle.id_item
 			historial_detalle.adjunto = detalle.adjunto
 			historial_detalle.observacion = detalle.observacion
@@ -499,10 +501,16 @@ class ItemUtil(Util):
 		historial_detalles = DBSession.query(HistorialDetalleItem).\
 			filter(HistorialDetalleItem.id_historial == historial_item.id_historial_item).\
 			all()
-			
+
+
+		#variable para indexar las posiciones que corresponden a los valores
+		#de esa version
+		atributo_mapper = {}
+		index = 0
+
 		"""
 		Se establecen los detalles actuales del item a None
-		para que el item conserve los campos definidos por su tipo de 
+		para que el item conserve los campos definidos por su tipo de
 		item. El item recuperara los valores de la version a la cual se
 		quiere revertir
 		"""
@@ -510,19 +518,20 @@ class ItemUtil(Util):
 			detalle.valor = None
 			detalle.adjunto = None
 			detalle.observacion = None
-		
-		DBSession.merge(item)
-			
+			atributo_mapper[detalle.id_atributo_tipo_item] = index
+			index += 1
+
 		for hist_detalle in historial_detalles:
-			detalle = DetalleItem()
-			detalle.id_item_detalle = hist_detalle.id_detalle
-			detalle.id_item = hist_detalle.id_item
-			detalle.adjunto = hist_detalle.adjunto
-			detalle.observacion = hist_detalle.observacion
-			detalle.valor = hist_detalle.valor
-			DBSession.merge(detalle)
-			#item.detalles.append(detalle)
-		
+
+			index = atributo_mapper[hist_detalle.id_atributo_tipo_item]
+
+			item.detalles[index].adjunto = hist_detalle.adjunto
+			item.detalles[index].observacion = hist_detalle.observacion
+			item.detalles[index].valor = hist_detalle.valor
+
+		DBSession.merge(item)
+
+
 		print "Recuperar las relaciones"
 		#recuperar los relaciones
 		historial_relaciones = DBSession.query(HistorialRelacion).\
@@ -553,7 +562,7 @@ class ItemUtil(Util):
 		item.nombre = historial_item.nombre
 		item.codigo = historial_item.codigo
 		#el estado del item es en desarrollo al revivir
-		item.estado = estado_item_util.get_by_codigo('Revsion')
+		item.estado_actual = estado_item_util.get_by_codigo('Revision')
 		item.tipo_item = historial_item.tipo_item
 		item.fase = historial_item.fase
 		item.version = historial_item.version
@@ -561,20 +570,37 @@ class ItemUtil(Util):
 		item.complejidad = historial_item.complejidad
 		item.descripcion = historial_item.descripcion
 		item.observacion = historial_item.observacion
-		item.linea_base = historial_item.linea_base
+		item.linea_base = None
+
+		#se vacian los detalles
+		item.detalles = []
+		atributo_mapper = {}
+		#Se obtienen los atributos actuales del tipo de item al que pertenece
+		tipo_item = DBSession.query(TipoItem).get(historial_item.tipo_item)
+
+		for atributo in tipo_item.atributos:
+			detalle = DetalleItem()
+			detalle.id_item = historial_item.id_item
+			detalle.id_atributo_tipo_item = atributo.id_atributo_tipo_item
+			detalle.adjunto = None
+			detalle.valor = None
+
+			atributo_mapper[atributo.id_atributo_tipo_item] = len(item.detalles)
+
+			item.detalles.append(detalle)
 
 		#recuperar los detalles
 		historial_detalles = DBSession.query(HistorialDetalleItem).\
 			filter(HistorialDetalleItem.id_item==historial_item.id_item).\
 			all()
 
+		#Se setean los valores a los atributos ya existentes
 		for hist_detalle in historial_detalles:
-			detalle = DetalleItem()
-			detalle.id_detalle = hist_detalle.id_detalle
-			detalle.id_item = hist_detalle.id_item
-			detalle.recurso = hist_detalle.recurso
-			detalle.valor = hist_detalle.valor
-			item.detalles.append(detalle)
+			#Se obtiene el indice correspondiente al atributo del tipo de item
+			index = atributo_mapper[hist_detalle.id_atributo_tipo_item]
+
+			item.detalles[index].adjunto = hist_detalle.adjunto
+			item.detalles[index].valor = hist_detalle.valor
 
 		DBSession.merge(item)
 
@@ -623,7 +649,7 @@ class ItemUtil(Util):
 		items = []
 		for item in items_aprobados:
 			linea_base = item.linea_base
-			
+
 			if(linea_base == None):
 				items.append(item)
 			else:
@@ -632,16 +658,16 @@ class ItemUtil(Util):
 					items.append(item)
 
 		return items
-	
+
 	def verificar_linea_base(self, item):
 		"""
-		Verifica si un item no pertenece a una linea base o si no 
+		Verifica si un item no pertenece a una linea base o si no
 		pertenece a una linea base Comprometida o Cerrdada
 		"""
 		linea_base = item.linea_base
 		if(linea_base == None):
 			return True
-			
+
 		estado_linea_base = linea_base.estado
 		if(estado_linea_base.nombre == "Cerrada" or \
 			estado_linea_base.nombre == "Comprometida"):
@@ -649,7 +675,7 @@ class ItemUtil(Util):
 			return False
 		elif(estado_linea_base.nombre == "Abierta"):
 			return True
-			
+
 class TipoItemUtil(Util):
 
 	def __init__(self):

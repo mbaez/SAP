@@ -264,7 +264,7 @@ class ItemController(RestController):
 
 		#estado muerto
 		item.estado = 4
-		util.audit_item(item)
+		item_util.audit_item(item)
 		relaciones = DBSession.query(RelacionItem).\
 								filter((RelacionItem.id_item_actual or\
 								RelacionItem.id_item_actual) == id_item).\
@@ -612,14 +612,14 @@ class ItemController(RestController):
 		historial = DBSession.query(HistorialItem).get(id_historial)
 		item = DBSession.query(Item).get(historial.id_item)
 		# Se registra en el historial el item antes de ser revertido
-		
+
 		linea_base = item.linea_base
 		if linea_base != None :
 			estado_linea_base = linea_base.estado
 			if(estado_linea_base.nombre == 'Cerrada' or estado_linea_base.nombre == 'Comprometida'):
 				flash("El item pertenece a una linea base Cerrada!", 'error')
 				redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
-				
+
 		item_util.audit_item(item)
 		#se revierte
 		item_util.revertir_item(historial)
@@ -728,7 +728,7 @@ class ItemController(RestController):
 	def revivir(self, id_historial):
 		historial = DBSession.query(HistorialItem).get(id_historial)
 		#se revive el item a partir de su historial
-		util.revivir_item(historial)
+		item_util.revivir_item(historial)
 		#se elimina el historial del item muerto
 		DBSession.delete(historial)
 		redirect("/miproyecto/fase/item/ver/"+str(historial.id_item))

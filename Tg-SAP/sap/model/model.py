@@ -267,7 +267,8 @@ class DetalleItem(DeclarativeBase):
 	id_item = Column ('id_item', Integer, ForeignKey ('item.id_item'))
 
 	id_atributo_tipo_item = Column( 'id_atributo_tipo_item', Integer,
-							ForeignKey ('atributo_tipo_item.id_atributo_tipo_item'))
+							ForeignKey ('atributo_tipo_item.id_atributo_tipo_item'),
+							nullable=False)
 
 	#{Relation
 
@@ -318,9 +319,7 @@ class HistorialItem(DeclarativeBase):
 
 	tipo_item = Column ('id_tipo_item', Integer, nullable=False)
 
-	#linea_base = Column ('id_linea', Integer)
-	id_linea_base = Column ('id_linea_base', Integer,
-					ForeignKey('linea_base.id_linea_base'))
+	id_linea_base = Column ('id_linea_base', Integer)
 
 	fase = Column ('id_fase', Integer, nullable=False)
 
@@ -355,6 +354,8 @@ class HistorialDetalleItem(DeclarativeBase):
 	observacion = Column ('observacion', Unicode(100))
 
 	valor = Column('valor', Unicode(200))
+
+	id_atributo_tipo_item = Column('id_atributo_tipo_item', Integer, nullable=False)
 
 class HistorialRelacion(DeclarativeBase):
 	__tablename__ = 'historial_relacion'
