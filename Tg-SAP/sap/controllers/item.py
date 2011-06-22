@@ -254,8 +254,8 @@ class ItemController(RestController):
 			redirect('/miproyecto/fase/item/error')
 
 		#validar que no pertenezca a una linea base
-		if item.linea_base != None:
-			flash('El item pertence a un linea base y no puede ser eliminado')
+		if (not item_util.verificar_linea_base(item)):
+			flash('El item pertence a un linea base Cerrada y no puede ser eliminado')
 			redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
 
 		if self.deja_huerfanos(item):
