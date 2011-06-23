@@ -9,6 +9,20 @@ from sap.model import *
 #import para la generacion del codigo
 import time
 
+#imports para graficar los grafos
+#import de la libreria de grafo
+from sap.lib.pygraph.classes.digraph import *
+from sap.lib.pygraph.algorithms.cycles import *
+from sap.lib.pygraph.readwrite.dot import write
+# Import graphviz
+
+import sys
+sys.path.append('..')
+sys.path.append('/usr/lib/graphviz/python/')
+sys.path.append('/usr/lib64/graphviz/python/')
+import gv
+import pygraphviz as pgv
+
 """Modulo que contiene un conjunto de metodos de uso frecuente
 
    :author: Maximiniliano Baez Gonzalez
@@ -675,6 +689,348 @@ class ItemUtil(Util):
 			return False
 		elif(estado_linea_base.nombre == "Abierta"):
 			return True
+
+
+	def deja_huerfanos (self, item):
+		relaciones = DBSession.query(RelacionItem).\
+					filter(RelacionItem.id_item_actual==item.id_item).\
+					all()
+		#por cada sucesor se obtienen
+		for relacion in relaciones:
+			antecesores = self.get_incidentes(relacion.id_item_relacionado)
+			if(len(antecesores) == 1):
+				return True
+
+		return False
+
+
+	"""
+	metodo que retorna los antecesores de un item.
+	parametros:
+	- id_item Integer
+	retorna:
+	- antecesores : List []
+	"""
+	def get_incidentes (self, id_item):
+		#lista de padres
+		antecesores = []
+		#relaciones
+		relaciones = []
+
+		#se obtienen todas las relaciones del item. Si el id de la relacion
+		#hijo-padre es 1 se obtienen todas las relaciones de este tipo que
+		#tiene el item actual
+		relaciones = DBSession.query(RelacionItem).\
+			filter(RelacionItem.id_item_relacionado==id_item).\
+			all()
+
+		for relacion in relaciones:
+			antecesores.append(relacion.id_item_actual)
+
+		return antecesores
+
+	"""
+	metodo que retorna el padres de un item.
+	parametros:
+	- item Item
+	retorna:
+	- item Item
+	"""
+	def getPadre (self, item):
+		#lista de padres
+		padre = []
+		#relaciones
+		relacion = []
+
+		#se obtienen todas las relaciones del item. Si el id de la relacion
+		#hijo-padre es 1 se obtienen todas las relaciones de este tipo que
+		#tiene el item actual
+		relacion = DBSession.query(RelacionItem).\
+			filter(RelacionItem.id_item_relacionado==item.id_item).\
+			filter(RelacionItem.relacion_parentesco==1).\
+			first()
+
+		padre = DBSession.query(Item).get(relacion.id_item_actual)
+		return padre
+
+	"""
+	metodo que retorna los items aprobados de una fase.
+	parametros:
+	- idfase Integer
+	retorna:
+	- List[] Item
+	"""
+	def getItemsAprobados (self, idfase):
+		#lista de items aprobados de la fase. Suponiendo que el id del estado "aprobado"
+		#sea 1
+		itemsAprobados = DBSession.query(Item).filter(Item.fase==idfase).\
+												filter(Item.estado_item==1).\
+												all()
+		return itemsAprobados
+
+	"""
+	Construye el grafo completo del proyecto con las todas las relaciones
+	parametros:
+	idproyecto: Integer
+	retorna:
+	grafo: digraph
+	"""
+	def proyectGraphConstructor(self, idproyecto):
+		fases = DBSession.query(Fase).filter(Fase.proyecto==idproyecto).all()
+		grafo = digraph()
+		items = []
+		itemsId = []
+
+		#se "obtienen los items de cada fase
+		for fase in fases:
+			items = items + list(DBSession.query(Item).filter(Item.fase==fase.id_fase))
+
+		for item in items:
+			grafo.add_nodes([item.id_item])
+
+		#guardar los ids de los items
+		for item in items:
+			itemsId = itemsId + [item.id_item]
+ 		"""
+		Se busca en la tabla RelacionItem todas las relaciones
+		que contengan a los items del proyecto
+		"""
+		relaciones = DBSession.query(RelacionItem).\
+						filter((RelacionItem.id_item_actual).in_(itemsId)).\
+						all()
+
+		#Se añaden las aristas entre los items relacionados
+		for relacion in relaciones:
+			grafo.add_edge((relacion.id_item_actual,relacion.id_item_relacionado))
+
+
+		return grafo
+
+	"""
+	construye el grafo "Padre-Hijo" dentro de una fase
+	parametros:
+	- idfase Integer
+	retorna:
+	- grafo digraph (grafo dirigido)
+	"""
+	def faseGraphConstructor(self, idfase):
+		#lista de items para el grafo
+		items = DBSession.query(Item).filter(Item.fase==idfase).all()
+		itemsId = []
+
+		"""
+		Todos los items de la fase forman parte del grafo (item = nodo)
+		"grafo" es un grafo dirigido que representa las relaciones padre-hijo
+		en una fase.
+		"""
+		grafo = digraph()
+		for item in items:
+			grafo.add_nodes([item.id_item])
+
+		"""
+		Se busca en la tabla RelacionItem todas las relaciones de padre-hijo
+		que contengan a los items de la fase
+		"""
+		#guardar los ids de los items
+		for item in items:
+			itemsId = itemsId + [item.id_item]
+
+		relaciones = DBSession.query(RelacionItem).\
+						filter(RelacionItem.relacion_parentesco==1).\
+						filter(RelacionItem.id_item_actual.in_(itemsId)).\
+						filter(RelacionItem.id_item_relacionado.in_(itemsId)).\
+						all()
+
+		#Se añaden las aristas entre los items relacionados
+		for relacion in relaciones:
+			grafo.add_edge((relacion.id_item_actual,relacion.id_item_relacionado))
+
+		return grafo
+
+	"""
+	metodo para verificar si una nueva relacion provoca un ciclo
+	parametros:
+	- nuevaRelacion tipo RelacionItem
+	- idfase tipo Integer
+	retorna
+		List [] si no tiene ciclo
+		List [edges] los enlaces que forman el ciclo
+	"""
+	def ciclo (self, id1, id2, idfase):
+		grafo = self.faseGraphConstructor(idfase)
+		if(grafo.has_edge((id1,id2))):
+			return []
+		grafo.add_edge((id1,id2))
+		return cycle(grafo)
+
+	"""
+	metodo que calcula el impacto de la modificacion de un item
+	parametros:
+	- itemId tipo Integer
+	- grafo del proyecto
+	retorna:
+	- valorImpacto Tipo Integer
+	"""
+	def calcular_impacto(self, grafo, itemId):
+		"""
+		obtener la lista de todos antecesores directos e indirectos
+		el list(set()) es para que elimine los repetidos
+		los metodos listBackwards y listForward retornan listas con elementos
+		repetidos.
+		"""
+		antecesores = list(set(self.listBackward(grafo, grafo.incidents(itemId))))
+		"""
+		se añade a la lista el propio item
+		"""
+		item = [itemId]
+		"""
+		obtener la lista de todos sucesores directos e indirectos
+		"""
+		sucesores = list(set(self.listForward(grafo, grafo.neighbors(itemId))))
+
+		#suma de listas
+		impactoList = antecesores + item + sucesores
+
+		valorImpacto = 0;
+		for idItem in impactoList:
+			itemActual = DBSession.query(Item).get(idItem)
+			valorImpacto = valorImpacto + itemActual.complejidad
+
+		return valorImpacto, impactoList
+
+	"""
+	metodo recursivo para obtener la lista de sucesores del item
+	TODO que ya filtre los repetidos
+	parametros:
+	- grafo digraph
+	- items List[Item]
+	retorna
+	List[Item]
+	"""
+	def listForward(self, grafo, items):
+		if(len(items)==0):
+			return []
+		if(len(items)==1 and len(grafo.neighbors(items[0])) == 0):
+			return [items[0]]
+		lista = []
+		for item in items:
+			if(item in lista):
+				lista = lista + self.listForward(grafo, grafo.neighbors(item))
+			else:
+				lista = lista + self.listForward(grafo, grafo.neighbors(item)) + [item]
+
+		return lista
+
+	"""
+	metodo recursivo para obtener la lista de antecesores del item
+	TODO que ya filtre los repetidos
+	parametros:
+	- grafo digraph
+	- items List[Item]
+	retorna
+	List[Item]
+	"""
+	def listBackward(self, grafo, items):
+		if(len(items)==0):
+			return []
+		if(len(items)==1 and len(grafo.incidents(items[0]))==0):
+			return [items[0]]
+
+		lista = []
+		for item in items:
+			if(item in lista):
+				lista = lista + self.listBackward(grafo, grafo.incidents(item))
+			else:
+				lista = lista + self.listBackward(grafo, grafo.incidents(item)) + [item]
+
+		return lista
+
+	def marcar_en_revision(self, grafo, itemId):
+		"""
+		Se marca en revision los items relacionados hacia atras y adelante.
+		Las lineas base de los items relacionados se marcan con estado
+		Comprometida.
+		obtener la lista de todos antecesores directos e indirectos
+		el list(set()) es para que elimine los repetidos
+		los metodos listBackwards y listForward retornan listas con elementos
+		repetidos.
+		"""
+		antecesores = list(set(self.listBackward(grafo, grafo.incidents(itemId))))
+		"""
+		se añade a la lista el propio item
+		"""
+		item = [itemId]
+		"""
+		obtener la lista de todos sucesores directos e indirectos
+		"""
+		sucesores = list(set(self.listForward(grafo, grafo.neighbors(itemId))))
+
+		#suma de listas
+		items = antecesores + item + sucesores
+		relacionados = antecesores + sucesores
+
+		for id_item in items:
+			item_actual = DBSession.query(Item).get(id_item)
+			item_actual.estado = 3
+			DBSession.merge(item_actual)
+
+		# Se marca con estado comprometido cada linea base de los items
+		# sucesores y antecesores.
+		if(relacionados != None):
+			for id_item in relacionados:
+				item_actual = DBSession.query(Item).get(id_item)
+				if item_actual.linea_base != None:
+					linea_base = item_actual.linea_base #DBSession.query(LineaBase).get(item_actual.id_linea_base)
+					linea_base.estado = estado_linea_base_util.get_by_codigo('Comprometida')
+					DBSession.merge(linea_base)
+
+			flash('Lineas base comprometidas')
+		else:
+			flash('El item no posee relaciones')
+
+	def dibujar_grafo(self, nodos, item_impacto):
+		fase = DBSession.query(Fase).get(item_impacto.fase)
+		fases = DBSession.query(Fase).filter(Fase.proyecto==fase.proyecto).\
+										all()
+		desplazamiento_x = []
+		for i in fases:
+			desplazamiento_x.append(i.id_fase)
+
+		desplazamiento_y = []
+		for i in range(len(fases)):
+			desplazamiento_y.append(0)
+
+		gr = pgv.AGraph(directed=True, label="Grafico calculo de impacto")
+		for nodo in nodos:
+			item = DBSession.query(Item).get(nodo)
+			valor = str(item.codigo)+" : "+str(item.complejidad)
+			index = desplazamiento_x.index(item.fase)
+			posicion =  str(index*2)+','+str(90-desplazamiento_y[index]*2)
+			desplazamiento_y[index] = desplazamiento_y[index] + 1
+			url= "/miproyecto/fase/item/ver/"+str(item.id_item)
+			if(nodo == item_impacto.id_item):
+				gr.add_node(valor, label=valor, fillcolor='#008ee8',
+					style="filled", pos=posicion, href=url, pin=True)
+			else:
+				gr.add_node(valor, label=valor, fillcolor='white',
+					style="filled", pos=posicion, href=url, pin=True)
+
+		#relaciones son aristas
+		aristas = DBSession.query(RelacionItem).\
+						filter(RelacionItem.id_item_actual.in_(nodos)).\
+						filter(RelacionItem.id_item_relacionado.in_(nodos)).\
+						all()
+		for arista in aristas:
+			if(gr.has_edge((arista.id_item_actual, arista.id_item_relacionado))==False):
+				item1 = item = DBSession.query(Item).get(arista.id_item_actual)
+				item2 = item = DBSession.query(Item).get(arista.id_item_relacionado)
+				valor1 = str(item1.codigo)+" : "+str(item1.complejidad)
+				valor2 = str(item2.codigo)+" : "+str(item2.complejidad)
+				gr.add_edge((valor1, valor2), color='#8dad48', href="/")
+
+		gr.layout()
+		gr.draw('sap/public/img/calculo_impacto.svg')
+
 
 class TipoItemUtil(Util):
 

@@ -4,16 +4,18 @@
       xmlns:py="http://genshi.edgewall.org/"
       xmlns:xi="http://www.w3.org/2001/XInclude"
       py:strip="">
-    <xi:include href="header.html" />
-
-    <xi:include href="footer.html" />
-
+	<xi:include href="header.html" />
+	<xi:include href="footer.html" />
 	<head py:match="head" py:attrs="select('@*')">
 		<meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
 		<title py:replace="''">Sistema de Administraci&oacute;n de Proyectos</title>
 		<meta py:replace="select('*')"/>
 		<link rel="stylesheet" type="text/css" media="screen" href="${tg.url('/css/master.css')}" />
 	</head>
+	<script type="text/javascript" src="/jquery/jquery.js"></script>
+	<script type="text/javascript" src="/jquery/table.sorter.js" ></script>
+	<script type="text/javascript" src="/jquery/table.filter.js" ></script>
+	<script type="text/javascript" src="/jquery/table.filter_and_sorter.js " ></script>
 
 <body py:match="body" py:attrs="select('@*')">
 <div id="container">

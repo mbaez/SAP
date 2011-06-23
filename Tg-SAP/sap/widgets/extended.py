@@ -160,10 +160,10 @@ class ExtendedItemDeFaseAnteriorField(PropertySingleSelectField):
 			#pertenezcan a una linea base "cerrada"
 			for item in items_fase_anterior:
 				if (item.linea_base != None):
-					linea = DBSession.query(LineaBase).get(item.linea_base)
+
 					#se pregunta si esta cerrada la linea
-					if(linea.id_estado_linea_base == 2):
-						item_list = item_list + item
+					if(item.linea_base.id_estado_linea_base == 2):
+						item_list = item_list + [item]
 
 			items = items + item_list
 		else:

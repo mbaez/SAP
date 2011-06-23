@@ -85,6 +85,27 @@ class NewItemForm(ExtendedAddRecordForm):
 	tipo_item_relacion = ExtendedTipoItemField
 	relaciones = ExtendedItemDeFaseAnteriorField
 
+	opciones_prioridad = ((1,"Muy Baja"),
+						 (2,"Baja"),
+						 (3,"Media"),
+						 (4,"Alta"),
+						 (5,"Muy alta"))
+
+	prioridad = SingleSelectField('prioridad', options=opciones_prioridad)
+
+	opciones_complejidad = ((1,"1"),
+						 (2,"2"),
+						 (3,"3"),
+						 (4,"4"),
+						 (5,"5"),
+						 (6,"6"),
+						 (7,"7"),
+						 (8,"8"),
+						 (9,"9"),
+						 (10,"10"))
+
+	complejidad = SingleSelectField('complejidad',options=opciones_complejidad)
+
 new_item_form = NewItemForm(DBSession)
 
 ####################################################

@@ -61,7 +61,7 @@ class ProyectosController(RestController):
 		value = fase_filler.get_value(fases)
 
 		proyecto = proyecto_util.get_current(idproyecto)
-		
+
 		usuarios = usuario_util.get_usuarios_by_permiso(idproyecto)
 		text_header='Listado de Fases del Proyecto'
 
@@ -69,10 +69,12 @@ class ProyectosController(RestController):
 		#establecida
 		limite_fase = DBSession.query(Fase).\
 									filter(Fase.proyecto==idproyecto).\
-									all().count(Fase.id_fase)
-		
+									all()
+
+		limite_fase = len(limite_fase)
+
 		permiso = 'crear_fase'
-		print "LIMITE "+ str(proyecto.nro_fases)
+		#print "LIMITE "+ str(limite_fase)
 		if (proyecto.nro_fases == limite_fase):
 			permiso = 'NO MOSTRAR BOTON NUEVO'
 

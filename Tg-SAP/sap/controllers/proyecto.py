@@ -65,7 +65,7 @@ class ProyectoController(RestController):
 		util.asignar_lider(proy)
 
 		flash("El proyecto ha sido creado correctamente.")
-		redirect("/administracion/proyecto/list")
+		redirect("/administracion/proyecto/")
 
 	"""
 	Encargado de carga el widget para editar las instancias,

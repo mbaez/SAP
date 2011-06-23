@@ -92,12 +92,27 @@ class RelacionController(RestController):
 	@expose()
 	@require(predicates.has_permission('editar_item'))
 	def borrarRelacion(self, item1, item2, idfase, **kw):
+
 		DBSession.delete(DBSession.query(RelacionItem).\
 					filter(RelacionItem.id_item_actual==item1).\
 					filter(RelacionItem.id_item_relacionado==item2).\
 					one())
 		flash("Se ha eliminado la relacion: "+item1+" <--> "+item2)
 		redirect("/miproyecto/fase/relacion/list/"+idfase)
+
+	def puede_borrar(self, item1, item2, idfase):
+		item = DBSession.query(Item).get(item2)
+		fase_actual = DBSession.query(Fase).get(item.fase)
+		fases_de_proyecto = DBSession.query(Fase).\
+								filter(Fase.proyecto == fase_actual.proyecto).\
+								order_by(Fase.id_fase).\
+								all()
+		primera_fase = False
+		if fase_actual.id_fase == fases_de_proyecto[0].id_fase:
+			return True
+
+
+
 
 	@expose('sap.templates.fase')
 	@require(predicates.has_permission('editar_item'))

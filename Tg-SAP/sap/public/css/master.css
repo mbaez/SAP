@@ -2312,3 +2312,6 @@ select[size], select[multiple], select[size][multiple] {
 	width:40px;
 }
 
+#inner-content td input[type="text"] {
+	width: 100%;
+}

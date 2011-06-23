@@ -46,7 +46,7 @@ class LineaBaseController(RestController):
 
 		items = item_util.get_items_aprobados(idfase)
 		if items == []:
-			flash('No hay items aprobados en esta fase')
+			flash('No hay items aprobados en esta fase', "warning")
 			redirect("/miproyecto/fase/linea_base/list/"+str(idfase))
 			return
 		for i in items:

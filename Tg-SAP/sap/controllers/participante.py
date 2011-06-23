@@ -118,7 +118,7 @@ class ParticipanteFaseController(RestController):
 		NewFaseParticipanteFrom.fields = []
 
 		for usuario in _usuarios :
-			NewFaseParticipanteFrom.fields.append(CheckBox(usuario.nombre))
+			NewFaseParticipanteFrom.fields.append(CheckBox(usuario.user_name))
 
 		new_participante_form = NewFaseParticipanteFrom("new_participante_form",action = 'post')
 
@@ -129,7 +129,7 @@ class ParticipanteFaseController(RestController):
 		"""
 		usuarios = util.get_usuarios_by_fase(fase.id_fase)
 		for usuario in usuarios :
-			kw[usuario.nombre] = True
+			kw[usuario.user_name] = True
 
 		self.params['fase'] = fase
 		self.params['usuarios'] = usuarios
@@ -170,13 +170,11 @@ class ParticipanteFaseController(RestController):
 
 		usuarios = []
 		for key in kw:
-			print "KEY:"+str(key)
 			usuarios.append(key)
 
-		list = DBSession.query(Usuario).filter(Usuario.nombre.in_(usuarios) ).\
-											all()
+		list = DBSession.query(Usuario).\
+				filter(Usuario.user_name.in_(usuarios)).all()
 		for usuario in list:
-			print "Add User:"+str(usuario)
 			util.asociar_usuario_fase(usuario.usuario_id, fase.id_fase)
 
 		redirect("/miproyecto/fase/get_all/" + str(fase.id_fase) )

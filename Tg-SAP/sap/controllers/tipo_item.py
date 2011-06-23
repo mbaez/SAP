@@ -205,7 +205,7 @@ class TipoItemController(RestController):
 		copia_tipo.nombre = tipo.nombre
 		copia_tipo.descripcion = tipo.descripcion
 		copia_tipo.fase = idfase
-		copia_tipo.codigo = tipo_item_util.gen_codigo('TIPO_ITEM')
+		copia_tipo.codigo = tipo_item_util.gen_codigo('TIPOITEM')
 		"""
 		Se settean los valores para cada copia_atributo
 

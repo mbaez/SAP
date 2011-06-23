@@ -5,6 +5,8 @@ from sap.widgets.extended import ExtendedEditableForm
 from sprox.formbase import EditableForm
 from sprox.fillerbase import EditFormFiller
 from tw.forms import PasswordField, FileField
+from tw.forms import TableForm, SingleSelectField
+from sap.widgets.extended import *
 
 ####################################################
 # Widgets del Usuario
@@ -98,7 +100,30 @@ class ItemEditForm(ExtendedEditableForm):
 	__omit_fields__ = ['tipo_item_relacion','tipo_item', '__actions__',
 					'id_item', 'fase', 'version','estado', 'linea_base',
 					'estado_actual', 'id_linea_base' , 'detalles', 'relaciones_id',
-					'relaciones','fase_actual']
+					'fase_actual']
+
+	relaciones = ExtendedItemDeFaseAnteriorField
+
+	opciones_prioridad = ((1,"Muy Baja"),
+						 (2,"Baja"),
+						 (3,"Media"),
+						 (4,"Alta"),
+						 (5,"Muy alta"))
+
+	prioridad = SingleSelectField('prioridad', options=opciones_prioridad)
+
+	opciones_complejidad = ((1,"1"),
+						 (2,"2"),
+						 (3,"3"),
+						 (4,"4"),
+						 (5,"5"),
+						 (6,"6"),
+						 (7,"7"),
+						 (8,"8"),
+						 (9,"9"),
+						 (10,"10"))
+
+	complejidad = SingleSelectField('complejidad',options=opciones_complejidad)
 
 item_edit_form = ItemEditForm(DBSession)
 
