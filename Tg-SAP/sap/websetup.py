@@ -435,7 +435,7 @@ def setup_app(command, conf, vars):
     #model.metadata.drop_all(engine)
     print "Finish..\nCreating tables"
     model.metadata.create_all(bind=engine)
-    """
+    
     manager = model.Usuario()
     manager.user_name = u'admin'
     manager.nombre = u'Administrador'
@@ -472,6 +472,6 @@ def setup_app(command, conf, vars):
     cargar_permisos_proyecto(group21,group22,group23,group31)
     #estado linea base
     cargar_estado_lineabase()
-    """
+    
     transaction.commit()
     print "Successfully setup"
