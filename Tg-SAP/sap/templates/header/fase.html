@@ -61,7 +61,7 @@
 
 				<li py:for="usuario in params['usuarios']">
 					<img src="/img/saved_resource" alt="">${usuario.user_name}
-						<div class="member-edit">
+						<div class="member-edit" py:if="params['permiso_anadir']" >
 							<a href="/miproyecto/fase/participantes/delete/${params['idfase']}/${usuario.usuario_id}">Delete</a>
 						</div>
 					</img>

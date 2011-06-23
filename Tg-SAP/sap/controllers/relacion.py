@@ -93,6 +93,10 @@ class RelacionController(RestController):
 	@require(predicates.has_permission('editar_item'))
 	def borrarRelacion(self, item1, item2, idfase, **kw):
 
+		if not self.puede_borrar(item1, item2, idfase):
+			flash ("No se peude borrar la relacion! deja huerfanos", 'warning')
+			redirect("/miproyecto/fase/relacion/list/"+idfase)
+
 		DBSession.delete(DBSession.query(RelacionItem).\
 					filter(RelacionItem.id_item_actual==item1).\
 					filter(RelacionItem.id_item_relacionado==item2).\
@@ -111,6 +115,10 @@ class RelacionController(RestController):
 		if fase_actual.id_fase == fases_de_proyecto[0].id_fase:
 			return True
 
+		if len(item_util.get_incidentes(item2)) == 1:
+			return False
+
+		return True
 
 
 

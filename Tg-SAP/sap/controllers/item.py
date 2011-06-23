@@ -27,9 +27,8 @@ from sap.widgets.editform import *
 from sap.lib.base import BaseController
 from sap.model import *
 from sap.model import DBSession, metadata
-#from sap.controllers.item_detalles import ItemDetallesController
+
 from sap.controllers.item_detalle import *
-from sap.controllers.checker import *
 from tg.controllers import RestController
 
 from sap.controllers.util import *
@@ -97,9 +96,7 @@ class ItemController(RestController):
 		new_item_form.tipo_item_relacion.idfase = idfase
 		new_item_form.relaciones.idfase = idfase
 		tmpl_context.widget = new_item_form
-		#se recomienda al usuario un codigo autogenerado
-		#kw['codigo'] = util.gen_codigo('item')
-		header_file = "abstract"
+		header_file = "item"
 		self.params['title'] = 'Nuevo Item'
 		self.params['modelname'] = 'Item'
 		self.params['header_file'] = 'abstract'
@@ -251,7 +248,7 @@ class ItemController(RestController):
 			DBSession.flush()
 
 		else:
-			if relacion != None:
+			if relacion != []:
 				DBSession.delete(relacion[0])
 
 		fase = DBSession.query(Fase).get(item.fase)

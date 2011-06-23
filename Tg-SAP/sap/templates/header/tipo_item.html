@@ -4,21 +4,30 @@
       xmlns:py="http://genshi.edgewall.org/"
       xmlns:xi="http://www.w3.org/2001/XInclude"
       py:strip="">
-      
+
 <py:def function="sub_header">
 <header class="content-header">
 	<nav>
-		<ul> 
+		<ul>
 			<li id="nav-dashboard" class="first">
 				<a href="/proyectos">Inicio</a>
-			</li> 
+			</li>
 			<li id="nav-agenda" py:if="tg.predicates.has_permission('crear_tipo_item')" >
 				<a href="/miproyecto/fase/tipo_item/importar/${params['idfase']}">Importar Tipos de Item</a>
 			</li>
-			
+
 		</ul>
 	</nav>
 </header>
-
 </py:def>
+
+<py:def function="come_history">
+	<h2 class="module-title" py:if="request.identity" id="login" >
+		<a href="/proyectos">Proyectos </a>
+		<a href="/miproyecto/ver/${params['fase'].proyecto}">Fases </a>
+		<a href="/miproyecto/fase/tipo_item/list/${params['fase'].id_fase}">Tipos de Items </a>
+		${params['current_name']}
+	</h2>
+</py:def>
+
 </html>

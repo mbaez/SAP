@@ -22,6 +22,8 @@ sys.path.append('/usr/lib/graphviz/python/')
 sys.path.append('/usr/lib64/graphviz/python/')
 import gv
 import pygraphviz as pgv
+#import para el item util
+from tg import flash
 
 """Modulo que contiene un conjunto de metodos de uso frecuente
 
@@ -1126,14 +1128,47 @@ class UsuarioUtil(Util):
 					filter(UsuarioPermisoFase.permiso_id == Permiso.permiso_id).\
 					filter(Permiso.nombre == permiso_name).all()
 		#Si el usuairo es lider del proyecto se saltan los controles
-		user = self.get_current()
-		fase = fase_utl.get_current(id)
+		user = session_util.get_current_user()
+		fase = fase_util.get_current(id)
 		rol = rol_util.get_by_codigo('lider_' + str(fase.proyecto))
 
 		if self.usuario_has_rol(user.usuario_id, rol ):
 			usuarios.append(user)
 
 		return self.distinct(usuarios)
+
+	def asociar_usuario_fase(self, usuario_id, fase_id):
+		"""
+		Asocia los permisos de un usuario con una fase, asi los usuarios que posean
+		el rol estaran asociados a la fase.
+
+		@type  usuario_id  : String
+		@param usuario_id : Codigo del rol
+
+		@type  fase_id   : Integer
+		@param fase_id   : Identificador de la fase
+
+		@rtype  : Rol
+		@return : El rol que es aplicado a la fase.
+		"""
+
+		fase = DBSession.query(Fase).get(fase_id)
+		#Se obtienen los permisos del template
+		permisos_rol = self.distinct(DBSession.query(Permiso).\
+						filter(RolPermisoProyecto.permiso_id == Permiso.permiso_id).\
+						filter(RolPermisoProyecto.proyecto_id == fase.proyecto)
+						)
+
+		#Se se asocian el rol con la fase
+		for permiso in permisos_rol:
+
+			rpu = UsuarioPermisoFase()
+
+			rpu.fase_id = fase_id
+			rpu.usuario_id = usuario_id
+			rpu.permiso_id = permiso.permiso_id
+			#Asocia el rol con los permisos y la fase
+			DBSession.add(rpu)
 
 class EstadoItemUtil(Util):
 	def __init__(self):

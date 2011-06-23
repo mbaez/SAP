@@ -40,6 +40,10 @@ class AtributoController(RestController):
 		self.params['modelname'] = "Atributos del Tipo de Item"
 		self.params['idtipo'] = idtipo
 		self.params['tipo_item'] = DBSession.query(TipoItem).get(idtipo)
+		self.params['current_name'] = self.params['tipo_item'].nombre
+		id_fase = self.params['tipo_item'].fase
+		self.params['fase'] = DBSession.query(Fase).get(id_fase)
+		self.params['idfase'] = id_fase
 		self.params['header_file'] = 'tipo_item'
 		self.params['cancelar_url'] = '/miproyecto/fase/tipo_item/atributos/list/'+str(idtipo)
 		return dict(value=kw, params=self.params)
@@ -58,9 +62,9 @@ class AtributoController(RestController):
 		atributo_tipo_item.nombre = kw['nombre']
 		atributo_tipo_item.tipo_id = kw['tipo']
 		DBSession.add(atributo_tipo_item)
-		
+
 		items = DBSession.query(Item).filter(Item.tipo_item==idtipo)
-		
+
 		for item in items :
 			detalle = DetalleItem()
 			detalle.nombre = atributo_tipo_item.nombre
@@ -70,7 +74,7 @@ class AtributoController(RestController):
 			item.detalles.append(detalle)
 			DBSession.merge(item)
 		DBSession.flush()
-		
+
 		flash("El Atributo del tipo de Item ha sido creado correctamente")
 		redirect('/miproyecto/fase/tipo_item/atributos/'+idtipo+'/new')
 

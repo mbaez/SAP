@@ -13,8 +13,6 @@ from sap.model import DBSession, metadata
 from sap.widgets.listform import *
 from sap.widgets.editform import *
 from sap.widgets.createform import *
-#impot del checker de permisos
-from sap.controllers.checker import *
 
 from sap.controllers.util import *
 
@@ -55,11 +53,11 @@ class ParticipanteFaseController(RestController):
 		#para saber si mostrar o no el boton anhdir participante
 		permiso_anadir = fase_util.check_fase_permiso(id,
 											'administrar_participantes')
-		usuarios = util.get_usuarios_by_fase(id)
+		usuarios = usuario_util.get_usuarios_by_fase(id)
 
 		tmpl_context.widget = participantes_table
 		fase = fase_util.get_current(id)
-		roles = util.get_roles_by_proyectos(fase.proyecto)
+		roles = rol_util.get_roles_by_proyectos(fase.proyecto)
 		value = participantes_fase_filler.get_value(roles)
 
 		self.params['permiso_editar'] = permiso_editar
@@ -79,10 +77,10 @@ class ParticipanteFaseController(RestController):
 		#para saber si mostrar o no el boton anhdir participante
 		permiso_anadir = fase_util.check_fase_permiso(id,
 											'administrar_participantes')
-		usuarios = util.get_usuarios_by_fase(id)
+		usuarios = usuario_util.get_usuarios_by_fase(id)
 
 		fase = fase_util.get_current(id)
-		roles = util.get_roles_by_proyectos(fase.proyecto)
+		roles = rol_util.get_roles_by_proyectos(fase.proyecto)
 
 		self.params['permiso_editar'] = permiso_editar
 		self.params['permiso_anadir'] = permiso_anadir
@@ -127,7 +125,7 @@ class ParticipanteFaseController(RestController):
 		Se marcan como seleccionados todos los usuarios que ya se encuentran
 		asociados a la fase
 		"""
-		usuarios = util.get_usuarios_by_fase(fase.id_fase)
+		usuarios = usuario_util.get_usuarios_by_fase(fase.id_fase)
 		for usuario in usuarios :
 			kw[usuario.user_name] = True
 
@@ -155,7 +153,7 @@ class ParticipanteFaseController(RestController):
 			redirect('/miproyecto/fase/participantes/error')
 
 		for usuario_id in kw['usuarios'] :
-			util.asociar_usuario_fase(usuario_id, fase.id_fase)
+			usuario_util.asociar_usuario_fase(usuario_id, fase.id_fase)
 
 		flash("Los Usuarios <"+str(kw['usuarios'])+"> fueron asignados a la fase "+ str(fase.id_fase)+".")
 		redirect("/miproyecto/fase/get_all/" + str(fase.id_fase) )
@@ -163,9 +161,8 @@ class ParticipanteFaseController(RestController):
 	@expose()
 	def post(self, id, params={}, **kw):
 		fase = fase_util.get_current()
-		_usuarios = util.get_usuarios_by_fase(fase.id_fase)
+		_usuarios = usuario_util.get_usuarios_by_fase(fase.id_fase)
 		for usuario in _usuarios:
-			print "Delete User:"+str(usuario)
 			self.delete(fase.id_fase ,usuario.usuario_id, False)
 
 		usuarios = []
@@ -178,6 +175,7 @@ class ParticipanteFaseController(RestController):
 			util.asociar_usuario_fase(usuario.usuario_id, fase.id_fase)
 
 		redirect("/miproyecto/fase/get_all/" + str(fase.id_fase) )
+
 	@expose()
 	def delete(self, id_fase ,id, show=True, **kw):
 		"""
@@ -237,11 +235,11 @@ class ParticipanteProyectoController(RestController):
 		permiso_anadir = proyecto_util.check_proyecto_permiso(idproyecto,
 											'administrar_participantes')
 
-		usuarios = util.get_usuarios_by_permiso(idproyecto)
+		usuarios = usuario_util.get_usuarios_by_permiso(idproyecto)
 
 		tmpl_context.widget = participantes_table
 
-		roles = util.get_roles_by_proyectos(idproyecto)
+		roles = rol_util.get_roles_by_proyectos(idproyecto)
 
 		value = participantes_filler.get_value(roles)
 
@@ -280,7 +278,7 @@ class ParticipanteProyectoController(RestController):
 			value = rol_usuario_edit_filler.get_value(kw)
 
 		proyecto = proyecto_util.get_current()
-		usuarios = util.get_usuarios_by_permiso(proyecto.id_proyecto)
+		usuarios = usuario_util.get_usuarios_by_permiso(proyecto.id_proyecto)
 
 		self.params['modelname'] = 'Participantes'
 		self.params['header_file'] = 'proyecto'

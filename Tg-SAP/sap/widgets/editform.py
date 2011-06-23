@@ -39,8 +39,7 @@ proyecto_edit_filler = ProyectoEditFiller(DBSession)
 
 class ProyectoEditForm(EditableForm):
 	__model__ = Proyecto
-	__omit_fields__ = ['lider_id','estado_id',
-					   'permisos_proyectos','estado']
+	__omit_fields__ = ['lider_id','estado_id', 'permisos_proyectos','estado']
 
 proyecto_edit_form = ProyectoEditForm(DBSession)
 
@@ -97,33 +96,36 @@ item_edit_filler = ItemEditFiller(DBSession)
 
 class ItemEditForm(ExtendedEditableForm):
 	__model__ = Item
-	__omit_fields__ = ['tipo_item_relacion','tipo_item', '__actions__',
-					'id_item', 'fase', 'version','estado', 'linea_base',
-					'estado_actual', 'id_linea_base' , 'detalles', 'relaciones_id',
-					'fase_actual']
+	__omit_fields__ = [ 'tipo_item_relacion','tipo_item', '__actions__',
+						'id_item', 'fase', 'version','estado', 'linea_base',
+						'estado_actual', 'id_linea_base' , 'detalles',
+						'relaciones_id', 'fase_actual']
 
 	relaciones = ExtendedItemDeFaseAnteriorField
 
 	opciones_prioridad = ((1,"Muy Baja"),
-						 (2,"Baja"),
-						 (3,"Media"),
-						 (4,"Alta"),
-						 (5,"Muy alta"))
+						  (2,"Baja"),
+						  (3,"Media"),
+						  (4,"Alta"),
+						  (5,"Muy alta")
+						 )
 
 	prioridad = SingleSelectField('prioridad', options=opciones_prioridad)
 
 	opciones_complejidad = ((1,"1"),
-						 (2,"2"),
-						 (3,"3"),
-						 (4,"4"),
-						 (5,"5"),
-						 (6,"6"),
-						 (7,"7"),
-						 (8,"8"),
-						 (9,"9"),
-						 (10,"10"))
+						    (2,"2"),
+						    (3,"3"),
+						    (4,"4"),
+						    (5,"5"),
+						    (6,"6"),
+						    (7,"7"),
+						    (8,"8"),
+						    (9,"9"),
+						    (10,"10")
+						   )
 
 	complejidad = SingleSelectField('complejidad',options=opciones_complejidad)
+
 
 item_edit_form = ItemEditForm(DBSession)
 
@@ -137,8 +139,9 @@ rol_usuario_edit_filler = RolUsuarioEditFiller(DBSession)
 
 class RolUsuarioEditForm(ExtendedEditableForm):
 	__model__ = Rol
-	__omit_fields__ = [ 'permisos_poyectos','descripcion','permisos', 'created',
-						 '_permisos','_proyectos','is_template', 'roles_permisos']
+	__omit_fields__ = [ 'permisos_poyectos','descripcion','permisos',
+					    'created', '_permisos','_proyectos','is_template',
+					    'roles_permisos']
 
 rol_usuario_edit_form = RolUsuarioEditForm(DBSession)
 

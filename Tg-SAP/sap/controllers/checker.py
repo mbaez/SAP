@@ -123,40 +123,7 @@ class SessionUtil() :
 				buff_list.append(element)
 		return buff_list
 
-	def asociar_usuario_fase(self, usuario_id, fase_id):
-		"""
-		Asocia los permisos de un usuario con una fase, asi los usuarios que posean
-		el rol estaran asociados a la fase.
 
-		@type  usuario_id  : String
-		@param usuario_id : Codigo del rol
-
-		@type  fase_id   : Integer
-		@param fase_id   : Identificador de la fase
-
-		@rtype  : Rol
-		@return : El rol que es aplicado a la fase.
-		"""
-
-		#rol = self.get_rol_by_codigo(cod_rol)
-		#usuario = DBSession.query(Usuario).get(usuario_id)
-		fase = DBSession.query(Fase).get(fase_id)
-		#Se obtienen los permisos del template
-		permisos_rol = self.distinct(DBSession.query(Permiso).\
-						filter(RolPermisoProyecto.permiso_id == Permiso.permiso_id).\
-						filter(RolPermisoProyecto.proyecto_id == fase.proyecto)
-						)
-
-		#Se se asocian el rol con la fase
-		for permiso in permisos_rol:
-
-			rpu = UsuarioPermisoFase()
-
-			rpu.fase_id = fase_id
-			rpu.usuario_id = usuario_id
-			rpu.permiso_id = permiso.permiso_id
-			#Asocia el rol con los permisos y la fase
-			DBSession.add(rpu)
 
 	def asignar_rol_usuario(self,usuario_id , cod_rol, id_proyecto, can_commit=True):
 		"""

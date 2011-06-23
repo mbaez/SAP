@@ -14,8 +14,6 @@ from sap.widgets.editform import *
 # imports del modelo
 from sap.model import *
 from tg import tmpl_context, redirect, validate
-#impot del checker de permisos
-from sap.controllers.checker import *
 #import de los controladores utilizados en la fase
 from sap.controllers.item import *
 from sap.controllers.tipo_item import TipoItemController
@@ -155,7 +153,7 @@ class FaseController(RestController):
 		self.params['fase'] = DBSession.query(Fase).get(idfase)
 		self.params['new_url'] = '/miproyecto/fase/item/'+idfase+'/new/'
 		self.params['label'] = 'Agregar Atributo'
-		self.params['usuarios'] = util.get_usuarios_by_fase(idfase)
+		self.params['usuarios'] = usuario_util.get_usuarios_by_fase(idfase)
 
 		return dict(value=value, params = self.params)
 

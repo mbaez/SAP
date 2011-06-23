@@ -113,14 +113,7 @@ class TipoItemController(RestController):
 
 		new_url = "/miproyecto/fase/tipo_item/"+idfase+"/new"
 
-		permiso_editar = fase_util.check_fase_permiso(idfase, 'editar_fase')
-		permiso_anadir = fase_util.check_fase_permiso(idfase, 'administrar_participantes')
-
-		self.params['permiso_editar'] = permiso_editar
-		self.params['permiso_anadir'] = permiso_anadir
-		self.params['fase'] = DBSession.query(Fase).get(idfase)
-		self.params['new_url'] = '/miproyecto/fase/item/'+idfase+'/new/'
-		self.params['usuarios'] = util.get_usuarios_by_fase(idfase)
+		self.init_params(idfase)
 
 		self.params['modelname'] = "Tipos de Items"
 		self.params['header_file'] = 'tipo_item'
@@ -130,6 +123,14 @@ class TipoItemController(RestController):
 		self.params['label'] = 'Nuevo Tipo de Item'
 		return dict(value=value, params=self.params)
 
+	def init_params(self, idfase):
+		permiso_editar = fase_util.check_fase_permiso(idfase, 'editar_fase')
+		permiso_anadir = fase_util.check_fase_permiso(idfase, 'administrar_participantes')
+		self.params['permiso_editar'] = permiso_editar
+		self.params['permiso_anadir'] = permiso_anadir
+		self.params['fase'] = DBSession.query(Fase).get(idfase)
+		self.params['new_url'] = '/miproyecto/fase/item/'+idfase+'/new/'
+		self.params['usuarios'] = util.get_usuarios_by_fase(idfase)
 	"""
 	Evento invocado desde el listado, se encarga de eliminar una instancia
 	de la base de datos.
@@ -145,20 +146,20 @@ class TipoItemController(RestController):
 	"""
 	@expose('sap.templates.list')
 	@require( predicates.has_permission('editar_tipo_item'))
-	def importar(self, idfase, **kw):
+	def importar(self, idfase, arg={}, **kw):
 		"""
 		Recuperar de la BD todas a las fases del proyecto actual
 		"""
 		fase = DBSession.query(Fase).get(idfase)
 		fases = DBSession.query(Fase).filter(Fase.proyecto!=fase.proyecto).\
-										all()
+									  all()
 
 		"""
 		Copiar los ids de las fases a una lista
 		"""
 		fases_id = []
-		for fase in fases:
-			fases_id.append(fase.id_fase)
+		for _fase in fases:
+			fases_id.append(_fase.id_fase)
 
 		"""
 		Se obtinene de la BD todos aquellos items que no sean de ninguna
@@ -182,7 +183,10 @@ class TipoItemController(RestController):
 
 		self.params['header_file'] = "tipo_item"
 		self.params['new_url'] = '/'
+		self.params['fase'] = fase
 		self.params['idfase'] = idfase
+
+		self.params['current_name'] = "Importar a la fase #" + str(fase.id_fase)
 		self.params['modelname'] = "Tipos de Items de Otros Proyectos"
 		self.params['permiso'] = 'NO SE MUESTRA EL BOTON NUEVO'
 		self.params['label'] = ''
