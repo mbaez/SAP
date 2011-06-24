@@ -123,10 +123,14 @@ class ParticipantesTable(TableBase):
 
 participantes_table = ParticipantesTable(DBSession);
 #Crea el table filler de los participantes por fase
-participantes_fase_filler = create_widget(ParticipantesModelDecorator, LabelActionDecorator)
+participantes_fase_filler = create_widget(ParticipantesModelDecorator,
+										  LabelActionDecorator
+										 )
 
 #Crea el table filler de los participantes por proyecto
-participantes_filler = create_widget(ParticipantesModelDecorator, LabelActionDecorator, '/miproyecto/participantes/')
+participantes_filler = create_widget(ParticipantesModelDecorator,
+									 LabelActionDecorator,
+									 '/miproyecto/participantes/')
 
 ####################################################
 # Widgets de los atributos del tipo de item
@@ -216,12 +220,16 @@ class DetalleItemTable(TableBase):
 	__model__ = DetalleItem
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
-	__omit_fields__ = ['__actions__','id_item_detalle','id_item',
-					   'item', 'id_atributo_tipo_item']
+	__omit_fields__ = ['__actions__','id_item_detalle','id_item', 'adjunto',
+					   'item', 'id_atributo_tipo_item', 'content_type'
+					  ]
 
-	__field_order__ = ['atributo_tipo_item','valor', 'adjunto', 'observacion',
+	__field_order__ = ['atributo_tipo_item','valor', 'file_name', 'observacion',
 					   'accion']
-	__headers__ = {'atributo_tipo_item':'Nombre','valor':'Valor'}
+
+	__headers__ = {'atributo_tipo_item':'Nombre','valor':'Valor',
+				   'file_name':'Archivo Adjunto'
+				  }
 
 detalle_item_table = DetalleItemTable(DBSession)
 

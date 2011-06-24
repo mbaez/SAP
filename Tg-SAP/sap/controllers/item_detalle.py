@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from tg import expose, flash, require, url, request, redirect
+from tg import expose, flash, require, redirect,response
 from repoze.what import predicates
 
 from sap.lib.base import BaseController
@@ -11,7 +11,7 @@ from tg import tmpl_context
 from sap.widgets.createform import *
 from sap.widgets.listform import *
 from sap.widgets.editform import *
-from tw.forms import TableForm, SingleSelectField, TextField, TextArea, PasswordField, SubmitButton, Spacer, CheckBox
+from tw.forms import *
 # imports del modelo
 from sap.model import *
 from tg import tmpl_context, redirect, validate
@@ -23,6 +23,7 @@ from tg.controllers import RestController
 
 from sap.controllers.util import *
 _widget = None
+
 
 class ItemDetalleController(RestController):
 	"""Controlador del detalle del item"""
@@ -81,15 +82,48 @@ class ItemDetalleController(RestController):
 		detalle.valor = kw['valor']
 
 		if kw ['adjunto'] != None:
-			detalle.adjunto = kw ['adjunto'].file.read()
+			stream = True
+			detalle.adjunto=""
+
+			while stream :
+				stream = kw ['adjunto'].file.read(1024)
+				detalle.adjunto += stream
+
+			detalle.file_name = kw ['adjunto'].filename
+			detalle.content_type = kw ['adjunto'].type
+			kw ['adjunto'].file.close()
+
 		detalle.observacion = kw ['observacion']
 
 		DBSession.merge(detalle)
 		DBSession.flush()
+
 		item = DBSession.query(Item).get(detalle.id_item)
+
 		item_util.audit_item(item)
 		item.version += 1
 		DBSession.merge(item)
 
 		flash("El item atributo ha sido modificado correctamente.")
 		redirect('/miproyecto/fase/item/poner_en_revision/'+str(detalle.id_item))
+
+	@expose()
+	def descargar(self, id, **kw):
+		"""
+		Encargado de descargar los archivos adjuntos del detalle del tipo
+		de item.
+
+		@type  id : Integer
+		@param id : Identificador del Detalle del item.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		"""
+		detalle =  DBSession.query(DetalleItem).get(id)
+		archivo = detalle.adjunto
+		response.headers["Content-disposition"] = "attachment; filename="+detalle.file_name
+		response.headers["Content-Type"] = detalle.content_type
+		response.write(detalle.adjunto)
+
+		return response

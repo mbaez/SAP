@@ -15,7 +15,6 @@ from sap.lib.pygraph.classes.digraph import *
 from sap.lib.pygraph.algorithms.cycles import *
 from sap.lib.pygraph.readwrite.dot import write
 # Import graphviz
-
 import sys
 sys.path.append('..')
 sys.path.append('/usr/lib/graphviz/python/')
@@ -28,7 +27,7 @@ from tg import flash
 """Modulo que contiene un conjunto de metodos de uso frecuente
 
    :author: Maximiniliano Baez Gonzalez
-   :mail: mxbg.py@gmail.com
+   :contact: mxbg.py@gmail.com
 """
 
 class Util ():
@@ -40,6 +39,9 @@ class Util ():
 
 	def get_current (self, id):
 		"""
+		Obtiene una instancia actual, si esta instancia no se encuentra en el
+		buffer, se obtiene de la base de datos y es colocada en el buffer.
+
 		@type  id : Integer
 		@param id : Identificador, clave primaria de la tabla
 
@@ -60,6 +62,19 @@ class Util ():
 		return self.__current
 
 	def gen_codigo(self, prefijo):
+		"""
+		Genera un codigo unico utilizando un prefijo, este codigo se construye
+		de la siguiente forma :
+		codigo = prefijo+ el anho actual+ el dia del anho + los segundos de la
+				hora actual + numero secuencial.
+
+		@type  prefijo : String
+		@param prefijo : Prefijo que del codigo a generar
+
+		@rtype  : String
+		@return : El codigo generado
+
+		"""
 		now = time.localtime()
 		time_string = str(now.tm_year)[2:] + str(now.tm_yday) +\
 					  str(now.tm_min*60 + now.tm_sec) +str(self.__sec)
@@ -69,7 +84,6 @@ class Util ():
 	def get_by_codigo(self, codigo):
 
 		instance = DBSession.query(self.__model__).filter(self.cmp_codigo(codigo)).first()
-		print "GET "+str(instance)
 		return instance
 
 	def distinct (self, list):

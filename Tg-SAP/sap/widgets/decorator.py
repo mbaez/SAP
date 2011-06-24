@@ -462,15 +462,19 @@ class DetalleItemModelDecorator(ExtendedTableList, Decorator):
 	def accion (self, obj):
 		accion = super(DetalleItemModelDecorator, self).accion(obj)
 		accion = self.replace(accion,self.__url__, obj.id_item_detalle)
+		accion = "<div> " + accion
+		accion +="<div><a class='link' href='/miproyecto/fase/item/item_detalle/descargar/"+\
+				str(obj.id_item_detalle) + "'>Descargar</a></div></div>"
+		print accion
 		return accion
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
 		detalle_item = DBSession.query(DetalleItem).get(id)
 		item = detalle_item.item
 		has_permiso = item_util.verificar_linea_base(item)
-		
+
 		print has_permiso
-		
+
 		return super(DetalleItemModelDecorator,self).\
 			check_permiso(id, permiso_name, has_permiso)
 

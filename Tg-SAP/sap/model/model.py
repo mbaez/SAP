@@ -261,6 +261,11 @@ class DetalleItem(DeclarativeBase):
 
 	adjunto = Column ('adjunto', Binary)
 
+	file_name = Column (Unicode(100))
+
+	content_type = Column (Unicode(100))
+
+
 	observacion = Column ('observacion', Unicode(100))
 
 	#{ForeignKey

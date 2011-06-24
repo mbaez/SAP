@@ -21,6 +21,7 @@ from tg.controllers import RestController
 
 class AtributoController(RestController):
 	"""Controlador de los atributos del tipo de item"""
+
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 			  'idtipo':'','permiso':'', 'label':'', 'cancelar_url': '',
 			  'idfase':''
@@ -63,10 +64,7 @@ class AtributoController(RestController):
 		self.params['cancelar_url'] = '/miproyecto/fase/tipo_item/atributos/list/'+str(idtipo)
 		return dict(value=kw, params=self.params)
 
-	"""
-	Evento invocado luego de un evento post en el form de crear
-	ecargado de persistir las nuevas instancias.
-	"""
+
 	@validate(new_atributo_form, error_handler=new)
 	@require(predicates.has_permission('crear_tipo_item'))
 	@expose()
@@ -199,9 +197,17 @@ class AtributoController(RestController):
 		"""
 		Evento invocado desde el listado, se encarga de eliminar una instancia
 		de la base de datos.
+
+		@type  id : Integer
+		@param id : Identificador del atributo del tipo de item
+
+		@type  kw : Hash
+		@param kw : Keywords
+
 		"""
 		atributo = DBSession.query(AtributoTipoItem).get(id)
 		id_tipo_item = atributo.id_tipo_item
 		DBSession.delete(atributo)
+
 		flash("El atributo "+ id + "ha sido eliminado correctamente.")
 		redirect('/miproyecto/fase/tipo_item/atributos/list/'+id_tipo_item)

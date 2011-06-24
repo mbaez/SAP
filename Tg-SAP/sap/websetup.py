@@ -194,7 +194,7 @@ def cargar_proyectos(usr, usr2):
     proyecto.nro_fases = 4
 
     model.DBSession.add(proyecto)
-
+    model.DBSession.flush()
     proyecto2 = model.Proyecto()
     proyecto2.lider = usr
     proyecto2.nombre = u'Parallel Programing Proyect'
@@ -202,6 +202,7 @@ def cargar_proyectos(usr, usr2):
     proyecto2.nro_fases = 3
 
     model.DBSession.add(proyecto2)
+    model.DBSession.flush()
 
     proyecto3 = model.Proyecto()
     proyecto3.lider = usr2
@@ -432,10 +433,10 @@ def setup_app(command, conf, vars):
     # Load the models
     engine = config['pylons.app_globals'].sa_engine
     print "Droping tables"
-    #model.metadata.drop_all(engine)
+    model.metadata.drop_all(engine)
     print "Finish..\nCreating tables"
     model.metadata.create_all(bind=engine)
-    
+
     manager = model.Usuario()
     manager.user_name = u'admin'
     manager.nombre = u'Administrador'
@@ -446,32 +447,43 @@ def setup_app(command, conf, vars):
     ##usuarios
     usr, usr2, usr3 = cargar_usuarios()
     #Roles
+    model.DBSession.flush()
     group, group2, group3,group21, group31,group22,group23 = cargar_roles(manager,
                                                        usr, usr2, usr3)
+    model.DBSession.flush()
     #estados
     inicial, desarrollo, cancelado, pausado, finalizado = cargar_estados()
     #Permisos
+    model.DBSession.flush()
     cargar_permisos(group, group2, group3, group21, group31, group22, group23)
     #Proyectos
+    model.DBSession.flush()
     proyecto,proyecto2,proyecto3 = cargar_proyectos(usr,usr2)
     #fases
+    model.DBSession.flush()
     fase1, fase2,fase3,fase4 = cargar_fases()
     #tipo de atributo
+    model.DBSession.flush()
     tipo1, tipo2, tipo3 = cargar_tipo_atributo()
     #tipo de item
+    model.DBSession.flush()
     tipodeitem1,tipodeitem2,tipodeitem3,tipodeitem4 = cargar_tipo_item(
                                                        fase1, fase2,fase3,
                                                        fase4)
     #estados de item
+    model.DBSession.flush()
     estadoItem1,estadoItem2,estadoItem3, estadoItem4 = cargar_estados_item()
     #items
     cargar_items()
+    model.DBSession.flush()
     #relaciones
     cargar_relaciones()
+    model.DBSession.flush()
     #Permisos del rol de proyecto
     cargar_permisos_proyecto(group21,group22,group23,group31)
     #estado linea base
+    model.DBSession.flush()
     cargar_estado_lineabase()
-    
+    model.DBSession.flush()
     transaction.commit()
     print "Successfully setup"
