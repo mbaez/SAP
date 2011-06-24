@@ -29,25 +29,51 @@ from sap.controllers.util import *
 
 
 class FaseController(RestController):
+	"""Controlador de las fases del proyecto"""
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':'', 'label': '', 'cancelar_url': '',
-						'permiso_editar': '', 'permiso_anadir': ''}
+			  'idfase':'','permiso':'', 'label': '', 'cancelar_url': '',
+			  'permiso_editar': '', 'permiso_anadir': ''
+			 }
+	"""
+	parametro que contiene los valores de varios parametros y es enviado a
+	los templates
+	"""
 
 	item = ItemController()
-	tipo_item = TipoItemController()
-	relacion = RelacionController()
-	linea_base = LineaBaseController()
+	"""Instancia del controlador del item"""
 
-	""" Contorlador de los participantes de la fase"""
+	tipo_item = TipoItemController()
+	"""Instancia del controlador del tipo de item"""
+
+	relacion = RelacionController()
+	"""Instancia del controlador de las relaciones del item"""
+
+	linea_base = LineaBaseController()
+	"""Instancia del controlador de las lineas bases"""
+
 	participantes = ParticipanteFaseController()
+	""" Contorlador de los participantes de la fase"""
 
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_fase'))
-	def new(self, idproyecto, modelname, **kw):
+	def new(self, idproyecto, args={}, **kw):
 		"""
-		Encargado de carga el widget para crear nuevas instancias,
+		Encargado de cargar el widget para crear nuevas instancias,
 		solo tienen acceso aquellos usuarios que posean el premiso de crear
+
+		@type  idproyecto : Integer
+		@param idproyecto : Identificador del Proyecto.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
 		"""
 		tmpl_context.widget = new_fase_form
 		header_file = "abstract"
@@ -65,6 +91,13 @@ class FaseController(RestController):
 		"""
 		Evento invocado luego de un evento post en el form de crear
 		ecargado de persistir las nuevas instancias.
+
+		@type  idproyecto : Integer
+		@param idproyecto : Identificador del Proyecto.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
 		"""
 		del kw['sprox_id']
 		fase = Fase(**kw)
@@ -77,10 +110,20 @@ class FaseController(RestController):
 	@require(predicates.has_permission('editar_fase'))
 	def edit(self, id,**kw):
 		"""
-		Encargado de carga el widget para editar las instancias,
-		solo tienen acceso aquellos usuarios que posean el premiso de editar
-		"""
+		Encargado de cargar el widget para editar las instancias,solo tienen
+		acceso aquellos usuarios que posean el premiso de editar
 
+		@type  id : Integer
+		@param id : Identificador de la Fase.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
+		# se verifica si el usuario posee el permiso de editar sobre esta fase
 		has_permiso = fase_util.check_fase_permiso(id,'editar_fase',True)
 		if ( has_permiso == None) :
 			flash("No posee permisos editar la fase #"+str(id),'error')
@@ -88,6 +131,7 @@ class FaseController(RestController):
 
 		fase =  DBSession.query(Fase).get(id)
 		tmpl_context.widget = fase_edit_form
+
 		kw['id_fase'] = fase.id_fase
 		kw['nombre'] = fase.nombre
 		kw['descripcion'] = fase.descripcion
@@ -98,10 +142,17 @@ class FaseController(RestController):
 	@validate(fase_edit_form, error_handler=edit)
 	@require(predicates.has_permission('editar_fase'))
 	@expose()
-	def put(self, _method, **kw):
+	def put(self, args={}, **kw):
 		"""
 		Evento invocado luego de un evento post en el form de editar
 		encargado de persistir las modificaciones de las instancias.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
 		"""
 
 		del kw['sprox_id']

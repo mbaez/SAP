@@ -28,15 +28,34 @@ new_url = "/administracion/proyecto/new"
 
 class ProyectoController(RestController):
 	"""
-	Encargado de carga el widget para crear nuevas instancias,
+	Encargado de cargar el widget para crear nuevas instancias,
 	solo tienen acceso aquellos usuarios que posean el premiso de crear
 	"""
+
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 	'idfase':'','permiso':'', 'label': '', 'cancelar_url':''}
+	"""
+	parametro que contiene los valores de varios parametros y es enviado a
+	los templates
+	"""
 
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_proyecto'))
-	def new(self, modelname='',**kw):
+	def new(self, args={},**kw):
+		"""
+		Encargado de cargar el widget para crear nuevas instancias,
+		solo tienen acceso aquellos usuarios que posean el premiso de crear
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
 		tmpl_context.widget = new_proyecto_form
 		self.params['title'] = 'Nuevo Proyecto'
 		self.params['modelname'] = 'Proyecto'
@@ -45,17 +64,22 @@ class ProyectoController(RestController):
 		self.params['cancelar_url'] = '/administracion/proyecto'
 		return dict(value=kw, params=self.params)
 
-	"""
-	Evento invocado luego de un evento post en el form de crear
-	ecargado de persistir las nuevas instancias.
-	"""
+
 	@validate(new_proyecto_form, error_handler=new)
 	@require(predicates.has_permission('crear_proyecto'))
 	@expose()
 	def post(self,**kw):
+		"""
+		Evento invocado luego de un evento post en el form de crear
+		ecargado de persistir las nuevas instancias.
+
+		@type  kw : Hash
+		@param kw : Keywords
+		"""
+
 		del kw['sprox_id']
 		kw['lider'] = DBSession.query(Usuario).get(kw['lider'])
-		kw['estado'] = estado_proyecto_util.get_by_codigo('Inicial')#DBSession.query(EstadoProyecto).get(kw['estado'])
+		kw['estado'] = estado_proyecto_util.get_by_codigo('Inicial')
 		proyecto = Proyecto(**kw)
 		#persiste el proyecto
 		DBSession.add(proyecto)
@@ -67,15 +91,28 @@ class ProyectoController(RestController):
 		flash("El proyecto ha sido creado correctamente.")
 		redirect("/administracion/proyecto/")
 
-	"""
-	Encargado de carga el widget para editar las instancias,
-	solo tienen acceso aquellos usuarios que posean el premiso de editar
-	"""
+
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('editar_proyecto'))
 	def edit(self, id,**kw):
+		"""
+		Encargado de cargar el widget para editar las instancias,solo tienen
+		acceso aquellos usuarios que posean el premiso de editar
+
+		@type  id : Integer
+		@param id : Identificador del Proyecto.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
+
 		proyecto =  DBSession.query(Proyecto).get(id)
 		tmpl_context.widget = proyecto_edit_form
+
 		kw['id_proyecto'] = proyecto.id_proyecto
 		kw['nombre'] = proyecto.nombre
 		kw['lider'] = proyecto.lider
@@ -88,14 +125,22 @@ class ProyectoController(RestController):
 		self.params['permiso'] = 'editar_proyecto'
 		return dict(value=kw, params=self.params)
 
-	"""
-	Evento invocado luego de un evento post en el form de editar
-	ecargado de persistir las modificaciones de las instancias.
-	"""
+
 	@validate(proyecto_edit_form, error_handler=edit)
 	@require(predicates.has_permission('editar_proyecto'))
 	@expose()
-	def put(self, _method, **kw):
+	def put(self, args={}, **kw):
+		"""
+		Evento invocado luego de un evento post en el form de editar
+		ecargado de persistir las modificaciones de las instancias.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		"""
 		#Se obtiene de la base de datos el proyecto modifcado
 		proyecto = DBSession.query(Proyecto).get(int(kw['id_proyecto']))
 		#Se actualizan unicamente los campos actualizables

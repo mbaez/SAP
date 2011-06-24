@@ -24,19 +24,35 @@ from sap.controllers.util import *
 
 class UsuarioContoller(RestController):
 	"""
-	prueba de abm y de visibilidad de datos en el template master.html
-	anhadi py:if="tg.predicates.has_permission('manage')" para que solo
-	muestre el link a los usuarios que posean el permiso 'manage'
-	ademas los metodos de new_usuario, create_usuario y list_usuario estan
-	anotados con @require(predicates.has_permission('manage')) esto es para que
-	no se pueda acceder a al formulario atravez de la url.
+	Controlador del Usuario
 	"""
+
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':'', 'label': '', 'cancelar_url':''}
+			  'idfase':'','permiso':'', 'label': '', 'cancelar_url':''
+			 }
+	"""
+	parametro que contiene los valores de varios parametros y es enviado a
+	los templates
+	"""
 
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_usuario'))
-	def new(self, modelname='',**kw):
+	def new(self, args={}, **kw):
+		"""
+		Encargado de cargar el widget para crear nuevas instancias,
+		solo tienen acceso aquellos usuarios que posean el premiso de crear
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
+
 		tmpl_context.widget = new_usuario_form
 		self.params['title'] = 'Nuevo usuario'
 		self.params['modelname'] = 'Usuario'
@@ -47,7 +63,19 @@ class UsuarioContoller(RestController):
 	@validate(new_usuario_form, error_handler=new)
 	@expose()
 	@require(predicates.has_permission('crear_usuario'))
-	def post(self, modelname='', **kw):
+	def post(self, args={}, **kw):
+		"""
+		Evento invocado luego de un evento post en el form de crear
+		ecargado de persistir las nuevas instancias.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		"""
+
 		del kw['sprox_id']
 		usuario = Usuario(**kw)
 		DBSession.add(usuario)
@@ -57,6 +85,20 @@ class UsuarioContoller(RestController):
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('editar_usuario'))
 	def edit(self, id,**kw):
+		"""
+		Encargado de cargar el widget para editar las instancias,solo tienen
+		acceso aquellos usuarios que posean el premiso de editar
+
+		@type  id : Integer
+		@param id : Identificador del usuario.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
 		tmpl_context.widget = usuario_edit_form
 		kw['usuario_id'] = id
 		value = usuario_edit_filler.get_value(kw)
@@ -68,15 +110,27 @@ class UsuarioContoller(RestController):
 	@validate(usuario_edit_form, error_handler=edit)
 	@expose()
 	def put(self, id, **kw):
+		"""
+		Evento invocado luego de un evento post en el form de editar
+		ecargado de persistir las modificaciones de las instancias.
+
+		@type  id : Integer
+		@param id : Identificador del usuario.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		"""
+
 		usuario = DBSession.query(Usuario).get( int(id) )
-		
+
 		usuario.nombre = kw['nombre']
 		usuario.email_address = kw['email_address']
-		
+
 		if usuario._password != kw['password'] :
 			print 'Actualizando la contrasenha'
 			usuario._set_password(kw['password'])
-		
+
 		DBSession.merge(usuario)
 		flash("El usuario '"+usuario.nombre+"' ha sido modificado correctamente.")
 		redirect("/administracion/usuario/get_all")

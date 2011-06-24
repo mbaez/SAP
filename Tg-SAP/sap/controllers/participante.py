@@ -8,7 +8,7 @@ from repoze.what import predicates , authorize
 from tg.controllers import RestController
 from sap.model import *
 from sap.model import DBSession, metadata
-#from sap.controllers.fase import FaseController
+
 #import de widgets
 from sap.widgets.listform import *
 from sap.widgets.editform import *
@@ -19,13 +19,21 @@ from sap.controllers.util import *
 
 
 class ParticipanteFaseController(RestController):
+	""" Contorlador de los participantes de la fase"""
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-			  'idfase':'','permiso':''}
-
-	_current_fase = None
+			  'idfase':'','permiso':''
+			 }
+	"""
+	parametro que contiene los valores de varios parametros y es enviado a
+	los templates
+	"""
 
 	allow_only = authorize.has_permission('administrar_participantes' )
+	"""
+	Limita el acceso al controlador a aquellos que poseen el permiso de
+	administrar participantes.
+	"""
 
 	@expose('sap.templates.fase')
 	@require(predicates.has_permission('administrar_participantes'))
@@ -92,6 +100,9 @@ class ParticipanteFaseController(RestController):
 	@require(predicates.has_permission('administrar_participantes'))
 	def edit(self, id,**kw):
 		"""
+		Encargado de cargar el widget para editar las instancias,solo tienen
+		acceso aquellos usuarios que posean el premiso de editar
+
 		@type  id : Integer
 		@param id : Identificador del Rol
 
@@ -103,7 +114,8 @@ class ParticipanteFaseController(RestController):
 		"""
 		fase = fase_util.get_current()
 
-		has_permiso = session_util.authorize_fase('administrar_participantes', fase=fase)
+		has_permiso = session_util.\
+					  authorize_fase('administrar_participantes', fase=fase)
 		if ( has_permiso == None) :
 			flash("No posee permisos sobre la fase #"+str(id),'error')
 			redirect('/miproyecto/fase/participantes/error')
@@ -118,7 +130,8 @@ class ParticipanteFaseController(RestController):
 		for usuario in _usuarios :
 			NewFaseParticipanteFrom.fields.append(CheckBox(usuario.user_name))
 
-		new_participante_form = NewFaseParticipanteFrom("new_participante_form",action = 'post')
+		new_participante_form = NewFaseParticipanteFrom("new_participante_form",
+								action = 'post')
 
 		tmpl_context.widget = new_participante_form
 		"""
@@ -135,6 +148,7 @@ class ParticipanteFaseController(RestController):
 		self.params['header_file'] = 'proyecto'
 		return dict(value=kw, params=self.params)
 
+
 	@validate(rol_usuario_edit_form, error_handler=edit)
 	@expose()
 	@require(predicates.has_permission('administrar_participantes'))
@@ -147,7 +161,8 @@ class ParticipanteFaseController(RestController):
 		@param kw : Keywords
 		"""
 		fase = fase_util.get_current()
-		has_permiso = session_util.authorize_fase('administrar_participantes', fase=fase)
+		has_permiso = session_util.\
+					  authorize_fase('administrar_participantes', fase=fase)
 		if ( has_permiso == None) :
 			flash("No posee permisos sobre la fase #"+str(id),'error')
 			redirect('/miproyecto/fase/participantes/error')
@@ -155,11 +170,27 @@ class ParticipanteFaseController(RestController):
 		for usuario_id in kw['usuarios'] :
 			usuario_util.asociar_usuario_fase(usuario_id, fase.id_fase)
 
-		flash("Los Usuarios <"+str(kw['usuarios'])+"> fueron asignados a la fase "+ str(fase.id_fase)+".")
+		flash("Los Usuarios <"+str(kw['usuarios'])+\
+			  "> fueron asignados a la fase "+ str(fase.id_fase)+".")
+
 		redirect("/miproyecto/fase/get_all/" + str(fase.id_fase) )
 
 	@expose()
-	def post(self, id, params={}, **kw):
+	def post(self, id, args={}, **kw):
+		"""
+		Evento invocado luego de un evento post en el form de crear
+		ecargado de persistir las nuevas instancias.
+
+		@type  id : Integer
+		@param id : Identificador de la fase.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		"""
 		fase = fase_util.get_current()
 		_usuarios = usuario_util.get_usuarios_by_fase(fase.id_fase)
 		for usuario in _usuarios:
@@ -202,11 +233,19 @@ class ParticipanteFaseController(RestController):
 
 
 class ParticipanteProyectoController(RestController):
-
+	""" Contorlador de los participantes de la fase"""
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-			  'idfase':'','permiso':''}
-
+			  'idfase':'','permiso':''
+			 }
+	"""
+	parametro que contiene los valores de varios parametros y es enviado a
+	los templates
+	"""
 	allow_only = authorize.has_permission('administrar_participantes' )
+	"""
+	Limita el acceso al controlador a aquellos que poseen el permiso de
+	administrar participantes.
+	"""
 
 	@expose('sap.templates.miproyecto')
 	@require(predicates.has_permission('administrar_participantes'))
@@ -221,8 +260,8 @@ class ParticipanteProyectoController(RestController):
 		@rtype  : Diccionario
 		@return : El diccionario que sera utilizado en el template.
 		"""
-		has_permiso = session_util.authorize_proyecto('administrar_participantes',
-														id=idproyecto)
+		has_permiso = session_util.\
+				authorize_proyecto('administrar_participantes', id=idproyecto)
 
 		if ( has_permiso == None) :
 			flash("No posee permisos sobre la fase #"+str(idproyecto),'error')

@@ -13,15 +13,17 @@ from sap.controllers.proyecto import ProyectoController
 from sap.controllers.rol import RolController
 
 
-
-
 class AdministracionController(BaseController):
+	"""Contorlador del modulo de Administracion"""
 
 	usuario = UsuarioContoller()
+	"""	Instancia del controlador del usuario"""
 
 	proyecto = ProyectoController()
+	"""Instancia del controlador de proyectos"""
 
 	rol = RolController()
+	"""Instancia del controlador de Roles"""
 
 	@expose('sap.templates.administracion.index')
 	def index(self):

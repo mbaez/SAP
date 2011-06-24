@@ -23,14 +23,25 @@ from sap.controllers.util import *
 
 
 class ProyectosController(RestController):
-
+	"""Controlador de los proyectos"""
 	fase = FaseController()
+	"""
+	Instancia del controlador de la fases
+	"""
 
 	participantes = ParticipanteProyectoController()
+	"""
+	Instancia del controlador de participantes del proyecto
+	"""
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 			  'idfase':'','permiso':'', 'label': '', 'permiso':'',
-			'idproyecto':'', 'permiso_editar': '', 'permiso_anadir': '' }
+			  'idproyecto':'', 'permiso_editar': '', 'permiso_anadir': ''
+			 }
+	"""
+	parametro que contiene los valores de varios parametros y es enviado a
+	los templates
+	"""
 
 	@expose('sap.templates.miproyecto')
 	@require(predicates.has_permission('ver_proyecto'))

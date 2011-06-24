@@ -16,18 +16,35 @@ from tg import tmpl_context, redirect, validate
 
 from tg.controllers import RestController
 
-#nombre del header que ser va cargar
-header_file="administracion"
 
 class RolController(RestController):
+	"""Controlador de los roles"""
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':'', 'label':'', 'cancelar_url':''}
+			  'idfase':'','permiso':'', 'label':'', 'cancelar_url':''
+			 }
+	"""
+	parametro que contiene los valores de varios parametros y es enviado a
+	los templates
+	"""
 
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_rol'))
 	def new(self, **kw):
+		"""
+		Encargado de cargar el widget para crear nuevas instancias,
+		solo tienen acceso aquellos usuarios que posean el premiso de crear
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
+
 		tmpl_context.widget = new_rol_form
+
 		self.params['title'] = 'Nuevo Rol'
 		self.params['modelname'] = 'Rol'
 		self.params['header_file'] = 'abstract'
@@ -37,7 +54,19 @@ class RolController(RestController):
 
 	@validate(new_rol_form, error_handler=new)
 	@expose()
-	def post(self,modelname='', **kw):
+	def post(self, args={}, **kw):
+		"""
+		Evento invocado luego de un evento post en el form de crear
+		ecargado de persistir las nuevas instancias.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		"""
+
 		del kw['sprox_id']
 		rol = Rol()
 		rol.codigo = kw['codigo']
@@ -54,6 +83,21 @@ class RolController(RestController):
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('editar_rol'))
 	def edit(self, id,**kw):
+		"""
+		Encargado de cargar el widget para editar las instancias,solo tienen
+		acceso aquellos usuarios que posean el premiso de editar
+
+		@type  id : Integer
+		@param id : Identificador del Rol.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
+
 		tmpl_context.widget = rol_edit_form
 		kw['rol_id'] = id
 		value = rol_edit_filler.get_value(kw)
@@ -64,7 +108,18 @@ class RolController(RestController):
 
 	@validate(rol_edit_form, error_handler=edit)
 	@expose()
-	def put(self, _method, **kw):
+	def put(self, args={}, **kw):
+		"""
+		Evento invocado luego de un evento post en el form de editar
+		ecargado de persistir las modificaciones de las instancias.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		"""
 		del kw['sprox_id']
 		rol = DBSession.query(Rol).get(int(kw['rol_id']))
 		rol.nombre = kw['nombre']

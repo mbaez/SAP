@@ -23,12 +23,11 @@ from tg.controllers import RestController
 __all__ = ['RootController']
 
 class DesarrolloController(BaseController):
-	
-	
+
 	@expose('sap.templates.desarrollo.list')
 	def list(self):
 		return dict(modelname='Fase')
-		
-	@expose('sap.templates.desarrollo.reporte')	
+
+	@expose('sap.templates.desarrollo.reporte')
 	def reporte(self):
 		return dict()

@@ -19,20 +19,47 @@ from tg.controllers import RestController
 from sap.controllers.item import *
 
 class RelacionController(RestController):
+	"""
+	Controlador de las relaciones del item
+	"""
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':'', 'label': '', 'cancelar_url': ''}
+			  'idfase':'','permiso':'', 'label': '', 'cancelar_url': ''
+			 }
+	"""
+	parametro que contiene los valores de varios parametros y es enviado a
+	los templates
+	"""
 
 	@expose('sap.templates.fase')
 	@require(predicates.has_permission('editar_item'))
-	def new(self, idfase, modelname='', **kw):
+	def new(self, idfase, args={}, **kw):
+		"""
+		Encargado de cargar el widget para crear nuevas instancias,
+		solo tienen acceso aquellos usuarios que posean el premiso de crear
+
+		@type  idfase : Integer
+		@param idfase : Identificador de la fase.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
+
+		new_relacion_form.item_1.idfase=idfase
 		"""
 		dentro del form un combo trae los items de la fase actual
 		y el otro los items de la fase actual y la siguiente
 		"""
-		new_relacion_form.item_1.idfase=idfase
 		new_relacion_form.item_2.idfase=idfase
 		tmpl_context.widget = new_relacion_form
+
 		self.params['header_file'] = "abstract"
 		self.params['idfase'] = idfase
 		self.params['modelname'] = "Relacion"
@@ -40,14 +67,26 @@ class RelacionController(RestController):
 		self.params['cancelar_url'] = '/miproyecto/fase/relacion/list/'+str(idfase)
 		self.init_params(idfase)
 		return dict(value=kw, params=self.params)
-	"""
-	Evento invocado luego de un evento post en el form de crear
-	ecargado de persistir las nuevas instancias.
-	"""
+
+
 	@validate(new_relacion_form, error_handler=new)
 	@expose()
 	@require(predicates.has_permission('editar_item'))
-	def post(self, idfase, modelname='',**kw):
+	def post(self, idfase, args={},**kw):
+		"""
+		Evento invocado luego de un evento post en el form de crear
+		ecargado de persistir las nuevas instancias.
+
+		@type  idfase : Integer
+		@param idfase : Identificador de la fase.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		"""
 		del kw['sprox_id']
 		"""
 		el item controller es para usar los metodos de esa clase

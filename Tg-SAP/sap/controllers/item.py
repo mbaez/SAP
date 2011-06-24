@@ -34,15 +34,21 @@ from tg.controllers import RestController
 from sap.controllers.util import *
 
 class ItemController(RestController):
+	"""Controlador del item"""
 
 	item_detalle = ItemDetalleController()
 
-	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-			  'idfase':'','permiso':'','progreso':0, 'cantidad':'', 'item':'',
-			  'impacto':'', 'atributos':'', 'permiso_editar':'',
+	"""Instancia del controlador del Detalle del item"""
+
+	params = {'title':'', 'header_file':'', 'modelname':'', 'new_url':'',
+			  'idfase':'', 'permiso':'', 'progreso':0, 'cantidad':'',
+			  'item':'', 'impacto':'', 'atributos':'', 'permiso_editar':'',
 			  'permiso_eliminar':'', 'linea_base':''
 			 }
-
+	"""
+	parametro que contiene los valores de varios parametros y es enviado a
+	los templates
+	"""
 
 	@expose('sap.templates.item')
 	@require(predicates.has_permission('ver_item'))
@@ -92,11 +98,28 @@ class ItemController(RestController):
 
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_item'))
-	def new(self, idfase, modelname="", **kw):
+	def new(self, idfase, args={}, **kw):
+		"""
+		Encargado de cargar el widget para crear nuevas instancias,
+		solo tienen acceso aquellos usuarios que posean el premiso de crear
+
+		@type  idtipo : Integer
+		@param idtipo : Identificador del Atributo del item.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
 		new_item_form.tipo_item_relacion.idfase = idfase
 		new_item_form.relaciones.idfase = idfase
 		tmpl_context.widget = new_item_form
-		header_file = "item"
+
 		self.params['title'] = 'Nuevo Item'
 		self.params['modelname'] = 'Item'
 		self.params['header_file'] = 'abstract'
@@ -106,14 +129,26 @@ class ItemController(RestController):
 		self.params['cancelar_url'] = '/miproyecto/fase/get_all/'+str(idfase)
 		return dict(value=kw, params=self.params)
 
-	"""
-	Evento invocado luego de un evento post en el form de crear
-	ecargado de persistir las nuevas instancias.
-	"""
+
 	@validate(new_item_form, error_handler=new)
 	@require(predicates.has_permission('crear_item'))
 	@expose()
-	def post(self, idfase, modelname='',**kw):
+	def post(self, idfase, args={},**kw):
+		"""
+		Evento invocado luego de un evento post en el form de crear
+		ecargado de persistir las nuevas instancias.
+
+		@type  idfase : Integer
+		@param idfase : Identificador de la fase.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		"""
+
 		del kw['sprox_id']
 		item = Item()
 		item.nombre = kw['nombre']
@@ -157,16 +192,28 @@ class ItemController(RestController):
 		#flash("El item se ha creado correctamente")
 		redirect('/miproyecto/fase/item/ver/'+str(item.id_item))
 
-	"""
-	Encargado de carga el widget para editar las instancias,
-	solo tienen acceso aquellos usuarios que posean el premiso de editar
-	"""
+
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('editar_item'))
 	def edit(self, id,**kw):
-		item =  DBSession.query(Item).get(id)
+		"""
+		Encargado de cargar el widget para editar las instancias,solo tienen
+		acceso aquellos usuarios que posean el premiso de editar
 
-		has_permiso = fase_util.check_fase_permiso(self.params['item'].fase,'ver_item',True)
+		@type  id : Integer
+		@param id : Identificador del Item.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
+
+		item =  DBSession.query(Item).get(id)
+		#se verifica si el usuario posee el permiso de ver para la fase actual
+		has_permiso = fase_util.check_fase_permiso(item.fase,'ver_item',True)
 		if ( has_permiso == None) :
 			flash("No posee permisos sobre la fase #"+ \
 				str(self.params['item'].fase),'error')
@@ -185,6 +232,7 @@ class ItemController(RestController):
 		kw['observacion'] = item.observacion
 		self.params['modelname'] = 'Item'
 		self.params['header_file'] = 'abstract'
+
 		return dict(value=kw, params=self.params)
 
 	"""

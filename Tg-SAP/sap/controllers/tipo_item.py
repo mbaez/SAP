@@ -23,22 +23,44 @@ from tg.controllers import RestController
 from sap.controllers.util import *
 
 class TipoItemController(RestController):
+	"""Controlador del tipo de item"""
 
 	atributos = AtributoController()
+	"""Instancia del controlador de los atributos del tipo de item"""
+
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':'','label': '', 'cancelar_url':''}
+			  'idfase':'','permiso':'','label': '', 'cancelar_url':''
+			 }
 	"""
-	Encargado de carga el widget para crear nuevas instancias,
-	solo tienen acceso aquellos usuarios que posean el premiso de crear
+	parametro que contiene los valores de varios parametros y es enviado a
+	los templates
 	"""
+
 	@expose('sap.templates.new')
 	@require(predicates.has_permission('crear_tipo_item'))
-	def new(self, idfase, modelname, **kw):
+	def new(self, idfase, args={}, **kw):
+		"""
+		Encargado de cargar el widget para crear nuevas instancias,
+		solo tienen acceso aquellos usuarios que posean el premiso de crear
+
+		@type  idfase : Integer
+		@param idfase : Identificador de la fase.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
+
 		tmpl_context.widget = new_tipo_item_form
 		self.params['modelname'] = "Tipo de Item"
 		self.params['header_file'] = 'tipo_item'
 		self.params['idfase'] = idfase
-		#self.params['codigo'] = util.gen_codigo('tipo_item')
 		self.params['cancelar_url'] = '/miproyecto/fase/tipo_item/list/'+str(idfase)
 		return dict(value=kw, params=self.params)
 
@@ -50,6 +72,17 @@ class TipoItemController(RestController):
 	@require(predicates.has_permission('crear_tipo_item'))
 	@expose()
 	def post(self, idfase, **kw):
+		"""
+		Evento invocado luego de un evento post en el form de crear
+		ecargado de persistir las nuevas instancias.
+
+		@type  idfase : Integer
+		@param idfase : Identificador de la fase.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		"""
 		del kw['sprox_id']
 		tipo_item = TipoItem(**kw)
 		tipo_item.fase = idfase
@@ -62,15 +95,28 @@ class TipoItemController(RestController):
 							first()
 		redirect('/miproyecto/fase/tipo_item/atributos/'
 											+str(tipo.id_tipo_item)+'/new')
-	"""
-	Encargado de carga el widget para editar las instancias,
-	solo tienen acceso aquellos usuarios que posean el premiso de editar
-	"""
+
+
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('editar_tipo_item'))
 	def edit(self, id,**kw):
+		"""
+		Encargado de cargar el widget para editar las instancias,solo tienen
+		acceso aquellos usuarios que posean el premiso de editar
+
+		@type  id : Integer
+		@param id : Identificador del Tipo de item.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
 		tipo_item =  DBSession.query(TipoItem).get(id)
 		tmpl_context.widget = tipo_item_edit_form
+
 		kw['id_tipo_item'] = tipo_item.id_tipo_item
 		kw['fase'] = tipo_item.fase
 		kw['nombre'] = tipo_item.nombre
@@ -80,14 +126,22 @@ class TipoItemController(RestController):
 		self.params['header_file'] = 'tipo_item'
 		return dict(value=kw, params=self.params)
 
-	"""
-	Evento invocado luego de un evento post en el form de editar
-	encargado de persistir las modificaciones de las instancias.
-	"""
+
 	@validate(tipo_item_edit_form, error_handler=edit)
 	@require(predicates.has_permission('editar_tipo_item'))
 	@expose()
-	def put(self, _method, **kw):
+	def put(self, args={}, **kw):
+		"""
+		Evento invocado luego de un evento post en el form de editar
+		ecargado de persistir las modificaciones de las instancias.
+
+		@type  args : Hash
+		@param args : Argumentos de template
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		"""
 		del kw['sprox_id']
 		tipo_item = TipoItem(**kw)
 		DBSession.merge(tipo_item)

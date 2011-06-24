@@ -25,13 +25,33 @@ from sap.controllers.util import *
 _widget = None
 
 class ItemDetalleController(RestController):
+	"""Controlador del detalle del item"""
 
-	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-	'idfase':'','permiso':'', 'cancelar_url':''}
+	params = {'title':'', 'header_file':'', 'modelname':'', 'new_url':'',
+			  'idfase':'', 'permiso':'', 'cancelar_url':''
+			 }
+	"""
+	parametro que contiene los valores de varios parametros y es enviado a
+	los templates
+	"""
 
 	@expose('sap.templates.edit')
 	@require(predicates.has_permission('editar_item'))
 	def edit(self, id,**kw):
+		"""
+		Encargado de cargar el widget para editar las instancias,solo tienen
+		acceso aquellos usuarios que posean el premiso de editar
+
+		@type  id : Integer
+		@param id : Identificador del Detalle del item.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
+		@rtype  : Diccionario
+		@return : El diccionario que sera utilizado en el template.
+
+		"""
 		kw['id_item_detalle'] = id
 
 		tmpl_context.widget = detalle_item_edit_form
@@ -49,9 +69,17 @@ class ItemDetalleController(RestController):
 		"""
 		Evento invocado luego de un evento post en el form de editar
 		encargado de persistir las modificaciones de las instancias.
+
+		@type  id : Integer
+		@param id : Identificador del Detalle del item.
+
+		@type  kw : Hash
+		@param kw : Keywords
+
 		"""
 		detalle =  DBSession.query(DetalleItem).get(id)
 		detalle.valor = kw['valor']
+
 		if kw ['adjunto'] != None:
 			detalle.adjunto = kw ['adjunto'].file.read()
 		detalle.observacion = kw ['observacion']
