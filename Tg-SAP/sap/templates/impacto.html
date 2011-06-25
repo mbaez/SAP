@@ -5,13 +5,12 @@
     xmlns:xi="http://www.w3.org/2001/XInclude">
 
 <xi:include href="master.html" />
-<xi:include href="header/abstract.html" />
+<xi:include href="header/item.html" />
 
 <head>
 		<title>Calculo de Impacto</title>
 		<link rel="stylesheet" type="text/css" media="screen" href="/css/master.css" />
 </head>
-
 <body>
 	${sub_header()}
 	<section id="inner-content">
@@ -41,6 +40,10 @@
 		</aside>
 		<div style="float:left; width: 60%">
 		<img src="/img/calculo_impacto.svg" />
+		<a class = "add-button"
+			style="width:120px; margin-top:10px" href="/miproyecto/fase/item/ver/${params['item'].id_item}">
+				&lt;&lt; Ver Item
+			</a>
 		</div>
 	</section>
 </body>

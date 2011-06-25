@@ -84,7 +84,7 @@ class ItemTable(TableBase):
 	__omit_fields__ = ['tipo_item','fase','id_item','__actions__',
 						'id_linea_base','descripcion','detalles',
 						'tipo_item_relacion', 'linea_base',
-						'estado', 'relaciones','fase_actual']
+						'estado', 'relaciones','fase_actual', 'relaciones_id']
 
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}

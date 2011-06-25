@@ -154,7 +154,7 @@ nav{
 #inner-content{
 	margin: 20px;
 	overflow: auto;
-	min-height: 500px;
+	min-height: 400px;
 }
 
 #content-sidebar{
@@ -2186,19 +2186,27 @@ a.edit-row{
 	width: 16px;
 	text-transform: uppercase;
 }
+input.delete-row:hover{
+	background:None;
+	text-decoration: underline;
+	color:#FF0000;
 
-input[type="delete"], .button {
-	background: url(../img/icons/notification_error.png) no-repeat right center;
-	height: 4px;
+}
+
+input.delete-row, .button{
+	height: 16px;
+	background:None;
+	color:#A52A2A;
 	width:76px;
-	border: 0px inset gray
+	border: 0px inset gray;
 	display: block;
-	#padding: 0 0 0 20px;
+	padding: 0 0 0 18px;
 	text-transform: capitalize;
 }
 
 .filter{
 	width: 98%;
+	text-aling: rigth;
 }
 
 #flash, .notice {
@@ -2314,4 +2322,9 @@ select[size], select[multiple], select[size][multiple] {
 
 #inner-content td input[type="text"] {
 	width: 100%;
+}
+.pagelist{
+	text-align: center;
+	margin-top: 10px;
+	font-size: 30px;
 }

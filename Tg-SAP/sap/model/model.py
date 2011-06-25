@@ -52,7 +52,7 @@ class Proyecto(DeclarativeBase):
 	lider = relation ('Usuario', backref='proyectos')
 
 	estado_id = Column ('id_estado_proyecto', Integer,
-					ForeignKey('estado_proyecto.id_estado_proyecto'))
+					ForeignKey('estado_proyecto.id_estado_proyecto'), default=1)
 	"""
 	Se relaciona con una instnacia de una clase EstadoProyecto
 	"""
@@ -99,7 +99,7 @@ class TipoItem(DeclarativeBase) :
 	id_tipo_item = Column ('id_tipo_item', Integer, autoincrement=True,
 							primary_key=True)
 
-	codigo = Column ('codigo', Unicode(50), unique = True, nullable = False)
+	codigo = Column ('codigo', Unicode(50), nullable = False)
 
 	fase = Column ('id_fase', Integer, ForeignKey ('fase.id_fase'))
 

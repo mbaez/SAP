@@ -127,11 +127,11 @@ class EditActionDecorator(Decorator):
 				<div>
 					<form style= '##deletestate##;' method='POST'
 							action='##id##' >
-						<input type='hidden' name='_method'
+						<input class='delete-row' type='hidden' name='_method'
 							value='DELETE' >
 						</input>
 						<input class='delete-row'
-							onclick="return confirm('Are you sure?');"
+							onclick="return confirm('Esta seguro que desea eliminar?');"
 							value='eliminar' type='submit' ></input>
 					</form>
 				</div>
@@ -381,7 +381,11 @@ class HistorialModelDecorator(ExtendedTableList, Decorator):
 		return accion
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
-		has_permiso = True
+		hist_item = DBSession.query(HistorialItem).get(id)
+		id_item = hist_item.id_item
+		item = DBSession.query(Item).get(id_item)
+		has_permiso = item_util.verificar_linea_base(item)
+		print has_permiso
 		return super(HistorialModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
 
 	def replace(self,action, url, id):
@@ -462,10 +466,10 @@ class DetalleItemModelDecorator(ExtendedTableList, Decorator):
 	def accion (self, obj):
 		accion = super(DetalleItemModelDecorator, self).accion(obj)
 		accion = self.replace(accion,self.__url__, obj.id_item_detalle)
-		accion = "<div> " + accion
-		accion +="<div><a class='link' href='/miproyecto/fase/item/item_detalle/descargar/"+\
-				str(obj.id_item_detalle) + "'>Descargar</a></div></div>"
-		print accion
+		if obj.adjunto != None :
+			accion = "<div> " + accion
+			accion +="<div><a class='link' href='/miproyecto/fase/item/item_detalle/descargar/"+\
+					str(obj.id_item_detalle) + "'>Descargar</a></div></div>"
 		return accion
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
@@ -473,7 +477,7 @@ class DetalleItemModelDecorator(ExtendedTableList, Decorator):
 		item = detalle_item.item
 		has_permiso = item_util.verificar_linea_base(item)
 
-		print has_permiso
+		print "HASTA ACA " + str(has_permiso)
 
 		return super(DetalleItemModelDecorator,self).\
 			check_permiso(id, permiso_name, has_permiso)

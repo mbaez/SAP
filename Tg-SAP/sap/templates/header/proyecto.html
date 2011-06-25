@@ -27,9 +27,12 @@
 			<p></p>
 			<p>${params['proyecto'].nombre}</p>
 			<p></p>
-			<h5>Descripcion </h5>
-			<div id="selected-tags">
+			<h5>Estado </h5>
+			<p>${params['proyecto'].estado.nombre}</p>
+			<div py:if="params['proyecto'].estado.nombre == 'Inicial'" id="selected-tags">
+				<li> <a href="/miproyecto/iniciar_proyecto/${params['proyecto'].id_proyecto}" class="tag beige">Iniciar Proyecto</a></li>
 			</div>
+			<h5>Descripcion </h5>
 			<p></p>
 			<p> ${params['proyecto'].descripcion} </p>
 			<p></p>

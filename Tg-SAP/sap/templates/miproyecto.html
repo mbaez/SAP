@@ -19,7 +19,7 @@
 
 		<div style="float:left; width: 60%">
 			${tmpl_context.widget(value=value)}
-			<a class = "add-button" py:if="tg.predicates.has_permission(params['permiso'])"
+			<a class = "add-button" py:if="tg.predicates.has_permission(params['permiso']) and params['proyecto'].estado.nombre == 'Inicial'"
 			style="width:120px; margin-top:10px" href="${params['new_url']}">
 				${params['label']}
 			</a>

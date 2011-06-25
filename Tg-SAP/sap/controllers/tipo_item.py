@@ -29,7 +29,8 @@ class TipoItemController(RestController):
 	"""Instancia del controlador de los atributos del tipo de item"""
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
-			  'idfase':'','permiso':'','label': '', 'cancelar_url':''
+			  'idfase':'','permiso':'','label': '', 'cancelar_url':'',
+			  'current_name' : ''
 			 }
 	"""
 	parametro que contiene los valores de varios parametros y es enviado a
@@ -58,6 +59,7 @@ class TipoItemController(RestController):
 		"""
 
 		tmpl_context.widget = new_tipo_item_form
+		self.init_params(idfase)
 		self.params['modelname'] = "Tipo de Item"
 		self.params['header_file'] = 'tipo_item'
 		self.params['idfase'] = idfase
@@ -231,7 +233,7 @@ class TipoItemController(RestController):
 		for tipo in tipo_items:
 			aux=[{'codigo': tipo.codigo, 'nombre': tipo.nombre,
 			'descripcion': tipo.descripcion,
-			'accion': '<div><a href="/miproyecto/fase/tipo_item/importar_este_tipo/'
+			'accion': '<div><a class="link" href="/miproyecto/fase/tipo_item/importar_este_tipo/'
 			+str(tipo.id_tipo_item)+'/'+idfase+'">Importar este Item</a></div>'}]
 			value=value+aux
 
@@ -263,7 +265,7 @@ class TipoItemController(RestController):
 		copia_tipo.nombre = tipo.nombre
 		copia_tipo.descripcion = tipo.descripcion
 		copia_tipo.fase = idfase
-		copia_tipo.codigo = tipo_item_util.gen_codigo('TIPOITEM')
+		copia_tipo.codigo = tipo.codigo
 		"""
 		Se settean los valores para cada copia_atributo
 

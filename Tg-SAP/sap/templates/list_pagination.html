@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+<xi:include href="master.html" />
+<xi:include href="header/${params['header_file']}.html" />
+
+
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+
+<title>Listado de ${params['modelname']}</title>
+</head>
+
+<body>
+	${sub_header()}
+<div  id="container" style="float:left width: 80%">
+	<h1 style="margin-top:1px;">Listado de ${params['modelname']}</h1>
+
+	${tmpl_context.widget(value=filler.get_value(tmpl_context.paginators.historiales))}
+	<p class="pagelist">
+		${tmpl_context.paginators.historiales.pager()}
+	</p>
+</div>
+		<a class = "add-button" py:if="tg.predicates.has_permission(params['permiso'])"
+			style="width:120px; margin-top:10px" href="${params['new_url']}">
+			${params['label']}
+		</a>
+<br/>
+</body>
+</html>

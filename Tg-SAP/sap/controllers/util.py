@@ -24,10 +24,11 @@ import pygraphviz as pgv
 #import para el item util
 from tg import flash
 
-"""Modulo que contiene un conjunto de metodos de uso frecuente
+"""
+Modulo que contiene un conjunto de metodos de uso frecuente
 
-   :author: Maximiniliano Baez Gonzalez
-   :contact: mxbg.py@gmail.com
+:author: Maximiniliano Baez Gonzalez
+:contact: mxbg.py@gmail.com
 """
 
 class Util ():
@@ -1004,26 +1005,32 @@ class ItemUtil(Util):
 		else:
 			flash('El item no posee relaciones')
 
-	def dibujar_grafo(self, nodos, item_impacto):
+	def dibujar_grafo(self, nodos, item_impacto, valor_impacto):
 		fase = DBSession.query(Fase).get(item_impacto.fase)
 		fases = DBSession.query(Fase).filter(Fase.proyecto==fase.proyecto).\
+										order_by(Fase.id_fase).\
 										all()
-		desplazamiento_x = []
+		desplazamiento_x = {}
+		__index = 0
 		for i in fases:
-			desplazamiento_x.append(i.id_fase)
+			desplazamiento_x[i.id_fase] = __index
+			__index+=1
 
 		desplazamiento_y = []
 		for i in range(len(fases)):
 			desplazamiento_y.append(0)
 
-		gr = pgv.AGraph(directed=True, label="Grafico calculo de impacto")
+		gr = pgv.AGraph(directed=True, label="Impacto : "+str(valor_impacto))
 		for nodo in nodos:
 			item = DBSession.query(Item).get(nodo)
-			valor = str(item.codigo)+" : "+str(item.complejidad)
-			index = desplazamiento_x.index(item.fase)
+
+			valor = str(item.id_item)+" : "+str(item.complejidad)
+			index = desplazamiento_x[item.fase]
 			posicion =  str(index*2)+','+str(90-desplazamiento_y[index]*2)
 			desplazamiento_y[index] = desplazamiento_y[index] + 1
+
 			url= "/miproyecto/fase/item/ver/"+str(item.id_item)
+
 			if(nodo == item_impacto.id_item):
 				gr.add_node(valor, label=valor, fillcolor='#008ee8',
 					style="filled", pos=posicion, href=url, pin=True)
@@ -1036,12 +1043,13 @@ class ItemUtil(Util):
 						filter(RelacionItem.id_item_actual.in_(nodos)).\
 						filter(RelacionItem.id_item_relacionado.in_(nodos)).\
 						all()
+
 		for arista in aristas:
 			if(gr.has_edge((arista.id_item_actual, arista.id_item_relacionado))==False):
 				item1 = item = DBSession.query(Item).get(arista.id_item_actual)
 				item2 = item = DBSession.query(Item).get(arista.id_item_relacionado)
-				valor1 = str(item1.codigo)+" : "+str(item1.complejidad)
-				valor2 = str(item2.codigo)+" : "+str(item2.complejidad)
+				valor1 = str(item1.id_item)+" : "+str(item1.complejidad)
+				valor2 = str(item2.id_item)+" : "+str(item2.complejidad)
 				gr.add_edge((valor1, valor2), color='#8dad48', href="/")
 
 		gr.layout()

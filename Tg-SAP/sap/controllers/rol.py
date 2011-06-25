@@ -102,7 +102,7 @@ class RolController(RestController):
 		kw['rol_id'] = id
 		value = rol_edit_filler.get_value(kw)
 		self.params['modelname'] = 'Rol'
-		self.params['header_file'] = header_file
+		self.params['header_file'] = 'administracion'
 		self.params['permiso'] = 'editar_rol'
 		return dict(value=value, params=self.params)
 
@@ -144,7 +144,7 @@ class RolController(RestController):
 		value = rol_filler.get_value()
 		self.params['new_url'] = 'new/'
 		self.params['modelname'] = 'Roles'
-		self.params['header_file'] = header_file
+		self.params['header_file'] = 'administracion'
 		self.params['permiso'] = 'crear_rol'
 		self.params['label'] = 'Nuevo Rol'
 		return dict(value=value, params=self.params)

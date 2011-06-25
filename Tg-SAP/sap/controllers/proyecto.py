@@ -204,8 +204,14 @@ class ProyectoController(RestController):
 	"""
 	@expose()
 	def post_delete(self, id_proyecto, **kw):
-		DBSession.delete(DBSession.query(RolPermisoProyecto).\
-				  filter(RolPermisoProyecto.proyecto_id == id_proyecto))
-		DBSession.delete(DBSession.query(Proyecto).get(id_proyecto))
-		flash("El proyecto ha sido "+ id_proyecto +" eliminado correctamente.")
+		fases = DBSession.query(Fase).filter(Fase.proyecto == id_proyecto).all()
+		if(len(fases) == 0):
+			DBSession.delete(DBSession.query(RolPermisoProyecto).\
+					  filter(RolPermisoProyecto.proyecto_id == id_proyecto))
+			DBSession.delete(DBSession.query(Proyecto).get(id_proyecto))
+			flash("El proyecto ha sido "+ id_proyecto +" eliminado correctamente.")
+
+		else:
+			flash("El proyecto no puede ser eliminado porque ya tiene fases", "error")
+
 		redirect("/administracion/proyecto/")

@@ -165,7 +165,7 @@ linea_base_edit_form = LineaBaseEditForm(DBSession)
 class DetalleItemEditForm(EditableForm):
 	__model__ = DetalleItem
 	__omit_fields__ = ['id_item', 'id_atributo_tipo_item'
-					   ,'atributo_tipo_item','item']
+					   ,'atributo_tipo_item','item', 'file_name','content_type']
 
 detalle_item_edit_form = DetalleItemEditForm(DBSession)
 

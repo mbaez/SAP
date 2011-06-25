@@ -10,8 +10,12 @@ from repoze.what import predicates, authorize
 from sap.lib.pygraph.classes.digraph import *
 from sap.lib.pygraph.algorithms.cycles import *
 from sap.lib.pygraph.readwrite.dot import write
-# Import graphviz
 
+#pagination
+from webhelpers import paginate
+from tg.decorators import paginate as paginatedeco
+
+# Import graphviz
 import sys
 sys.path.append('..')
 sys.path.append('/usr/lib/graphviz/python/')
@@ -378,7 +382,7 @@ class ItemController(RestController):
 		DBSession.merge(item)
 		flash("El item " + item.codigo+ " ha sido aprobado correctamente")
 		redirect('/miproyecto/fase/item/ver/'+str(iditem))
-
+	"""
 	@expose('sap.templates.list')
 	@require(predicates.has_permission('editar_item'))
 	def historial_versiones(self, id_item):
@@ -394,7 +398,27 @@ class ItemController(RestController):
 		self.params['permiso'] = 'NONE'
 		self.params['idfase'] = 'NONE'
 		return dict (value=value, params=self.params)
+	"""
 
+	@require(predicates.has_permission('editar_item'))
+	@expose('sap.templates.list_pagination')
+	@paginatedeco("historiales", items_per_page=10)
+	def historial_versiones(self, id_item):
+		historiales = DBSession.query(HistorialItem).\
+								filter(HistorialItem.id_item==id_item).\
+								all()
+
+		tmpl_context.widget = historial_table
+		filler = historial_filler
+
+		self.params['title'] = 'Versiones Anteriores'
+		self.params['modelname'] = 'Historial'
+		self.params['header_file'] = 'item'
+		self.params['new_url'] = '/'
+		self.params['permiso'] = 'NONE'
+		self.params['idfase'] = 'NONE'
+		self.params['item'] = DBSession.query(Item).get(id_item)
+		return dict (params=self.params, filler=filler, historiales=historiales)
 
 	@expose()
 	@require(predicates.has_permission('editar_item'))
@@ -423,7 +447,7 @@ class ItemController(RestController):
 		grafo = item_util.proyectGraphConstructor(fase.proyecto)
 		nodos = []
 		impacto, nodos = item_util.calcular_impacto(grafo, item.id_item)
-		item_util.dibujar_grafo(nodos, item)
+		item_util.dibujar_grafo(nodos, item, impacto)
 		self.params['cantidad'] = len(nodos)
 		self.params['impacto'] = impacto
 		self.params['item'] = item

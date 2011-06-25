@@ -140,27 +140,32 @@ def cargar_roles(manager,usr, usr2, usr3):
 
 def cargar_estados():
     inicial = model.EstadoProyecto()
+    inicial.id_estado_proyecto = 1
     inicial.nombre = u'Inicial'
     inicial.descripcion = u'Estado que indica que un proyecto esta en estado inicial'
     model.DBSession.add(inicial)
 
     desarrollo = model.EstadoProyecto()
     desarrollo.nombre = u'Desarrollo'
+    desarrollo.id_estado_proyecto = 2
     desarrollo.descripcion = u'Estado que indica que un proyecto esta en desarrollo'
     model.DBSession.add(desarrollo)
 
     cancelado = model.EstadoProyecto()
     cancelado.nombre = u'Cancelado'
+    cancelado.id_estado_proyecto = 3
     cancelado.descripcion = u'Estado que indica que un proyecto esta cancelado'
     model.DBSession.add(cancelado)
 
     pausado = model.EstadoProyecto()
     pausado.nombre = u'Pausado'
+    pausado.id_estado_proyecto = 4
     pausado.descripcion = u'Estado que indica que un proyecto esta pausado'
     model.DBSession.add(pausado)
 
     finalizado = model.EstadoProyecto()
     finalizado.nombre = u'Finalizado'
+    finalizado.id_estado_proyecto = 5
     finalizado.descripcion = u'Estado que indica que un proyecto esta finalizado'
     model.DBSession.add(finalizado)
 

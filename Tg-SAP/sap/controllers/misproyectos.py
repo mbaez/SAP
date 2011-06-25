@@ -107,3 +107,14 @@ class ProyectosController(RestController):
 		self.params['permiso_editar'] = permiso_editar
 		self.params['permiso_anadir'] = permiso_anadir
 		return dict(value=value, params=self.params)
+
+	@expose()
+	def iniciar_proyecto(self, idproyecto, **kw):
+		proyecto = DBSession.query(Proyecto).get(idproyecto)
+		proyecto.estado = estado_proyecto_util.get_by_codigo('Desarrollo')
+
+		DBSession.merge(proyecto)
+
+		redirect('/miproyecto/ver/'+str(idproyecto))
+
+
