@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>sap.controllers.checker.SessionChecker</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;sap ::
+        <a href="sap.controllers-module.html">Package&nbsp;controllers</a> ::
+        <a href="sap.controllers.checker-module.html">Module&nbsp;checker</a> ::
+        Class&nbsp;SessionChecker
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="sap.controllers.checker.SessionChecker-class.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!-- ==================== CLASS DESCRIPTION ==================== -->
+<h1 class="epydoc">Class SessionChecker</h1><p class="nomargin-top"><span class="codelink"><a href="sap.controllers.checker-pysrc.html#SessionChecker">source&nbsp;code</a></span></p>
+<!-- ==================== INSTANCE METHODS ==================== -->
+<a name="section-InstanceMethods"></a>
+<table class="summary" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Instance Methods</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-InstanceMethods"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">Predicates @return : retorna las credenciales del usuario</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sap.controllers.checker.SessionChecker-class.html#check_proyecto_permiso" class="summary-sig-name">check_proyecto_permiso</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">id_proyecto</span>,
+        <span class="summary-sig-arg">permiso_name</span>,
+        <span class="summary-sig-arg">nuleable</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Controla si el usuario que actualmente se encuentra logeado posee el 
+      deteminado permiso sobre un proyecto.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sap.controllers.checker-pysrc.html#SessionChecker.check_proyecto_permiso">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">Predicates @return : retorna las credenciales del usuario</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sap.controllers.checker.SessionChecker-class.html#check_fase_permiso" class="summary-sig-name">check_fase_permiso</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">id_fase</span>,
+        <span class="summary-sig-arg">permiso_name</span>,
+        <span class="summary-sig-arg">nuleable</span>=<span class="summary-sig-default">False</span>)</span><br />
+      Controla si el usuario que actualmente se encuentra logeado posee el 
+      deteminado permiso sobre una fase.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sap.controllers.checker-pysrc.html#SessionChecker.check_fase_permiso">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">Usuario @return : retorna una instancia de la clase usuario</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="get_current_user"></a><span class="summary-sig-name">get_current_user</span>(<span class="summary-sig-arg">self</span>)</span><br />
+      Obtiene el username del usuario que se encuentra actualmente logeado 
+      en el sistema de la cabecera http y recupera de la base de datos el 
+      usuario.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sap.controllers.checker-pysrc.html#SessionChecker.get_current_user">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">Proyecto [ ] @return : retorna una lista de los poryectos</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sap.controllers.checker.SessionChecker-class.html#get_poyect_list" class="summary-sig-name">get_poyect_list</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">permiso_name</span>)</span><br />
+      Obtiene un lista de los proyectos para los cuales el usuario que se 
+      encuentra logeado posee el correspondiente permiso.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sap.controllers.checker-pysrc.html#SessionChecker.get_poyect_list">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">Fase [] @return : retorna una lista de fases</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a href="sap.controllers.checker.SessionChecker-class.html#get_fases_by_proyecto_list" class="summary-sig-name">get_fases_by_proyecto_list</a>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">idproyecto</span>,
+        <span class="summary-sig-arg">permiso_name</span>)</span><br />
+      Obtiene un lista de las fases que pertenecen a un proyecto, para los 
+      cuales el usuario que se encuentra logeado posee el correspondiente 
+      permiso.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="sap.controllers.checker-pysrc.html#SessionChecker.get_fases_by_proyecto_list">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+</table>
+<!-- ==================== METHOD DETAILS ==================== -->
+<a name="section-MethodDetails"></a>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr bgcolor="#70b0f0" class="table-header">
+  <td colspan="2" class="table-header">
+    <table border="0" cellpadding="0" cellspacing="0" width="100%">
+      <tr valign="top">
+        <td align="left"><span class="table-header">Method Details</span></td>
+        <td align="right" valign="top"
+         ><span class="options">[<a href="#section-MethodDetails"
+         class="privatelink" onclick="toggle_private();"
+         >hide private</a>]</span></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+</table>
+<a name="check_proyecto_permiso"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">check_proyecto_permiso</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">id_proyecto</span>,
+        <span class="sig-arg">permiso_name</span>,
+        <span class="sig-arg">nuleable</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sap.controllers.checker-pysrc.html#SessionChecker.check_proyecto_permiso">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Controla si el usuario que actualmente se encuentra logeado posee el 
+  deteminado permiso sobre un proyecto.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>id_proyecto</code></strong> (Integer) - Identificador del proyecto</li>
+        <li><strong class="pname"><code>permiso_name</code></strong> (String) - Nombre del permiso</li>
+        <li><strong class="pname"><code>nuleable</code></strong> (Boolean) - Variable de control del valor de retorno. Si es True y el usuario
+          no posee permisos retorna None</li>
+    </ul></dd>
+    <dt>Returns: Predicates @return : retorna las credenciales del usuario</dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="check_fase_permiso"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">check_fase_permiso</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">id_fase</span>,
+        <span class="sig-arg">permiso_name</span>,
+        <span class="sig-arg">nuleable</span>=<span class="sig-default">False</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sap.controllers.checker-pysrc.html#SessionChecker.check_fase_permiso">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Controla si el usuario que actualmente se encuentra logeado posee el 
+  deteminado permiso sobre una fase.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>id_fase</code></strong> (Integer) - Identificador de la fase</li>
+        <li><strong class="pname"><code>permiso_name</code></strong> (String) - Nombre del permiso</li>
+        <li><strong class="pname"><code>nuleable</code></strong> (Boolean) - Variable de control del valor de retorno. Si es True y el usuario
+          no posee permisos retorna None</li>
+    </ul></dd>
+    <dt>Returns: Predicates @return : retorna las credenciales del usuario</dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_poyect_list"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_poyect_list</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">permiso_name</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sap.controllers.checker-pysrc.html#SessionChecker.get_poyect_list">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Obtiene un lista de los proyectos para los cuales el usuario que se 
+  encuentra logeado posee el correspondiente permiso.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>permiso_name</code></strong> (String) - Nombre del permiso</li>
+    </ul></dd>
+    <dt>Returns: Proyecto [ ] @return : retorna una lista de los poryectos</dt>
+  </dl>
+</td></tr></table>
+</div>
+<a name="get_fases_by_proyecto_list"></a>
+<div>
+<table class="details" border="1" cellpadding="3"
+       cellspacing="0" width="100%" bgcolor="white">
+<tr><td>
+  <table width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr valign="top"><td>
+  <h3 class="epydoc"><span class="sig"><span class="sig-name">get_fases_by_proyecto_list</span>(<span class="sig-arg">self</span>,
+        <span class="sig-arg">idproyecto</span>,
+        <span class="sig-arg">permiso_name</span>)</span>
+  </h3>
+  </td><td align="right" valign="top"
+    ><span class="codelink"><a href="sap.controllers.checker-pysrc.html#SessionChecker.get_fases_by_proyecto_list">source&nbsp;code</a></span>&nbsp;
+    </td>
+  </tr></table>
+  
+  <p>Obtiene un lista de las fases que pertenecen a un proyecto, para los 
+  cuales el usuario que se encuentra logeado posee el correspondiente 
+  permiso.</p>
+  <dl class="fields">
+    <dt>Parameters:</dt>
+    <dd><ul class="nomargin-top">
+        <li><strong class="pname"><code>idproyecto</code></strong> (Integer) - Identificador del proyecto</li>
+        <li><strong class="pname"><code>permiso_name</code></strong> (String) - Nombre del permiso</li>
+    </ul></dd>
+    <dt>Returns: Fase [] @return : retorna una lista de fases</dt>
+  </dl>
+</td></tr></table>
+</div>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Sat Jun 25 02:27:35 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

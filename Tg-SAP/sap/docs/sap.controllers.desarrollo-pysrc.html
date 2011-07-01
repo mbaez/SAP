@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>sap.controllers.desarrollo</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;sap ::
+        <a href="sap.controllers-module.html">Package&nbsp;controllers</a> ::
+        Module&nbsp;desarrollo
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="sap.controllers.desarrollo-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="sap.controllers.desarrollo-module.html">Module sap.controllers.desarrollo</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno"> 1</tt>  <tt class="py-line"><tt class="py-comment"># -*- coding: utf-8 -*-</tt> </tt>
+<a name="L2"></a><tt class="py-lineno"> 2</tt>  <tt class="py-line"> </tt>
+<a name="L3"></a><tt class="py-lineno"> 3</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">tg</tt> <tt class="py-keyword">import</tt> <tt class="py-name">expose</tt><tt class="py-op">,</tt> <tt id="link-0" class="py-name" targets="Variable sap.widgets.createform.flash=sap.widgets.createform-module.html#flash,Variable sap.widgets.decorator.flash=sap.widgets.decorator-module.html#flash,Variable sap.widgets.listform.flash=sap.widgets.listform-module.html#flash"><a title="sap.widgets.createform.flash
+sap.widgets.decorator.flash
+sap.widgets.listform.flash" class="py-name" href="#" onclick="return doclink('link-0', 'flash', 'link-0');">flash</a></tt><tt class="py-op">,</tt> <tt class="py-name">require</tt><tt class="py-op">,</tt> <tt class="py-name">url</tt><tt class="py-op">,</tt> <tt id="link-1" class="py-name" targets="Variable sap.controllers.item_detalle.request=sap.controllers.item_detalle-module.html#request,Variable sap.widgets.createform.request=sap.widgets.createform-module.html#request,Variable sap.widgets.decorator.request=sap.widgets.decorator-module.html#request,Variable sap.widgets.listform.request=sap.widgets.listform-module.html#request"><a title="sap.controllers.item_detalle.request
+sap.widgets.createform.request
+sap.widgets.decorator.request
+sap.widgets.listform.request" class="py-name" href="#" onclick="return doclink('link-1', 'request', 'link-1');">request</a></tt><tt class="py-op">,</tt> <tt class="py-name">redirect</tt> </tt>
+<a name="L4"></a><tt class="py-lineno"> 4</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">repoze</tt><tt class="py-op">.</tt><tt class="py-name">what</tt> <tt class="py-keyword">import</tt> <tt class="py-name">predicates</tt> </tt>
+<a name="L5"></a><tt class="py-lineno"> 5</tt>  <tt class="py-line"><tt class="py-comment"># project specific imports</tt> </tt>
+<a name="L6"></a><tt class="py-lineno"> 6</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt class="py-name">lib</tt><tt class="py-op">.</tt><tt class="py-name">base</tt> <tt class="py-keyword">import</tt> <tt class="py-name">BaseController</tt> </tt>
+<a name="L7"></a><tt class="py-lineno"> 7</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Package sap.model=sap.model-module.html,Module sap.model.model=sap.model.model-module.html"><a title="sap.model
+sap.model.model" class="py-name" href="#" onclick="return doclink('link-2', 'model', 'link-2');">model</a></tt> <tt class="py-keyword">import</tt> <tt id="link-3" class="py-name" targets="Variable sap.controllers.participante.DBSession=sap.controllers.participante-module.html#DBSession,Variable sap.model.DBSession=sap.model-module.html#DBSession,Variable sap.widgets.createform.DBSession=sap.widgets.createform-module.html#DBSession,Variable sap.widgets.decorator.DBSession=sap.widgets.decorator-module.html#DBSession,Variable sap.widgets.editform.DBSession=sap.widgets.editform-module.html#DBSession,Variable sap.widgets.extended.DBSession=sap.widgets.extended-module.html#DBSession"><a title="sap.controllers.participante.DBSession
+sap.model.DBSession
+sap.widgets.createform.DBSession
+sap.widgets.decorator.DBSession
+sap.widgets.editform.DBSession
+sap.widgets.extended.DBSession" class="py-name" href="#" onclick="return doclink('link-3', 'DBSession', 'link-3');">DBSession</a></tt><tt class="py-op">,</tt> <tt id="link-4" class="py-name" targets="Variable sap.controllers.participante.metadata=sap.controllers.participante-module.html#metadata,Variable sap.model.metadata=sap.model-module.html#metadata,Variable sap.widgets.createform.metadata=sap.widgets.createform-module.html#metadata,Variable sap.widgets.decorator.metadata=sap.widgets.decorator-module.html#metadata,Variable sap.widgets.editform.metadata=sap.widgets.editform-module.html#metadata,Variable sap.widgets.extended.metadata=sap.widgets.extended-module.html#metadata"><a title="sap.controllers.participante.metadata
+sap.model.metadata
+sap.widgets.createform.metadata
+sap.widgets.decorator.metadata
+sap.widgets.editform.metadata
+sap.widgets.extended.metadata" class="py-name" href="#" onclick="return doclink('link-4', 'metadata', 'link-4');">metadata</a></tt> </tt>
+<a name="L8"></a><tt class="py-lineno"> 8</tt>  <tt class="py-line"> </tt>
+<a name="L9"></a><tt class="py-lineno"> 9</tt>  <tt class="py-line"> </tt>
+<a name="L10"></a><tt class="py-lineno">10</tt>  <tt class="py-line"><tt class="py-string">"""</tt> </tt>
+<a name="L11"></a><tt class="py-lineno">11</tt>  <tt class="py-line"><tt class="py-string">Import the usuario widget</tt> </tt>
+<a name="L12"></a><tt class="py-lineno">12</tt>  <tt class="py-line"><tt class="py-string">"""</tt> </tt>
+<a name="L13"></a><tt class="py-lineno">13</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">tg</tt> <tt class="py-keyword">import</tt> <tt id="link-5" class="py-name" targets="Variable sap.controllers.item.tmpl_context=sap.controllers.item-module.html#tmpl_context,Variable sap.controllers.misproyectos.tmpl_context=sap.controllers.misproyectos-module.html#tmpl_context,Variable sap.controllers.participante.tmpl_context=sap.controllers.participante-module.html#tmpl_context,Variable sap.controllers.relacion.tmpl_context=sap.controllers.relacion-module.html#tmpl_context,Variable sap.widgets.decorator.tmpl_context=sap.widgets.decorator-module.html#tmpl_context,Variable sap.widgets.listform.tmpl_context=sap.widgets.listform-module.html#tmpl_context"><a title="sap.controllers.item.tmpl_context
+sap.controllers.misproyectos.tmpl_context
+sap.controllers.participante.tmpl_context
+sap.controllers.relacion.tmpl_context
+sap.widgets.decorator.tmpl_context
+sap.widgets.listform.tmpl_context" class="py-name" href="#" onclick="return doclink('link-5', 'tmpl_context', 'link-5');">tmpl_context</a></tt> </tt>
+<a name="L14"></a><tt class="py-lineno">14</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Package sap.widgets=sap.widgets-module.html"><a title="sap.widgets" class="py-name" href="#" onclick="return doclink('link-6', 'widgets', 'link-6');">widgets</a></tt><tt class="py-op">.</tt><tt id="link-7" class="py-name" targets="Module sap.widgets.createform=sap.widgets.createform-module.html"><a title="sap.widgets.createform" class="py-name" href="#" onclick="return doclink('link-7', 'createform', 'link-7');">createform</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L15"></a><tt class="py-lineno">15</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-8" class="py-name"><a title="sap.widgets" class="py-name" href="#" onclick="return doclink('link-8', 'widgets', 'link-6');">widgets</a></tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Module sap.widgets.listform=sap.widgets.listform-module.html"><a title="sap.widgets.listform" class="py-name" href="#" onclick="return doclink('link-9', 'listform', 'link-9');">listform</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L16"></a><tt class="py-lineno">16</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-10" class="py-name"><a title="sap.widgets" class="py-name" href="#" onclick="return doclink('link-10', 'widgets', 'link-6');">widgets</a></tt><tt class="py-op">.</tt><tt id="link-11" class="py-name" targets="Module sap.widgets.editform=sap.widgets.editform-module.html"><a title="sap.widgets.editform" class="py-name" href="#" onclick="return doclink('link-11', 'editform', 'link-11');">editform</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L17"></a><tt class="py-lineno">17</tt>  <tt class="py-line"> </tt>
+<a name="L18"></a><tt class="py-lineno">18</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name"><a title="sap.model
+sap.model.model" class="py-name" href="#" onclick="return doclink('link-12', 'model', 'link-2');">model</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L19"></a><tt class="py-lineno">19</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">tg</tt> <tt class="py-keyword">import</tt> <tt id="link-13" class="py-name"><a title="sap.controllers.item.tmpl_context
+sap.controllers.misproyectos.tmpl_context
+sap.controllers.participante.tmpl_context
+sap.controllers.relacion.tmpl_context
+sap.widgets.decorator.tmpl_context
+sap.widgets.listform.tmpl_context" class="py-name" href="#" onclick="return doclink('link-13', 'tmpl_context', 'link-5');">tmpl_context</a></tt><tt class="py-op">,</tt> <tt class="py-name">redirect</tt><tt class="py-op">,</tt> <tt class="py-name">validate</tt> </tt>
+<a name="L20"></a><tt class="py-lineno">20</tt>  <tt class="py-line"> </tt>
+<a name="L21"></a><tt class="py-lineno">21</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">tg</tt><tt class="py-op">.</tt><tt id="link-14" class="py-name" targets="Package sap.controllers=sap.controllers-module.html"><a title="sap.controllers" class="py-name" href="#" onclick="return doclink('link-14', 'controllers', 'link-14');">controllers</a></tt> <tt class="py-keyword">import</tt> <tt class="py-name">RestController</tt> </tt>
+<a name="L22"></a><tt class="py-lineno">22</tt>  <tt class="py-line"> </tt>
+<a name="L23"></a><tt class="py-lineno">23</tt>  <tt class="py-line"><tt class="py-name">__all__</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-string">'RootController'</tt><tt class="py-op">]</tt> </tt>
+<a name="DesarrolloController"></a><div id="DesarrolloController-def"><a name="L24"></a><tt class="py-lineno">24</tt>  <tt class="py-line"> </tt>
+<a name="L25"></a><tt class="py-lineno">25</tt> <a class="py-toggle" href="#" id="DesarrolloController-toggle" onclick="return toggle('DesarrolloController');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="sap.controllers.desarrollo.DesarrolloController-class.html">DesarrolloController</a><tt class="py-op">(</tt><tt class="py-base-class">BaseController</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="DesarrolloController-collapsed" style="display:none;" pad="++" indent="++++"></div><div id="DesarrolloController-expanded"><a name="L26"></a><tt class="py-lineno">26</tt>  <tt class="py-line"> </tt>
+<a name="L27"></a><tt class="py-lineno">27</tt>  <tt class="py-line">        <tt class="py-decorator">@</tt><tt class="py-decorator">expose</tt><tt class="py-op">(</tt><tt class="py-string">'sap.templates.desarrollo.list'</tt><tt class="py-op">)</tt> </tt>
+<a name="DesarrolloController.list"></a><div id="DesarrolloController.list-def"><a name="L28"></a><tt class="py-lineno">28</tt> <a class="py-toggle" href="#" id="DesarrolloController.list-toggle" onclick="return toggle('DesarrolloController.list');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.controllers.desarrollo.DesarrolloController-class.html#list">list</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="DesarrolloController.list-collapsed" style="display:none;" pad="++" indent="++++++++++++"></div><div id="DesarrolloController.list-expanded"><a name="L29"></a><tt class="py-lineno">29</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">dict</tt><tt class="py-op">(</tt><tt class="py-name">modelname</tt><tt class="py-op">=</tt><tt class="py-string">'Fase'</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L30"></a><tt class="py-lineno">30</tt>  <tt class="py-line"> </tt>
+<a name="L31"></a><tt class="py-lineno">31</tt>  <tt class="py-line">        <tt class="py-decorator">@</tt><tt class="py-decorator">expose</tt><tt class="py-op">(</tt><tt class="py-string">'sap.templates.desarrollo.reporte'</tt><tt class="py-op">)</tt> </tt>
+<a name="DesarrolloController.reporte"></a><div id="DesarrolloController.reporte-def"><a name="L32"></a><tt class="py-lineno">32</tt> <a class="py-toggle" href="#" id="DesarrolloController.reporte-toggle" onclick="return toggle('DesarrolloController.reporte');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.controllers.desarrollo.DesarrolloController-class.html#reporte">reporte</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="DesarrolloController.reporte-collapsed" style="display:none;" pad="++" indent="++++++++++++"></div><div id="DesarrolloController.reporte-expanded"><a name="L33"></a><tt class="py-lineno">33</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">dict</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L34"></a><tt class="py-lineno">34</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Sat Jun 25 02:27:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

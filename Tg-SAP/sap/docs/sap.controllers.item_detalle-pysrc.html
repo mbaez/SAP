@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>sap.controllers.item_detalle</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;sap ::
+        <a href="sap.controllers-module.html">Package&nbsp;controllers</a> ::
+        Module&nbsp;item_detalle
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="sap.controllers.item_detalle-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="sap.controllers.item_detalle-module.html">Module sap.controllers.item_detalle</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment"># -*- coding: utf-8 -*-</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">tg</tt> <tt class="py-keyword">import</tt> <tt class="py-name">expose</tt><tt class="py-op">,</tt> <tt id="link-0" class="py-name" targets="Variable sap.widgets.createform.flash=sap.widgets.createform-module.html#flash,Variable sap.widgets.decorator.flash=sap.widgets.decorator-module.html#flash,Variable sap.widgets.listform.flash=sap.widgets.listform-module.html#flash"><a title="sap.widgets.createform.flash
+sap.widgets.decorator.flash
+sap.widgets.listform.flash" class="py-name" href="#" onclick="return doclink('link-0', 'flash', 'link-0');">flash</a></tt><tt class="py-op">,</tt> <tt class="py-name">require</tt><tt class="py-op">,</tt> <tt class="py-name">redirect</tt><tt class="py-op">,</tt><tt id="link-1" class="py-name" targets="Variable sap.controllers.fase.response=sap.controllers.fase-module.html#response,Variable sap.controllers.relacion.response=sap.controllers.relacion-module.html#response"><a title="sap.controllers.fase.response
+sap.controllers.relacion.response" class="py-name" href="#" onclick="return doclink('link-1', 'response', 'link-1');">response</a></tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">repoze</tt><tt class="py-op">.</tt><tt class="py-name">what</tt> <tt class="py-keyword">import</tt> <tt class="py-name">predicates</tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt class="py-name">lib</tt><tt class="py-op">.</tt><tt class="py-name">base</tt> <tt class="py-keyword">import</tt> <tt class="py-name">BaseController</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Package sap.model=sap.model-module.html,Module sap.model.model=sap.model.model-module.html"><a title="sap.model
+sap.model.model" class="py-name" href="#" onclick="return doclink('link-2', 'model', 'link-2');">model</a></tt> <tt class="py-keyword">import</tt> <tt id="link-3" class="py-name" targets="Variable sap.controllers.participante.DBSession=sap.controllers.participante-module.html#DBSession,Variable sap.model.DBSession=sap.model-module.html#DBSession,Variable sap.widgets.createform.DBSession=sap.widgets.createform-module.html#DBSession,Variable sap.widgets.decorator.DBSession=sap.widgets.decorator-module.html#DBSession,Variable sap.widgets.editform.DBSession=sap.widgets.editform-module.html#DBSession,Variable sap.widgets.extended.DBSession=sap.widgets.extended-module.html#DBSession"><a title="sap.controllers.participante.DBSession
+sap.model.DBSession
+sap.widgets.createform.DBSession
+sap.widgets.decorator.DBSession
+sap.widgets.editform.DBSession
+sap.widgets.extended.DBSession" class="py-name" href="#" onclick="return doclink('link-3', 'DBSession', 'link-3');">DBSession</a></tt><tt class="py-op">,</tt> <tt id="link-4" class="py-name" targets="Variable sap.controllers.participante.metadata=sap.controllers.participante-module.html#metadata,Variable sap.model.metadata=sap.model-module.html#metadata,Variable sap.widgets.createform.metadata=sap.widgets.createform-module.html#metadata,Variable sap.widgets.decorator.metadata=sap.widgets.decorator-module.html#metadata,Variable sap.widgets.editform.metadata=sap.widgets.editform-module.html#metadata,Variable sap.widgets.extended.metadata=sap.widgets.extended-module.html#metadata"><a title="sap.controllers.participante.metadata
+sap.model.metadata
+sap.widgets.createform.metadata
+sap.widgets.decorator.metadata
+sap.widgets.editform.metadata
+sap.widgets.extended.metadata" class="py-name" href="#" onclick="return doclink('link-4', 'metadata', 'link-4');">metadata</a></tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">tg</tt> <tt class="py-keyword">import</tt> <tt id="link-5" class="py-name" targets="Variable sap.controllers.item.tmpl_context=sap.controllers.item-module.html#tmpl_context,Variable sap.controllers.misproyectos.tmpl_context=sap.controllers.misproyectos-module.html#tmpl_context,Variable sap.controllers.participante.tmpl_context=sap.controllers.participante-module.html#tmpl_context,Variable sap.controllers.relacion.tmpl_context=sap.controllers.relacion-module.html#tmpl_context,Variable sap.widgets.decorator.tmpl_context=sap.widgets.decorator-module.html#tmpl_context,Variable sap.widgets.listform.tmpl_context=sap.widgets.listform-module.html#tmpl_context"><a title="sap.controllers.item.tmpl_context
+sap.controllers.misproyectos.tmpl_context
+sap.controllers.participante.tmpl_context
+sap.controllers.relacion.tmpl_context
+sap.widgets.decorator.tmpl_context
+sap.widgets.listform.tmpl_context" class="py-name" href="#" onclick="return doclink('link-5', 'tmpl_context', 'link-5');">tmpl_context</a></tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-comment">#import de widgets</tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-6" class="py-name" targets="Package sap.widgets=sap.widgets-module.html"><a title="sap.widgets" class="py-name" href="#" onclick="return doclink('link-6', 'widgets', 'link-6');">widgets</a></tt><tt class="py-op">.</tt><tt id="link-7" class="py-name" targets="Module sap.widgets.createform=sap.widgets.createform-module.html"><a title="sap.widgets.createform" class="py-name" href="#" onclick="return doclink('link-7', 'createform', 'link-7');">createform</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-8" class="py-name"><a title="sap.widgets" class="py-name" href="#" onclick="return doclink('link-8', 'widgets', 'link-6');">widgets</a></tt><tt class="py-op">.</tt><tt id="link-9" class="py-name" targets="Module sap.widgets.listform=sap.widgets.listform-module.html"><a title="sap.widgets.listform" class="py-name" href="#" onclick="return doclink('link-9', 'listform', 'link-9');">listform</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-10" class="py-name"><a title="sap.widgets" class="py-name" href="#" onclick="return doclink('link-10', 'widgets', 'link-6');">widgets</a></tt><tt class="py-op">.</tt><tt id="link-11" class="py-name" targets="Module sap.widgets.editform=sap.widgets.editform-module.html"><a title="sap.widgets.editform" class="py-name" href="#" onclick="return doclink('link-11', 'editform', 'link-11');">editform</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">tw</tt><tt class="py-op">.</tt><tt class="py-name">forms</tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-comment"># imports del modelo</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-12" class="py-name"><a title="sap.model
+sap.model.model" class="py-name" href="#" onclick="return doclink('link-12', 'model', 'link-2');">model</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">tg</tt> <tt class="py-keyword">import</tt> <tt id="link-13" class="py-name"><a title="sap.controllers.item.tmpl_context
+sap.controllers.misproyectos.tmpl_context
+sap.controllers.participante.tmpl_context
+sap.controllers.relacion.tmpl_context
+sap.widgets.decorator.tmpl_context
+sap.widgets.listform.tmpl_context" class="py-name" href="#" onclick="return doclink('link-13', 'tmpl_context', 'link-5');">tmpl_context</a></tt><tt class="py-op">,</tt> <tt class="py-name">redirect</tt><tt class="py-op">,</tt> <tt class="py-name">validate</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line"><tt class="py-comment">#import del checker de permisos</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-14" class="py-name" targets="Package sap.controllers=sap.controllers-module.html"><a title="sap.controllers" class="py-name" href="#" onclick="return doclink('link-14', 'controllers', 'link-14');">controllers</a></tt><tt class="py-op">.</tt><tt id="link-15" class="py-name" targets="Variable sap.controllers.atributo.checker=sap.controllers.atributo-module.html#checker,Module sap.controllers.checker=sap.controllers.checker-module.html,Variable sap.controllers.checker.checker=sap.controllers.checker-module.html#checker,Variable sap.controllers.desarrollo.checker=sap.controllers.desarrollo-module.html#checker,Variable sap.controllers.fase.checker=sap.controllers.fase-module.html#checker,Variable sap.controllers.item.checker=sap.controllers.item-module.html#checker,Variable sap.controllers.item_detalle.checker=sap.controllers.item_detalle-module.html#checker,Variable sap.controllers.linea_base.checker=sap.controllers.linea_base-module.html#checker,Variable sap.controllers.misproyectos.checker=sap.controllers.misproyectos-module.html#checker,Variable sap.controllers.participante.checker=sap.controllers.participante-module.html#checker,Variable sap.controllers.proyecto.checker=sap.controllers.proyecto-module.html#checker,Variable sap.controllers.relacion.checker=sap.controllers.relacion-module.html#checker,Variable sap.controllers.rol.checker=sap.controllers.rol-module.html#checker,Variable sap.controllers.tipo_item.checker=sap.controllers.tipo_item-module.html#checker,Variable sap.controllers.usuario.checker=sap.controllers.usuario-module.html#checker,Variable sap.widgets.decorator.checker=sap.widgets.decorator-module.html#checker,Variable sap.widgets.listform.checker=sap.widgets.listform-module.html#checker"><a title="sap.controllers.atributo.checker
+sap.controllers.checker
+sap.controllers.checker.checker
+sap.controllers.desarrollo.checker
+sap.controllers.fase.checker
+sap.controllers.item.checker
+sap.controllers.item_detalle.checker
+sap.controllers.linea_base.checker
+sap.controllers.misproyectos.checker
+sap.controllers.participante.checker
+sap.controllers.proyecto.checker
+sap.controllers.relacion.checker
+sap.controllers.rol.checker
+sap.controllers.tipo_item.checker
+sap.controllers.usuario.checker
+sap.widgets.decorator.checker
+sap.widgets.listform.checker" class="py-name" href="#" onclick="return doclink('link-15', 'checker', 'link-15');">checker</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-16" class="py-name"><a title="sap.controllers" class="py-name" href="#" onclick="return doclink('link-16', 'controllers', 'link-14');">controllers</a></tt><tt class="py-op">.</tt><tt id="link-17" class="py-name" targets="Variable sap.controllers.fase.FaseController.item=sap.controllers.fase.FaseController-class.html#item,Module sap.controllers.item=sap.controllers.item-module.html,Variable sap.model.model.HistorialDetalleItem.item=sap.model.model.HistorialDetalleItem-class.html#item"><a title="sap.controllers.fase.FaseController.item
+sap.controllers.item
+sap.model.model.HistorialDetalleItem.item" class="py-name" href="#" onclick="return doclink('link-17', 'item', 'link-17');">item</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"><tt class="py-comment">#import del controlador</tt> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">tg</tt><tt class="py-op">.</tt><tt id="link-18" class="py-name"><a title="sap.controllers" class="py-name" href="#" onclick="return doclink('link-18', 'controllers', 'link-14');">controllers</a></tt> <tt class="py-keyword">import</tt> <tt class="py-name">RestController</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-19" class="py-name"><a title="sap.controllers" class="py-name" href="#" onclick="return doclink('link-19', 'controllers', 'link-14');">controllers</a></tt><tt class="py-op">.</tt><tt id="link-20" class="py-name" targets="Variable sap.controllers.atributo.util=sap.controllers.atributo-module.html#util,Variable sap.controllers.checker.util=sap.controllers.checker-module.html#util,Variable sap.controllers.desarrollo.util=sap.controllers.desarrollo-module.html#util,Variable sap.controllers.fase.util=sap.controllers.fase-module.html#util,Variable sap.controllers.item.util=sap.controllers.item-module.html#util,Variable sap.controllers.item_detalle.util=sap.controllers.item_detalle-module.html#util,Variable sap.controllers.linea_base.util=sap.controllers.linea_base-module.html#util,Variable sap.controllers.misproyectos.util=sap.controllers.misproyectos-module.html#util,Variable sap.controllers.participante.util=sap.controllers.participante-module.html#util,Variable sap.controllers.proyecto.util=sap.controllers.proyecto-module.html#util,Variable sap.controllers.relacion.util=sap.controllers.relacion-module.html#util,Variable sap.controllers.rol.util=sap.controllers.rol-module.html#util,Variable sap.controllers.tipo_item.util=sap.controllers.tipo_item-module.html#util,Variable sap.controllers.usuario.util=sap.controllers.usuario-module.html#util,Module sap.controllers.util=sap.controllers.util-module.html,Variable sap.widgets.decorator.util=sap.widgets.decorator-module.html#util,Variable sap.widgets.listform.util=sap.widgets.listform-module.html#util"><a title="sap.controllers.atributo.util
+sap.controllers.checker.util
+sap.controllers.desarrollo.util
+sap.controllers.fase.util
+sap.controllers.item.util
+sap.controllers.item_detalle.util
+sap.controllers.linea_base.util
+sap.controllers.misproyectos.util
+sap.controllers.participante.util
+sap.controllers.proyecto.util
+sap.controllers.relacion.util
+sap.controllers.rol.util
+sap.controllers.tipo_item.util
+sap.controllers.usuario.util
+sap.controllers.util
+sap.widgets.decorator.util
+sap.widgets.listform.util" class="py-name" href="#" onclick="return doclink('link-20', 'util', 'link-20');">util</a></tt> <tt class="py-keyword">import</tt> <tt class="py-op">*</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"><tt id="link-21" class="py-name" targets="Variable sap.controllers.item_detalle._widget=sap.controllers.item_detalle-module.html#_widget,Variable sap.controllers.linea_base._widget=sap.controllers.linea_base-module.html#_widget"><a title="sap.controllers.item_detalle._widget
+sap.controllers.linea_base._widget" class="py-name" href="#" onclick="return doclink('link-21', '_widget', 'link-21');">_widget</a></tt> <tt class="py-op">=</tt> <tt class="py-name">None</tt> </tt>
+<a name="ItemDetalleController"></a><div id="ItemDetalleController-def"><a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt> <a class="py-toggle" href="#" id="ItemDetalleController-toggle" onclick="return toggle('ItemDetalleController');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="sap.controllers.item_detalle.ItemDetalleController-class.html">ItemDetalleController</a><tt class="py-op">(</tt><tt class="py-base-class">RestController</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ItemDetalleController-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="ItemDetalleController-expanded"><a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line">        <tt class="py-docstring">"""Controlador del detalle del item"""</tt> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line">        <tt id="link-22" class="py-name" targets="Variable sap.controllers.atributo.AtributoController.params=sap.controllers.atributo.AtributoController-class.html#params,Variable sap.controllers.fase.FaseController.params=sap.controllers.fase.FaseController-class.html#params,Variable sap.controllers.item.ItemController.params=sap.controllers.item.ItemController-class.html#params,Variable sap.controllers.item_detalle.ItemDetalleController.params=sap.controllers.item_detalle.ItemDetalleController-class.html#params,Variable sap.controllers.linea_base.LineaBaseController.params=sap.controllers.linea_base.LineaBaseController-class.html#params,Variable sap.controllers.misproyectos.ProyectosController.params=sap.controllers.misproyectos.ProyectosController-class.html#params,Variable sap.controllers.participante.ParticipanteFaseController.params=sap.controllers.participante.ParticipanteFaseController-class.html#params,Variable sap.controllers.participante.ParticipanteProyectoController.params=sap.controllers.participante.ParticipanteProyectoController-class.html#params,Variable sap.controllers.proyecto.ProyectoController.params=sap.controllers.proyecto.ProyectoController-class.html#params,Variable sap.controllers.relacion.RelacionController.params=sap.controllers.relacion.RelacionController-class.html#params,Variable sap.controllers.rol.RolController.params=sap.controllers.rol.RolController-class.html#params,Variable sap.controllers.root.RootController.params=sap.controllers.root.RootController-class.html#params,Variable sap.controllers.tipo_item.TipoItemController.params=sap.controllers.tipo_item.TipoItemController-class.html#params,Variable sap.controllers.usuario.UsuarioContoller.params=sap.controllers.usuario.UsuarioContoller-class.html#params,Variable sap.widgets.decorator.LabelActionDecorator.params=sap.widgets.decorator.LabelActionDecorator-class.html#params,Variable sap.widgets.extended.SproxExtendedSelectShuttleField.params=sap.widgets.extended.SproxExtendedSelectShuttleField-class.html#params,Variable sprox.widgets.widgets.PropertyMultipleSelectField.params=sprox.widgets.widgets.PropertyMultipleSelectField-class.html#params,Variable sprox.widgets.widgets.PropertySingleSelectField.params=sprox.widgets.widgets.PropertySingleSelectField-class.html#params,Variable sprox.widgets.widgets.SproxDataGrid.params=sprox.widgets.widgets.SproxDataGrid-class.html#params,Variable tw.forms.fields.TableForm.params=tw.forms.fields.TableForm-class.html#params"><a title="sap.controllers.atributo.AtributoController.params
+sap.controllers.fase.FaseController.params
+sap.controllers.item.ItemController.params
+sap.controllers.item_detalle.ItemDetalleController.params
+sap.controllers.linea_base.LineaBaseController.params
+sap.controllers.misproyectos.ProyectosController.params
+sap.controllers.participante.ParticipanteFaseController.params
+sap.controllers.participante.ParticipanteProyectoController.params
+sap.controllers.proyecto.ProyectoController.params
+sap.controllers.relacion.RelacionController.params
+sap.controllers.rol.RolController.params
+sap.controllers.root.RootController.params
+sap.controllers.tipo_item.TipoItemController.params
+sap.controllers.usuario.UsuarioContoller.params
+sap.widgets.decorator.LabelActionDecorator.params
+sap.widgets.extended.SproxExtendedSelectShuttleField.params
+sprox.widgets.widgets.PropertyMultipleSelectField.params
+sprox.widgets.widgets.PropertySingleSelectField.params
+sprox.widgets.widgets.SproxDataGrid.params
+tw.forms.fields.TableForm.params" class="py-name" href="#" onclick="return doclink('link-22', 'params', 'link-22');">params</a></tt> <tt class="py-op">=</tt> <tt class="py-op">{</tt><tt class="py-string">'title'</tt><tt class="py-op">:</tt><tt class="py-string">''</tt><tt class="py-op">,</tt> <tt class="py-string">'header_file'</tt><tt class="py-op">:</tt><tt class="py-string">''</tt><tt class="py-op">,</tt> <tt class="py-string">'modelname'</tt><tt class="py-op">:</tt><tt class="py-string">''</tt><tt class="py-op">,</tt> <tt class="py-string">'new_url'</tt><tt class="py-op">:</tt><tt class="py-string">''</tt><tt class="py-op">,</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line">                          <tt class="py-string">'idfase'</tt><tt class="py-op">:</tt><tt class="py-string">''</tt><tt class="py-op">,</tt> <tt class="py-string">'permiso'</tt><tt class="py-op">:</tt><tt class="py-string">''</tt><tt class="py-op">,</tt> <tt class="py-string">'cancelar_url'</tt><tt class="py-op">:</tt><tt class="py-string">''</tt> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line">                         <tt class="py-op">}</tt> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line">        <tt class="py-string">"""</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-string">        parametro que contiene los valores de varios parametros y es enviado a</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt class="py-string">        los templates</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line"><tt class="py-string">        """</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line"> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line">        <tt class="py-decorator">@</tt><tt class="py-decorator">expose</tt><tt class="py-op">(</tt><tt class="py-string">'sap.templates.edit'</tt><tt class="py-op">)</tt> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line">        <tt class="py-decorator">@</tt><tt class="py-decorator">require</tt><tt class="py-op">(</tt><tt class="py-name">predicates</tt><tt class="py-op">.</tt><tt class="py-name">has_permission</tt><tt class="py-op">(</tt><tt class="py-string">'editar_item'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="ItemDetalleController.edit"></a><div id="ItemDetalleController.edit-def"><a name="L41"></a><tt class="py-lineno"> 41</tt> <a class="py-toggle" href="#" id="ItemDetalleController.edit-toggle" onclick="return toggle('ItemDetalleController.edit');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.controllers.item_detalle.ItemDetalleController-class.html#edit">edit</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">id</tt><tt class="py-op">,</tt><tt class="py-op">**</tt><tt class="py-param">kw</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ItemDetalleController.edit-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="ItemDetalleController.edit-expanded"><a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"><tt class="py-docstring">                Encargado de cargar el widget para editar las instancias,solo tienen</tt> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-docstring">                acceso aquellos usuarios que posean el premiso de editar</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt class="py-docstring">                @type  id : Integer</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line"><tt class="py-docstring">                @param id : Identificador del Detalle del item.</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line"><tt class="py-docstring">                @type  kw : Hash</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line"><tt class="py-docstring">                @param kw : Keywords</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"><tt class="py-docstring">                @rtype  : Diccionario</tt> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-docstring">                @return : El diccionario que sera utilizado en el template.</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line">                <tt class="py-name">kw</tt><tt class="py-op">[</tt><tt class="py-string">'id_item_detalle'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">id</tt> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line"> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line">                <tt id="link-23" class="py-name"><a title="sap.controllers.item.tmpl_context
+sap.controllers.misproyectos.tmpl_context
+sap.controllers.participante.tmpl_context
+sap.controllers.relacion.tmpl_context
+sap.widgets.decorator.tmpl_context
+sap.widgets.listform.tmpl_context" class="py-name" href="#" onclick="return doclink('link-23', 'tmpl_context', 'link-5');">tmpl_context</a></tt><tt class="py-op">.</tt><tt class="py-name">widget</tt> <tt class="py-op">=</tt> <tt id="link-24" class="py-name" targets="Variable sap.controllers.atributo.detalle_item_edit_form=sap.controllers.atributo-module.html#detalle_item_edit_form,Variable sap.controllers.desarrollo.detalle_item_edit_form=sap.controllers.desarrollo-module.html#detalle_item_edit_form,Variable sap.controllers.fase.detalle_item_edit_form=sap.controllers.fase-module.html#detalle_item_edit_form,Variable sap.controllers.item.detalle_item_edit_form=sap.controllers.item-module.html#detalle_item_edit_form,Variable sap.controllers.item_detalle.detalle_item_edit_form=sap.controllers.item_detalle-module.html#detalle_item_edit_form,Variable sap.controllers.linea_base.detalle_item_edit_form=sap.controllers.linea_base-module.html#detalle_item_edit_form,Variable sap.controllers.misproyectos.detalle_item_edit_form=sap.controllers.misproyectos-module.html#detalle_item_edit_form,Variable sap.controllers.participante.detalle_item_edit_form=sap.controllers.participante-module.html#detalle_item_edit_form,Variable sap.controllers.proyecto.detalle_item_edit_form=sap.controllers.proyecto-module.html#detalle_item_edit_form,Variable sap.controllers.relacion.detalle_item_edit_form=sap.controllers.relacion-module.html#detalle_item_edit_form,Variable sap.controllers.rol.detalle_item_edit_form=sap.controllers.rol-module.html#detalle_item_edit_form,Variable sap.controllers.tipo_item.detalle_item_edit_form=sap.controllers.tipo_item-module.html#detalle_item_edit_form,Variable sap.controllers.usuario.detalle_item_edit_form=sap.controllers.usuario-module.html#detalle_item_edit_form,Variable sap.widgets.editform.detalle_item_edit_form=sap.widgets.editform-module.html#detalle_item_edit_form"><a title="sap.controllers.atributo.detalle_item_edit_form
+sap.controllers.desarrollo.detalle_item_edit_form
+sap.controllers.fase.detalle_item_edit_form
+sap.controllers.item.detalle_item_edit_form
+sap.controllers.item_detalle.detalle_item_edit_form
+sap.controllers.linea_base.detalle_item_edit_form
+sap.controllers.misproyectos.detalle_item_edit_form
+sap.controllers.participante.detalle_item_edit_form
+sap.controllers.proyecto.detalle_item_edit_form
+sap.controllers.relacion.detalle_item_edit_form
+sap.controllers.rol.detalle_item_edit_form
+sap.controllers.tipo_item.detalle_item_edit_form
+sap.controllers.usuario.detalle_item_edit_form
+sap.widgets.editform.detalle_item_edit_form" class="py-name" href="#" onclick="return doclink('link-24', 'detalle_item_edit_form', 'link-24');">detalle_item_edit_form</a></tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">                <tt class="py-name">value</tt> <tt class="py-op">=</tt> <tt id="link-25" class="py-name" targets="Variable sap.controllers.atributo.detalle_item_edit_filler=sap.controllers.atributo-module.html#detalle_item_edit_filler,Variable sap.controllers.desarrollo.detalle_item_edit_filler=sap.controllers.desarrollo-module.html#detalle_item_edit_filler,Variable sap.controllers.fase.detalle_item_edit_filler=sap.controllers.fase-module.html#detalle_item_edit_filler,Variable sap.controllers.item.detalle_item_edit_filler=sap.controllers.item-module.html#detalle_item_edit_filler,Variable sap.controllers.item_detalle.detalle_item_edit_filler=sap.controllers.item_detalle-module.html#detalle_item_edit_filler,Variable sap.controllers.linea_base.detalle_item_edit_filler=sap.controllers.linea_base-module.html#detalle_item_edit_filler,Variable sap.controllers.misproyectos.detalle_item_edit_filler=sap.controllers.misproyectos-module.html#detalle_item_edit_filler,Variable sap.controllers.participante.detalle_item_edit_filler=sap.controllers.participante-module.html#detalle_item_edit_filler,Variable sap.controllers.proyecto.detalle_item_edit_filler=sap.controllers.proyecto-module.html#detalle_item_edit_filler,Variable sap.controllers.relacion.detalle_item_edit_filler=sap.controllers.relacion-module.html#detalle_item_edit_filler,Variable sap.controllers.rol.detalle_item_edit_filler=sap.controllers.rol-module.html#detalle_item_edit_filler,Variable sap.controllers.tipo_item.detalle_item_edit_filler=sap.controllers.tipo_item-module.html#detalle_item_edit_filler,Variable sap.controllers.usuario.detalle_item_edit_filler=sap.controllers.usuario-module.html#detalle_item_edit_filler,Variable sap.widgets.editform.detalle_item_edit_filler=sap.widgets.editform-module.html#detalle_item_edit_filler"><a title="sap.controllers.atributo.detalle_item_edit_filler
+sap.controllers.desarrollo.detalle_item_edit_filler
+sap.controllers.fase.detalle_item_edit_filler
+sap.controllers.item.detalle_item_edit_filler
+sap.controllers.item_detalle.detalle_item_edit_filler
+sap.controllers.linea_base.detalle_item_edit_filler
+sap.controllers.misproyectos.detalle_item_edit_filler
+sap.controllers.participante.detalle_item_edit_filler
+sap.controllers.proyecto.detalle_item_edit_filler
+sap.controllers.relacion.detalle_item_edit_filler
+sap.controllers.rol.detalle_item_edit_filler
+sap.controllers.tipo_item.detalle_item_edit_filler
+sap.controllers.usuario.detalle_item_edit_filler
+sap.widgets.editform.detalle_item_edit_filler" class="py-name" href="#" onclick="return doclink('link-25', 'detalle_item_edit_filler', 'link-25');">detalle_item_edit_filler</a></tt><tt class="py-op">.</tt><tt id="link-26" class="py-name" targets="Method sap.widgets.decorator.ExtendedTableList.get_value()=sap.widgets.decorator.ExtendedTableList-class.html#get_value,Method sap.widgets.extended.ExtendedTableFiller.get_value()=sap.widgets.extended.ExtendedTableFiller-class.html#get_value"><a title="sap.widgets.decorator.ExtendedTableList.get_value
+sap.widgets.extended.ExtendedTableFiller.get_value" class="py-name" href="#" onclick="return doclink('link-26', 'get_value', 'link-26');">get_value</a></tt><tt class="py-op">(</tt><tt class="py-name">kw</tt><tt class="py-op">)</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line"> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-27" class="py-name"><a title="sap.controllers.atributo.AtributoController.params
+sap.controllers.fase.FaseController.params
+sap.controllers.item.ItemController.params
+sap.controllers.item_detalle.ItemDetalleController.params
+sap.controllers.linea_base.LineaBaseController.params
+sap.controllers.misproyectos.ProyectosController.params
+sap.controllers.participante.ParticipanteFaseController.params
+sap.controllers.participante.ParticipanteProyectoController.params
+sap.controllers.proyecto.ProyectoController.params
+sap.controllers.relacion.RelacionController.params
+sap.controllers.rol.RolController.params
+sap.controllers.root.RootController.params
+sap.controllers.tipo_item.TipoItemController.params
+sap.controllers.usuario.UsuarioContoller.params
+sap.widgets.decorator.LabelActionDecorator.params
+sap.widgets.extended.SproxExtendedSelectShuttleField.params
+sprox.widgets.widgets.PropertyMultipleSelectField.params
+sprox.widgets.widgets.PropertySingleSelectField.params
+sprox.widgets.widgets.SproxDataGrid.params
+tw.forms.fields.TableForm.params" class="py-name" href="#" onclick="return doclink('link-27', 'params', 'link-22');">params</a></tt><tt class="py-op">[</tt><tt class="py-string">'modelname'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-string">'Atributo de Item'</tt> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-28" class="py-name"><a title="sap.controllers.atributo.AtributoController.params
+sap.controllers.fase.FaseController.params
+sap.controllers.item.ItemController.params
+sap.controllers.item_detalle.ItemDetalleController.params
+sap.controllers.linea_base.LineaBaseController.params
+sap.controllers.misproyectos.ProyectosController.params
+sap.controllers.participante.ParticipanteFaseController.params
+sap.controllers.participante.ParticipanteProyectoController.params
+sap.controllers.proyecto.ProyectoController.params
+sap.controllers.relacion.RelacionController.params
+sap.controllers.rol.RolController.params
+sap.controllers.root.RootController.params
+sap.controllers.tipo_item.TipoItemController.params
+sap.controllers.usuario.UsuarioContoller.params
+sap.widgets.decorator.LabelActionDecorator.params
+sap.widgets.extended.SproxExtendedSelectShuttleField.params
+sprox.widgets.widgets.PropertyMultipleSelectField.params
+sprox.widgets.widgets.PropertySingleSelectField.params
+sprox.widgets.widgets.SproxDataGrid.params
+tw.forms.fields.TableForm.params" class="py-name" href="#" onclick="return doclink('link-28', 'params', 'link-22');">params</a></tt><tt class="py-op">[</tt><tt class="py-string">'header_file'</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-string">'abstract'</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">dict</tt><tt class="py-op">(</tt><tt class="py-name">value</tt><tt class="py-op">=</tt><tt class="py-name">value</tt><tt class="py-op">,</tt> <tt id="link-29" class="py-name"><a title="sap.controllers.atributo.AtributoController.params
+sap.controllers.fase.FaseController.params
+sap.controllers.item.ItemController.params
+sap.controllers.item_detalle.ItemDetalleController.params
+sap.controllers.linea_base.LineaBaseController.params
+sap.controllers.misproyectos.ProyectosController.params
+sap.controllers.participante.ParticipanteFaseController.params
+sap.controllers.participante.ParticipanteProyectoController.params
+sap.controllers.proyecto.ProyectoController.params
+sap.controllers.relacion.RelacionController.params
+sap.controllers.rol.RolController.params
+sap.controllers.root.RootController.params
+sap.controllers.tipo_item.TipoItemController.params
+sap.controllers.usuario.UsuarioContoller.params
+sap.widgets.decorator.LabelActionDecorator.params
+sap.widgets.extended.SproxExtendedSelectShuttleField.params
+sprox.widgets.widgets.PropertyMultipleSelectField.params
+sprox.widgets.widgets.PropertySingleSelectField.params
+sprox.widgets.widgets.SproxDataGrid.params
+tw.forms.fields.TableForm.params" class="py-name" href="#" onclick="return doclink('link-29', 'params', 'link-22');">params</a></tt><tt class="py-op">=</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-30" class="py-name"><a title="sap.controllers.atributo.AtributoController.params
+sap.controllers.fase.FaseController.params
+sap.controllers.item.ItemController.params
+sap.controllers.item_detalle.ItemDetalleController.params
+sap.controllers.linea_base.LineaBaseController.params
+sap.controllers.misproyectos.ProyectosController.params
+sap.controllers.participante.ParticipanteFaseController.params
+sap.controllers.participante.ParticipanteProyectoController.params
+sap.controllers.proyecto.ProyectoController.params
+sap.controllers.relacion.RelacionController.params
+sap.controllers.rol.RolController.params
+sap.controllers.root.RootController.params
+sap.controllers.tipo_item.TipoItemController.params
+sap.controllers.usuario.UsuarioContoller.params
+sap.widgets.decorator.LabelActionDecorator.params
+sap.widgets.extended.SproxExtendedSelectShuttleField.params
+sprox.widgets.widgets.PropertyMultipleSelectField.params
+sprox.widgets.widgets.PropertySingleSelectField.params
+sprox.widgets.widgets.SproxDataGrid.params
+tw.forms.fields.TableForm.params" class="py-name" href="#" onclick="return doclink('link-30', 'params', 'link-22');">params</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line">        <tt class="py-decorator">@</tt><tt class="py-decorator">validate</tt><tt class="py-op">(</tt><tt id="link-31" class="py-name"><a title="sap.controllers.atributo.detalle_item_edit_form
+sap.controllers.desarrollo.detalle_item_edit_form
+sap.controllers.fase.detalle_item_edit_form
+sap.controllers.item.detalle_item_edit_form
+sap.controllers.item_detalle.detalle_item_edit_form
+sap.controllers.linea_base.detalle_item_edit_form
+sap.controllers.misproyectos.detalle_item_edit_form
+sap.controllers.participante.detalle_item_edit_form
+sap.controllers.proyecto.detalle_item_edit_form
+sap.controllers.relacion.detalle_item_edit_form
+sap.controllers.rol.detalle_item_edit_form
+sap.controllers.tipo_item.detalle_item_edit_form
+sap.controllers.usuario.detalle_item_edit_form
+sap.widgets.editform.detalle_item_edit_form" class="py-name" href="#" onclick="return doclink('link-31', 'detalle_item_edit_form', 'link-24');">detalle_item_edit_form</a></tt><tt class="py-op">,</tt> <tt class="py-name">error_handler</tt><tt class="py-op">=</tt><tt id="link-32" class="py-name" targets="Method sap.controllers.atributo.AtributoController.edit()=sap.controllers.atributo.AtributoController-class.html#edit,Method sap.controllers.fase.FaseController.edit()=sap.controllers.fase.FaseController-class.html#edit,Method sap.controllers.item.ItemController.edit()=sap.controllers.item.ItemController-class.html#edit,Method sap.controllers.item_detalle.ItemDetalleController.edit()=sap.controllers.item_detalle.ItemDetalleController-class.html#edit,Method sap.controllers.linea_base.LineaBaseController.edit()=sap.controllers.linea_base.LineaBaseController-class.html#edit,Method sap.controllers.participante.ParticipanteFaseController.edit()=sap.controllers.participante.ParticipanteFaseController-class.html#edit,Method sap.controllers.participante.ParticipanteProyectoController.edit()=sap.controllers.participante.ParticipanteProyectoController-class.html#edit,Method sap.controllers.proyecto.ProyectoController.edit()=sap.controllers.proyecto.ProyectoController-class.html#edit,Method sap.controllers.rol.RolController.edit()=sap.controllers.rol.RolController-class.html#edit,Method sap.controllers.tipo_item.TipoItemController.edit()=sap.controllers.tipo_item.TipoItemController-class.html#edit,Method sap.controllers.usuario.UsuarioContoller.edit()=sap.controllers.usuario.UsuarioContoller-class.html#edit"><a title="sap.controllers.atributo.AtributoController.edit
+sap.controllers.fase.FaseController.edit
+sap.controllers.item.ItemController.edit
+sap.controllers.item_detalle.ItemDetalleController.edit
+sap.controllers.linea_base.LineaBaseController.edit
+sap.controllers.participante.ParticipanteFaseController.edit
+sap.controllers.participante.ParticipanteProyectoController.edit
+sap.controllers.proyecto.ProyectoController.edit
+sap.controllers.rol.RolController.edit
+sap.controllers.tipo_item.TipoItemController.edit
+sap.controllers.usuario.UsuarioContoller.edit" class="py-name" href="#" onclick="return doclink('link-32', 'edit', 'link-32');">edit</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line">        <tt class="py-decorator">@</tt><tt class="py-decorator">require</tt><tt class="py-op">(</tt><tt class="py-name">predicates</tt><tt class="py-op">.</tt><tt class="py-name">has_permission</tt><tt class="py-op">(</tt><tt class="py-string">'editar_item'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line">        <tt class="py-decorator">@</tt><tt class="py-decorator">expose</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="ItemDetalleController.put"></a><div id="ItemDetalleController.put-def"><a name="L69"></a><tt class="py-lineno"> 69</tt> <a class="py-toggle" href="#" id="ItemDetalleController.put-toggle" onclick="return toggle('ItemDetalleController.put');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.controllers.item_detalle.ItemDetalleController-class.html#put">put</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">id</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">kw</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ItemDetalleController.put-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="ItemDetalleController.put-expanded"><a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"><tt class="py-docstring">                Evento invocado luego de un evento post en el form de editar</tt> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line"><tt class="py-docstring">                encargado de persistir las modificaciones de las instancias.</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"><tt class="py-docstring">                @type  id : Integer</tt> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line"><tt class="py-docstring">                @param id : Identificador del Detalle del item.</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-docstring">                @type  kw : Hash</tt> </tt>
+<a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"><tt class="py-docstring">                @param kw : Keywords</tt> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line">                <tt class="py-name">detalle</tt> <tt class="py-op">=</tt>  <tt id="link-33" class="py-name"><a title="sap.controllers.participante.DBSession
+sap.model.DBSession
+sap.widgets.createform.DBSession
+sap.widgets.decorator.DBSession
+sap.widgets.editform.DBSession
+sap.widgets.extended.DBSession" class="py-name" href="#" onclick="return doclink('link-33', 'DBSession', 'link-3');">DBSession</a></tt><tt class="py-op">.</tt><tt class="py-name">query</tt><tt class="py-op">(</tt><tt id="link-34" class="py-name" targets="Class sap.model.model.DetalleItem=sap.model.model.DetalleItem-class.html"><a title="sap.model.model.DetalleItem" class="py-name" href="#" onclick="return doclink('link-34', 'DetalleItem', 'link-34');">DetalleItem</a></tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">id</tt><tt class="py-op">)</tt> </tt>
+<a name="L82"></a><tt class="py-lineno"> 82</tt>  <tt class="py-line">                <tt class="py-name">detalle</tt><tt class="py-op">.</tt><tt id="link-35" class="py-name" targets="Variable sap.model.model.DetalleItem.valor=sap.model.model.DetalleItem-class.html#valor,Variable sap.model.model.HistorialDetalleItem.valor=sap.model.model.HistorialDetalleItem-class.html#valor"><a title="sap.model.model.DetalleItem.valor
+sap.model.model.HistorialDetalleItem.valor" class="py-name" href="#" onclick="return doclink('link-35', 'valor', 'link-35');">valor</a></tt> <tt class="py-op">=</tt> <tt class="py-name">kw</tt><tt class="py-op">[</tt><tt class="py-string">'valor'</tt><tt class="py-op">]</tt> </tt>
+<a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line"> </tt>
+<a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">kw</tt> <tt class="py-op">[</tt><tt class="py-string">'adjunto'</tt><tt class="py-op">]</tt> <tt class="py-op">!=</tt> <tt class="py-name">None</tt><tt class="py-op">:</tt> </tt>
+<a name="L85"></a><tt class="py-lineno"> 85</tt>  <tt class="py-line">                        <tt class="py-name">stream</tt> <tt class="py-op">=</tt> <tt class="py-name">True</tt> </tt>
+<a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">                        <tt class="py-name">detalle</tt><tt class="py-op">.</tt><tt id="link-36" class="py-name" targets="Variable sap.model.model.DetalleItem.adjunto=sap.model.model.DetalleItem-class.html#adjunto,Variable sap.model.model.HistorialDetalleItem.adjunto=sap.model.model.HistorialDetalleItem-class.html#adjunto"><a title="sap.model.model.DetalleItem.adjunto
+sap.model.model.HistorialDetalleItem.adjunto" class="py-name" href="#" onclick="return doclink('link-36', 'adjunto', 'link-36');">adjunto</a></tt><tt class="py-op">=</tt><tt class="py-string">""</tt> </tt>
+<a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"> </tt>
+<a name="L88"></a><tt class="py-lineno"> 88</tt>  <tt class="py-line">                        <tt class="py-keyword">while</tt> <tt class="py-name">stream</tt> <tt class="py-op">:</tt> </tt>
+<a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">                                <tt class="py-name">stream</tt> <tt class="py-op">=</tt> <tt class="py-name">kw</tt> <tt class="py-op">[</tt><tt class="py-string">'adjunto'</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">file</tt><tt class="py-op">.</tt><tt class="py-name">read</tt><tt class="py-op">(</tt><tt class="py-number">1024</tt><tt class="py-op">)</tt> </tt>
+<a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line">                                <tt class="py-name">detalle</tt><tt class="py-op">.</tt><tt id="link-37" class="py-name"><a title="sap.model.model.DetalleItem.adjunto
+sap.model.model.HistorialDetalleItem.adjunto" class="py-name" href="#" onclick="return doclink('link-37', 'adjunto', 'link-36');">adjunto</a></tt> <tt class="py-op">+=</tt> <tt class="py-name">stream</tt> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line">                        <tt class="py-name">detalle</tt><tt class="py-op">.</tt><tt id="link-38" class="py-name" targets="Variable sap.model.model.DetalleItem.file_name=sap.model.model.DetalleItem-class.html#file_name"><a title="sap.model.model.DetalleItem.file_name" class="py-name" href="#" onclick="return doclink('link-38', 'file_name', 'link-38');">file_name</a></tt> <tt class="py-op">=</tt> <tt class="py-name">kw</tt> <tt class="py-op">[</tt><tt class="py-string">'adjunto'</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">filename</tt> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line">                        <tt class="py-name">detalle</tt><tt class="py-op">.</tt><tt id="link-39" class="py-name" targets="Variable sap.model.model.DetalleItem.content_type=sap.model.model.DetalleItem-class.html#content_type"><a title="sap.model.model.DetalleItem.content_type" class="py-name" href="#" onclick="return doclink('link-39', 'content_type', 'link-39');">content_type</a></tt> <tt class="py-op">=</tt> <tt class="py-name">kw</tt> <tt class="py-op">[</tt><tt class="py-string">'adjunto'</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt id="link-40" class="py-name" targets="Variable tw.forms.fields.PasswordField.type=tw.forms.fields.PasswordField-class.html#type"><a title="tw.forms.fields.PasswordField.type" class="py-name" href="#" onclick="return doclink('link-40', 'type', 'link-40');">type</a></tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line">                        <tt class="py-name">kw</tt> <tt class="py-op">[</tt><tt class="py-string">'adjunto'</tt><tt class="py-op">]</tt><tt class="py-op">.</tt><tt class="py-name">file</tt><tt class="py-op">.</tt><tt class="py-name">close</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line">                <tt class="py-name">detalle</tt><tt class="py-op">.</tt><tt id="link-41" class="py-name" targets="Variable sap.model.model.DetalleItem.observacion=sap.model.model.DetalleItem-class.html#observacion,Variable sap.model.model.HistorialDetalleItem.observacion=sap.model.model.HistorialDetalleItem-class.html#observacion,Variable sap.model.model.HistorialItem.observacion=sap.model.model.HistorialItem-class.html#observacion,Variable sap.model.model.Item.observacion=sap.model.model.Item-class.html#observacion"><a title="sap.model.model.DetalleItem.observacion
+sap.model.model.HistorialDetalleItem.observacion
+sap.model.model.HistorialItem.observacion
+sap.model.model.Item.observacion" class="py-name" href="#" onclick="return doclink('link-41', 'observacion', 'link-41');">observacion</a></tt> <tt class="py-op">=</tt> <tt class="py-name">kw</tt> <tt class="py-op">[</tt><tt class="py-string">'observacion'</tt><tt class="py-op">]</tt> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"> </tt>
+<a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line">                <tt id="link-42" class="py-name"><a title="sap.controllers.participante.DBSession
+sap.model.DBSession
+sap.widgets.createform.DBSession
+sap.widgets.decorator.DBSession
+sap.widgets.editform.DBSession
+sap.widgets.extended.DBSession" class="py-name" href="#" onclick="return doclink('link-42', 'DBSession', 'link-3');">DBSession</a></tt><tt class="py-op">.</tt><tt class="py-name">merge</tt><tt class="py-op">(</tt><tt class="py-name">detalle</tt><tt class="py-op">)</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line">                <tt id="link-43" class="py-name"><a title="sap.controllers.participante.DBSession
+sap.model.DBSession
+sap.widgets.createform.DBSession
+sap.widgets.decorator.DBSession
+sap.widgets.editform.DBSession
+sap.widgets.extended.DBSession" class="py-name" href="#" onclick="return doclink('link-43', 'DBSession', 'link-3');">DBSession</a></tt><tt class="py-op">.</tt><tt class="py-name">flush</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line"> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line">                <tt id="link-44" class="py-name"><a title="sap.controllers.fase.FaseController.item
+sap.controllers.item
+sap.model.model.HistorialDetalleItem.item" class="py-name" href="#" onclick="return doclink('link-44', 'item', 'link-17');">item</a></tt> <tt class="py-op">=</tt> <tt id="link-45" class="py-name"><a title="sap.controllers.participante.DBSession
+sap.model.DBSession
+sap.widgets.createform.DBSession
+sap.widgets.decorator.DBSession
+sap.widgets.editform.DBSession
+sap.widgets.extended.DBSession" class="py-name" href="#" onclick="return doclink('link-45', 'DBSession', 'link-3');">DBSession</a></tt><tt class="py-op">.</tt><tt class="py-name">query</tt><tt class="py-op">(</tt><tt id="link-46" class="py-name" targets="Class sap.model.model.Item=sap.model.model.Item-class.html"><a title="sap.model.model.Item" class="py-name" href="#" onclick="return doclink('link-46', 'Item', 'link-46');">Item</a></tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">detalle</tt><tt class="py-op">.</tt><tt id="link-47" class="py-name" targets="Variable sap.model.model.DetalleItem.id_item=sap.model.model.DetalleItem-class.html#id_item,Variable sap.model.model.HistorialDetalleItem.id_item=sap.model.model.HistorialDetalleItem-class.html#id_item,Variable sap.model.model.HistorialItem.id_item=sap.model.model.HistorialItem-class.html#id_item,Variable sap.model.model.Item.id_item=sap.model.model.Item-class.html#id_item"><a title="sap.model.model.DetalleItem.id_item
+sap.model.model.HistorialDetalleItem.id_item
+sap.model.model.HistorialItem.id_item
+sap.model.model.Item.id_item" class="py-name" href="#" onclick="return doclink('link-47', 'id_item', 'link-47');">id_item</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line"> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt>  <tt class="py-line">                <tt id="link-48" class="py-name" targets="Variable sap.controllers.atributo.item_util=sap.controllers.atributo-module.html#item_util,Variable sap.controllers.desarrollo.item_util=sap.controllers.desarrollo-module.html#item_util,Variable sap.controllers.fase.item_util=sap.controllers.fase-module.html#item_util,Variable sap.controllers.item.item_util=sap.controllers.item-module.html#item_util,Variable sap.controllers.item_detalle.item_util=sap.controllers.item_detalle-module.html#item_util,Variable sap.controllers.linea_base.item_util=sap.controllers.linea_base-module.html#item_util,Variable sap.controllers.misproyectos.item_util=sap.controllers.misproyectos-module.html#item_util,Variable sap.controllers.participante.item_util=sap.controllers.participante-module.html#item_util,Variable sap.controllers.proyecto.item_util=sap.controllers.proyecto-module.html#item_util,Variable sap.controllers.relacion.item_util=sap.controllers.relacion-module.html#item_util,Variable sap.controllers.rol.item_util=sap.controllers.rol-module.html#item_util,Variable sap.controllers.tipo_item.item_util=sap.controllers.tipo_item-module.html#item_util,Variable sap.controllers.usuario.item_util=sap.controllers.usuario-module.html#item_util,Variable sap.controllers.util.item_util=sap.controllers.util-module.html#item_util,Variable sap.widgets.createform.item_util=sap.widgets.createform-module.html#item_util,Variable sap.widgets.decorator.item_util=sap.widgets.decorator-module.html#item_util,Variable sap.widgets.listform.item_util=sap.widgets.listform-module.html#item_util"><a title="sap.controllers.atributo.item_util
+sap.controllers.desarrollo.item_util
+sap.controllers.fase.item_util
+sap.controllers.item.item_util
+sap.controllers.item_detalle.item_util
+sap.controllers.linea_base.item_util
+sap.controllers.misproyectos.item_util
+sap.controllers.participante.item_util
+sap.controllers.proyecto.item_util
+sap.controllers.relacion.item_util
+sap.controllers.rol.item_util
+sap.controllers.tipo_item.item_util
+sap.controllers.usuario.item_util
+sap.controllers.util.item_util
+sap.widgets.createform.item_util
+sap.widgets.decorator.item_util
+sap.widgets.listform.item_util" class="py-name" href="#" onclick="return doclink('link-48', 'item_util', 'link-48');">item_util</a></tt><tt class="py-op">.</tt><tt id="link-49" class="py-name" targets="Method sap.controllers.checker.SessionUtil.audit_item()=sap.controllers.checker.SessionUtil-class.html#audit_item,Method sap.controllers.util.ItemUtil.audit_item()=sap.controllers.util.ItemUtil-class.html#audit_item"><a title="sap.controllers.checker.SessionUtil.audit_item
+sap.controllers.util.ItemUtil.audit_item" class="py-name" href="#" onclick="return doclink('link-49', 'audit_item', 'link-49');">audit_item</a></tt><tt class="py-op">(</tt><tt id="link-50" class="py-name"><a title="sap.controllers.fase.FaseController.item
+sap.controllers.item
+sap.model.model.HistorialDetalleItem.item" class="py-name" href="#" onclick="return doclink('link-50', 'item', 'link-17');">item</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">                <tt id="link-51" class="py-name"><a title="sap.controllers.fase.FaseController.item
+sap.controllers.item
+sap.model.model.HistorialDetalleItem.item" class="py-name" href="#" onclick="return doclink('link-51', 'item', 'link-17');">item</a></tt><tt class="py-op">.</tt><tt id="link-52" class="py-name" targets="Variable sap.model.model.HistorialItem.version=sap.model.model.HistorialItem-class.html#version,Variable sap.model.model.Item.version=sap.model.model.Item-class.html#version"><a title="sap.model.model.HistorialItem.version
+sap.model.model.Item.version" class="py-name" href="#" onclick="return doclink('link-52', 'version', 'link-52');">version</a></tt> <tt class="py-op">+=</tt> <tt class="py-number">1</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line">                <tt id="link-53" class="py-name"><a title="sap.controllers.participante.DBSession
+sap.model.DBSession
+sap.widgets.createform.DBSession
+sap.widgets.decorator.DBSession
+sap.widgets.editform.DBSession
+sap.widgets.extended.DBSession" class="py-name" href="#" onclick="return doclink('link-53', 'DBSession', 'link-3');">DBSession</a></tt><tt class="py-op">.</tt><tt class="py-name">merge</tt><tt class="py-op">(</tt><tt id="link-54" class="py-name"><a title="sap.controllers.fase.FaseController.item
+sap.controllers.item
+sap.model.model.HistorialDetalleItem.item" class="py-name" href="#" onclick="return doclink('link-54', 'item', 'link-17');">item</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line"> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line">                <tt id="link-55" class="py-name"><a title="sap.widgets.createform.flash
+sap.widgets.decorator.flash
+sap.widgets.listform.flash" class="py-name" href="#" onclick="return doclink('link-55', 'flash', 'link-0');">flash</a></tt><tt class="py-op">(</tt><tt class="py-string">"El item atributo ha sido modificado correctamente."</tt><tt class="py-op">)</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line">                <tt class="py-name">redirect</tt><tt class="py-op">(</tt><tt class="py-string">'/miproyecto/fase/item/poner_en_revision/'</tt><tt class="py-op">+</tt><tt class="py-name">str</tt><tt class="py-op">(</tt><tt class="py-name">detalle</tt><tt class="py-op">.</tt><tt id="link-56" class="py-name"><a title="sap.model.model.DetalleItem.id_item
+sap.model.model.HistorialDetalleItem.id_item
+sap.model.model.HistorialItem.id_item
+sap.model.model.Item.id_item" class="py-name" href="#" onclick="return doclink('link-56', 'id_item', 'link-47');">id_item</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line"> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line">        <tt class="py-decorator">@</tt><tt class="py-decorator">expose</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="ItemDetalleController.descargar"></a><div id="ItemDetalleController.descargar-def"><a name="L111"></a><tt class="py-lineno">111</tt> <a class="py-toggle" href="#" id="ItemDetalleController.descargar-toggle" onclick="return toggle('ItemDetalleController.descargar');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.controllers.item_detalle.ItemDetalleController-class.html#descargar">descargar</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">id</tt><tt class="py-op">,</tt> <tt class="py-op">**</tt><tt class="py-param">kw</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="ItemDetalleController.descargar-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="ItemDetalleController.descargar-expanded"><a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line"><tt class="py-docstring">                Encargado de descargar los archivos adjuntos del detalle del tipo</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line"><tt class="py-docstring">                de item.</tt> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line"><tt class="py-docstring">                @type  id : Integer</tt> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line"><tt class="py-docstring">                @param id : Identificador del Detalle del item.</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line"><tt class="py-docstring">                @type  kw : Hash</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line"><tt class="py-docstring">                @param kw : Keywords</tt> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">                <tt class="py-name">detalle</tt> <tt class="py-op">=</tt>  <tt id="link-57" class="py-name"><a title="sap.controllers.participante.DBSession
+sap.model.DBSession
+sap.widgets.createform.DBSession
+sap.widgets.decorator.DBSession
+sap.widgets.editform.DBSession
+sap.widgets.extended.DBSession" class="py-name" href="#" onclick="return doclink('link-57', 'DBSession', 'link-3');">DBSession</a></tt><tt class="py-op">.</tt><tt class="py-name">query</tt><tt class="py-op">(</tt><tt id="link-58" class="py-name"><a title="sap.model.model.DetalleItem" class="py-name" href="#" onclick="return doclink('link-58', 'DetalleItem', 'link-34');">DetalleItem</a></tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-name">id</tt><tt class="py-op">)</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line">                <tt class="py-name">archivo</tt> <tt class="py-op">=</tt> <tt class="py-name">detalle</tt><tt class="py-op">.</tt><tt id="link-59" class="py-name"><a title="sap.model.model.DetalleItem.adjunto
+sap.model.model.HistorialDetalleItem.adjunto" class="py-name" href="#" onclick="return doclink('link-59', 'adjunto', 'link-36');">adjunto</a></tt> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">                <tt id="link-60" class="py-name"><a title="sap.controllers.fase.response
+sap.controllers.relacion.response" class="py-name" href="#" onclick="return doclink('link-60', 'response', 'link-1');">response</a></tt><tt class="py-op">.</tt><tt class="py-name">headers</tt><tt class="py-op">[</tt><tt class="py-string">"Content-disposition"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-string">"attachment; filename="</tt><tt class="py-op">+</tt><tt class="py-name">detalle</tt><tt class="py-op">.</tt><tt id="link-61" class="py-name"><a title="sap.model.model.DetalleItem.file_name" class="py-name" href="#" onclick="return doclink('link-61', 'file_name', 'link-38');">file_name</a></tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line">                <tt id="link-62" class="py-name"><a title="sap.controllers.fase.response
+sap.controllers.relacion.response" class="py-name" href="#" onclick="return doclink('link-62', 'response', 'link-1');">response</a></tt><tt class="py-op">.</tt><tt class="py-name">headers</tt><tt class="py-op">[</tt><tt class="py-string">"Content-Type"</tt><tt class="py-op">]</tt> <tt class="py-op">=</tt> <tt class="py-name">detalle</tt><tt class="py-op">.</tt><tt id="link-63" class="py-name"><a title="sap.model.model.DetalleItem.content_type" class="py-name" href="#" onclick="return doclink('link-63', 'content_type', 'link-39');">content_type</a></tt> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">                <tt id="link-64" class="py-name"><a title="sap.controllers.fase.response
+sap.controllers.relacion.response" class="py-name" href="#" onclick="return doclink('link-64', 'response', 'link-1');">response</a></tt><tt class="py-op">.</tt><tt class="py-name">write</tt><tt class="py-op">(</tt><tt class="py-name">detalle</tt><tt class="py-op">.</tt><tt id="link-65" class="py-name"><a title="sap.model.model.DetalleItem.adjunto
+sap.model.model.HistorialDetalleItem.adjunto" class="py-name" href="#" onclick="return doclink('link-65', 'adjunto', 'link-36');">adjunto</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line"> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt id="link-66" class="py-name"><a title="sap.controllers.fase.response
+sap.controllers.relacion.response" class="py-name" href="#" onclick="return doclink('link-66', 'response', 'link-1');">response</a></tt> </tt>
+</div></div><a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Sat Jun 25 02:27:38 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>

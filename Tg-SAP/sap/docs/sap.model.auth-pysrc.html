@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>sap.model.auth</title>
+  <link rel="stylesheet" href="epydoc.css" type="text/css" />
+  <script type="text/javascript" src="epydoc.js"></script>
+</head>
+
+<body bgcolor="white" text="black" link="blue" vlink="#204080"
+      alink="#204080">
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0">
+  <tr valign="top">
+    <td width="100%">
+      <span class="breadcrumbs">
+        Package&nbsp;sap ::
+        <a href="sap.model-module.html">Package&nbsp;model</a> ::
+        Module&nbsp;auth
+      </span>
+    </td>
+    <td>
+      <table cellpadding="0" cellspacing="0">
+        <!-- hide/show private -->
+        <tr><td align="right"><span class="options">[<a href="javascript:void(0);" class="privatelink"
+    onclick="toggle_private();">hide&nbsp;private</a>]</span></td></tr>
+        <tr><td align="right"><span class="options"
+            >[<a href="frames.html" target="_top">frames</a
+            >]&nbsp;|&nbsp;<a href="sap.model.auth-pysrc.html"
+            target="_top">no&nbsp;frames</a>]</span></td></tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<h1 class="epydoc">Source Code for <a href="sap.model.auth-module.html">Module sap.model.auth</a></h1>
+<pre class="py-src">
+<a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment"># -*- coding: utf-8 -*-</tt> </tt>
+<a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L3"></a><tt class="py-lineno">  3</tt>  <tt class="py-line"><tt class="py-docstring">Auth* related model.</tt> </tt>
+<a name="L4"></a><tt class="py-lineno">  4</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L5"></a><tt class="py-lineno">  5</tt>  <tt class="py-line"><tt class="py-docstring">This is where the models used by :mod:`repoze.who` and :mod:`repoze.what` are</tt> </tt>
+<a name="L6"></a><tt class="py-lineno">  6</tt>  <tt class="py-line"><tt class="py-docstring">defined.</tt> </tt>
+<a name="L7"></a><tt class="py-lineno">  7</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L8"></a><tt class="py-lineno">  8</tt>  <tt class="py-line"><tt class="py-docstring">It's perfectly fine to re-use this definition in the Tg-SAP application,</tt> </tt>
+<a name="L9"></a><tt class="py-lineno">  9</tt>  <tt class="py-line"><tt class="py-docstring">though.</tt> </tt>
+<a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-docstring">"""</tt> </tt>
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">os</tt> </tt>
+<a name="L13"></a><tt class="py-lineno"> 13</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">datetime</tt> <tt class="py-keyword">import</tt> <tt class="py-name">datetime</tt> </tt>
+<a name="L14"></a><tt class="py-lineno"> 14</tt>  <tt class="py-line"><tt class="py-keyword">import</tt> <tt class="py-name">sys</tt> </tt>
+<a name="L15"></a><tt class="py-lineno"> 15</tt>  <tt class="py-line"><tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
+<a name="L16"></a><tt class="py-lineno"> 16</tt>  <tt class="py-line">        <tt class="py-keyword">from</tt> <tt class="py-name">hashlib</tt> <tt class="py-keyword">import</tt> <tt class="py-name">sha1</tt> </tt>
+<a name="L17"></a><tt class="py-lineno"> 17</tt>  <tt class="py-line"><tt class="py-keyword">except</tt> <tt class="py-name">ImportError</tt><tt class="py-op">:</tt> </tt>
+<a name="L18"></a><tt class="py-lineno"> 18</tt>  <tt class="py-line">        <tt class="py-name">sys</tt><tt class="py-op">.</tt><tt class="py-name">exit</tt><tt class="py-op">(</tt><tt class="py-string">'ImportError: No module named hashlib\n'</tt> </tt>
+<a name="L19"></a><tt class="py-lineno"> 19</tt>  <tt class="py-line">                         <tt class="py-string">'If you are on python2.4 this library is not part of python. '</tt> </tt>
+<a name="L20"></a><tt class="py-lineno"> 20</tt>  <tt class="py-line">                         <tt class="py-string">'Please install it. Example: easy_install hashlib'</tt><tt class="py-op">)</tt> </tt>
+<a name="L21"></a><tt class="py-lineno"> 21</tt>  <tt class="py-line"> </tt>
+<a name="L22"></a><tt class="py-lineno"> 22</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sqlalchemy</tt> <tt class="py-keyword">import</tt> <tt class="py-name">Table</tt><tt class="py-op">,</tt> <tt class="py-name">ForeignKey</tt><tt class="py-op">,</tt> <tt class="py-name">Column</tt> </tt>
+<a name="L23"></a><tt class="py-lineno"> 23</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sqlalchemy</tt><tt class="py-op">.</tt><tt class="py-name">types</tt> <tt class="py-keyword">import</tt> <tt class="py-name">Unicode</tt><tt class="py-op">,</tt> <tt class="py-name">Integer</tt><tt class="py-op">,</tt> <tt class="py-name">DateTime</tt><tt class="py-op">,</tt> <tt class="py-name">Boolean</tt> </tt>
+<a name="L24"></a><tt class="py-lineno"> 24</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sqlalchemy</tt><tt class="py-op">.</tt><tt class="py-name">orm</tt> <tt class="py-keyword">import</tt> <tt class="py-name">relation</tt><tt class="py-op">,</tt> <tt class="py-name">synonym</tt><tt class="py-op">,</tt> <tt class="py-name">mapper</tt> </tt>
+<a name="L25"></a><tt class="py-lineno"> 25</tt>  <tt class="py-line"> </tt>
+<a name="L26"></a><tt class="py-lineno"> 26</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-name">sap</tt><tt class="py-op">.</tt><tt id="link-0" class="py-name" targets="Package sap.model=sap.model-module.html,Module sap.model.model=sap.model.model-module.html"><a title="sap.model
+sap.model.model" class="py-name" href="#" onclick="return doclink('link-0', 'model', 'link-0');">model</a></tt> <tt class="py-keyword">import</tt> <tt class="py-name">DeclarativeBase</tt><tt class="py-op">,</tt> <tt id="link-1" class="py-name" targets="Variable sap.controllers.participante.metadata=sap.controllers.participante-module.html#metadata,Variable sap.model.metadata=sap.model-module.html#metadata,Variable sap.widgets.createform.metadata=sap.widgets.createform-module.html#metadata,Variable sap.widgets.decorator.metadata=sap.widgets.decorator-module.html#metadata,Variable sap.widgets.editform.metadata=sap.widgets.editform-module.html#metadata,Variable sap.widgets.extended.metadata=sap.widgets.extended-module.html#metadata"><a title="sap.controllers.participante.metadata
+sap.model.metadata
+sap.widgets.createform.metadata
+sap.widgets.decorator.metadata
+sap.widgets.editform.metadata
+sap.widgets.extended.metadata" class="py-name" href="#" onclick="return doclink('link-1', 'metadata', 'link-1');">metadata</a></tt><tt class="py-op">,</tt> <tt id="link-2" class="py-name" targets="Variable sap.controllers.participante.DBSession=sap.controllers.participante-module.html#DBSession,Variable sap.model.DBSession=sap.model-module.html#DBSession,Variable sap.widgets.createform.DBSession=sap.widgets.createform-module.html#DBSession,Variable sap.widgets.decorator.DBSession=sap.widgets.decorator-module.html#DBSession,Variable sap.widgets.editform.DBSession=sap.widgets.editform-module.html#DBSession,Variable sap.widgets.extended.DBSession=sap.widgets.extended-module.html#DBSession"><a title="sap.controllers.participante.DBSession
+sap.model.DBSession
+sap.widgets.createform.DBSession
+sap.widgets.decorator.DBSession
+sap.widgets.editform.DBSession
+sap.widgets.extended.DBSession" class="py-name" href="#" onclick="return doclink('link-2', 'DBSession', 'link-2');">DBSession</a></tt><tt class="py-op">,</tt> <tt id="link-3" class="py-name"><a title="sap.model
+sap.model.model" class="py-name" href="#" onclick="return doclink('link-3', 'model', 'link-0');">model</a></tt> </tt>
+<a name="L27"></a><tt class="py-lineno"> 27</tt>  <tt class="py-line"> </tt>
+<a name="L28"></a><tt class="py-lineno"> 28</tt>  <tt class="py-line"><tt class="py-name">__all__</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-string">'Usuario'</tt><tt class="py-op">,</tt> <tt class="py-string">'Rol'</tt><tt class="py-op">,</tt> <tt class="py-string">'Permiso'</tt><tt class="py-op">,</tt> <tt class="py-string">'RolPermisoProyecto'</tt><tt class="py-op">,</tt> <tt class="py-string">'UsuarioPermisoFase'</tt><tt class="py-op">,</tt><tt class="py-string">'RolUsuario'</tt><tt class="py-op">,</tt> <tt class="py-string">'RolPermiso'</tt><tt class="py-op">]</tt> </tt>
+<a name="L29"></a><tt class="py-lineno"> 29</tt>  <tt class="py-line"> </tt>
+<a name="L30"></a><tt class="py-lineno"> 30</tt>  <tt class="py-line"> </tt>
+<a name="L31"></a><tt class="py-lineno"> 31</tt>  <tt class="py-line"><tt class="py-comment">#{ Association tables</tt> </tt>
+<a name="L32"></a><tt class="py-lineno"> 32</tt>  <tt class="py-line"> </tt>
+<a name="L33"></a><tt class="py-lineno"> 33</tt>  <tt class="py-line"> </tt>
+<a name="L34"></a><tt class="py-lineno"> 34</tt>  <tt class="py-line"><tt class="py-comment"># This is the association table for the many-to-many relationship between</tt> </tt>
+<a name="L35"></a><tt class="py-lineno"> 35</tt>  <tt class="py-line"><tt class="py-comment"># groups and permissions. This is required by repoze.what.</tt> </tt>
+<a name="L36"></a><tt class="py-lineno"> 36</tt>  <tt class="py-line"><tt id="link-4" class="py-name" targets="Variable sap.model.auth.rol_permiso_table=sap.model.auth-module.html#rol_permiso_table"><a title="sap.model.auth.rol_permiso_table" class="py-name" href="#" onclick="return doclink('link-4', 'rol_permiso_table', 'link-4');">rol_permiso_table</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Table</tt><tt class="py-op">(</tt><tt class="py-string">'rol_permiso'</tt><tt class="py-op">,</tt> <tt id="link-5" class="py-name"><a title="sap.controllers.participante.metadata
+sap.model.metadata
+sap.widgets.createform.metadata
+sap.widgets.decorator.metadata
+sap.widgets.editform.metadata
+sap.widgets.extended.metadata" class="py-name" href="#" onclick="return doclink('link-5', 'metadata', 'link-1');">metadata</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L37"></a><tt class="py-lineno"> 37</tt>  <tt class="py-line">        <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-string">'rol_id'</tt><tt class="py-op">,</tt> <tt class="py-name">Integer</tt><tt class="py-op">,</tt> <tt class="py-name">ForeignKey</tt><tt class="py-op">(</tt><tt class="py-string">'rol.rol_id'</tt><tt class="py-op">,</tt> </tt>
+<a name="L38"></a><tt class="py-lineno"> 38</tt>  <tt class="py-line">                <tt class="py-name">onupdate</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">,</tt> <tt class="py-name">ondelete</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">)</tt><tt class="py-op">,</tt><tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L39"></a><tt class="py-lineno"> 39</tt>  <tt class="py-line"> </tt>
+<a name="L40"></a><tt class="py-lineno"> 40</tt>  <tt class="py-line">        <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-string">'permiso_id'</tt><tt class="py-op">,</tt> <tt class="py-name">Integer</tt><tt class="py-op">,</tt> <tt class="py-name">ForeignKey</tt><tt class="py-op">(</tt><tt class="py-string">'permiso.permiso_id'</tt><tt class="py-op">,</tt> </tt>
+<a name="L41"></a><tt class="py-lineno"> 41</tt>  <tt class="py-line">                <tt class="py-name">onupdate</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">,</tt> <tt class="py-name">ondelete</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">)</tt><tt class="py-op">,</tt><tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt> </tt>
+<a name="L42"></a><tt class="py-lineno"> 42</tt>  <tt class="py-line"><tt class="py-op">)</tt> </tt>
+<a name="L43"></a><tt class="py-lineno"> 43</tt>  <tt class="py-line"> </tt>
+<a name="L44"></a><tt class="py-lineno"> 44</tt>  <tt class="py-line"><tt class="py-comment"># This is the association table for the many-to-many relationship between</tt> </tt>
+<a name="L45"></a><tt class="py-lineno"> 45</tt>  <tt class="py-line"><tt class="py-comment"># groups and members - this is, the memberships. It's required by repoze.what.</tt> </tt>
+<a name="L46"></a><tt class="py-lineno"> 46</tt>  <tt class="py-line"><tt id="link-6" class="py-name" targets="Variable sap.model.auth.usuario_rol_table=sap.model.auth-module.html#usuario_rol_table"><a title="sap.model.auth.usuario_rol_table" class="py-name" href="#" onclick="return doclink('link-6', 'usuario_rol_table', 'link-6');">usuario_rol_table</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Table</tt><tt class="py-op">(</tt><tt class="py-string">'usuario_rol'</tt><tt class="py-op">,</tt> <tt id="link-7" class="py-name"><a title="sap.controllers.participante.metadata
+sap.model.metadata
+sap.widgets.createform.metadata
+sap.widgets.decorator.metadata
+sap.widgets.editform.metadata
+sap.widgets.extended.metadata" class="py-name" href="#" onclick="return doclink('link-7', 'metadata', 'link-1');">metadata</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L47"></a><tt class="py-lineno"> 47</tt>  <tt class="py-line">        <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-string">'usuario_id'</tt><tt class="py-op">,</tt> <tt class="py-name">Integer</tt><tt class="py-op">,</tt> <tt class="py-name">ForeignKey</tt><tt class="py-op">(</tt><tt class="py-string">'usuario.usuario_id'</tt><tt class="py-op">,</tt> </tt>
+<a name="L48"></a><tt class="py-lineno"> 48</tt>  <tt class="py-line">                        <tt class="py-name">onupdate</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">,</tt> <tt class="py-name">ondelete</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L49"></a><tt class="py-lineno"> 49</tt>  <tt class="py-line">        <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-string">'rol_id'</tt><tt class="py-op">,</tt> <tt class="py-name">Integer</tt><tt class="py-op">,</tt> <tt class="py-name">ForeignKey</tt><tt class="py-op">(</tt><tt class="py-string">'rol.rol_id'</tt><tt class="py-op">,</tt> </tt>
+<a name="L50"></a><tt class="py-lineno"> 50</tt>  <tt class="py-line">                        <tt class="py-name">onupdate</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">,</tt> <tt class="py-name">ondelete</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt> </tt>
+<a name="L51"></a><tt class="py-lineno"> 51</tt>  <tt class="py-line"><tt class="py-op">)</tt> </tt>
+<a name="L52"></a><tt class="py-lineno"> 52</tt>  <tt class="py-line"> </tt>
+<a name="L53"></a><tt class="py-lineno"> 53</tt>  <tt class="py-line"><tt class="py-comment">#Relaciona a un rol y sus permisos a un proyecto</tt> </tt>
+<a name="L54"></a><tt class="py-lineno"> 54</tt>  <tt class="py-line"><tt class="py-comment">#</tt> </tt>
+<a name="L55"></a><tt class="py-lineno"> 55</tt>  <tt class="py-line"><tt id="link-8" class="py-name" targets="Variable sap.model.auth.rol_permiso_proyecto_table=sap.model.auth-module.html#rol_permiso_proyecto_table"><a title="sap.model.auth.rol_permiso_proyecto_table" class="py-name" href="#" onclick="return doclink('link-8', 'rol_permiso_proyecto_table', 'link-8');">rol_permiso_proyecto_table</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Table</tt><tt class="py-op">(</tt> <tt class="py-string">'rol_permiso_proyecto'</tt><tt class="py-op">,</tt> <tt id="link-9" class="py-name"><a title="sap.controllers.participante.metadata
+sap.model.metadata
+sap.widgets.createform.metadata
+sap.widgets.decorator.metadata
+sap.widgets.editform.metadata
+sap.widgets.extended.metadata" class="py-name" href="#" onclick="return doclink('link-9', 'metadata', 'link-1');">metadata</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L56"></a><tt class="py-lineno"> 56</tt>  <tt class="py-line"> </tt>
+<a name="L57"></a><tt class="py-lineno"> 57</tt>  <tt class="py-line">        <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-string">'rol_id'</tt><tt class="py-op">,</tt> <tt class="py-name">Integer</tt><tt class="py-op">,</tt> <tt class="py-name">ForeignKey</tt><tt class="py-op">(</tt><tt class="py-string">'rol.rol_id'</tt><tt class="py-op">,</tt> </tt>
+<a name="L58"></a><tt class="py-lineno"> 58</tt>  <tt class="py-line">                <tt class="py-name">onupdate</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">,</tt> <tt class="py-name">ondelete</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">)</tt><tt class="py-op">,</tt><tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L59"></a><tt class="py-lineno"> 59</tt>  <tt class="py-line"> </tt>
+<a name="L60"></a><tt class="py-lineno"> 60</tt>  <tt class="py-line">        <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-string">'permiso_id'</tt><tt class="py-op">,</tt> <tt class="py-name">Integer</tt><tt class="py-op">,</tt> <tt class="py-name">ForeignKey</tt><tt class="py-op">(</tt><tt class="py-string">'permiso.permiso_id'</tt><tt class="py-op">,</tt> </tt>
+<a name="L61"></a><tt class="py-lineno"> 61</tt>  <tt class="py-line">                <tt class="py-name">onupdate</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">,</tt> <tt class="py-name">ondelete</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">)</tt><tt class="py-op">,</tt><tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L62"></a><tt class="py-lineno"> 62</tt>  <tt class="py-line"> </tt>
+<a name="L63"></a><tt class="py-lineno"> 63</tt>  <tt class="py-line">        <tt class="py-name">Column</tt> <tt class="py-op">(</tt><tt class="py-string">'proyecto_id'</tt><tt class="py-op">,</tt> <tt class="py-name">Integer</tt><tt class="py-op">,</tt><tt class="py-name">ForeignKey</tt><tt class="py-op">(</tt><tt class="py-string">'proyecto.id_proyecto'</tt><tt class="py-op">,</tt> </tt>
+<a name="L64"></a><tt class="py-lineno"> 64</tt>  <tt class="py-line">                        <tt class="py-name">onupdate</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">,</tt> <tt class="py-name">ondelete</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt> </tt>
+<a name="L65"></a><tt class="py-lineno"> 65</tt>  <tt class="py-line"><tt class="py-op">)</tt> </tt>
+<a name="L66"></a><tt class="py-lineno"> 66</tt>  <tt class="py-line"> </tt>
+<a name="L67"></a><tt class="py-lineno"> 67</tt>  <tt class="py-line"><tt id="link-10" class="py-name" targets="Variable sap.model.auth.usuario_permiso_fase_table=sap.model.auth-module.html#usuario_permiso_fase_table"><a title="sap.model.auth.usuario_permiso_fase_table" class="py-name" href="#" onclick="return doclink('link-10', 'usuario_permiso_fase_table', 'link-10');">usuario_permiso_fase_table</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Table</tt><tt class="py-op">(</tt> <tt class="py-string">'usuario_permiso_fase'</tt><tt class="py-op">,</tt> <tt id="link-11" class="py-name"><a title="sap.controllers.participante.metadata
+sap.model.metadata
+sap.widgets.createform.metadata
+sap.widgets.decorator.metadata
+sap.widgets.editform.metadata
+sap.widgets.extended.metadata" class="py-name" href="#" onclick="return doclink('link-11', 'metadata', 'link-1');">metadata</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L68"></a><tt class="py-lineno"> 68</tt>  <tt class="py-line"> </tt>
+<a name="L69"></a><tt class="py-lineno"> 69</tt>  <tt class="py-line">        <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-string">'usuario_id'</tt><tt class="py-op">,</tt> <tt class="py-name">Integer</tt><tt class="py-op">,</tt> <tt class="py-name">ForeignKey</tt><tt class="py-op">(</tt><tt class="py-string">'usuario.usuario_id'</tt><tt class="py-op">,</tt> </tt>
+<a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">                        <tt class="py-name">onupdate</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">,</tt> <tt class="py-name">ondelete</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line"> </tt>
+<a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">        <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-string">'permiso_id'</tt><tt class="py-op">,</tt> <tt class="py-name">Integer</tt><tt class="py-op">,</tt> <tt class="py-name">ForeignKey</tt><tt class="py-op">(</tt><tt class="py-string">'permiso.permiso_id'</tt><tt class="py-op">,</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">                <tt class="py-name">onupdate</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">,</tt> <tt class="py-name">ondelete</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">)</tt><tt class="py-op">,</tt><tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line"> </tt>
+<a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">        <tt class="py-name">Column</tt> <tt class="py-op">(</tt><tt class="py-string">'fase_id'</tt><tt class="py-op">,</tt> <tt class="py-name">Integer</tt><tt class="py-op">,</tt><tt class="py-name">ForeignKey</tt><tt class="py-op">(</tt><tt class="py-string">'fase.id_fase'</tt><tt class="py-op">,</tt> </tt>
+<a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">                        <tt class="py-name">onupdate</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">,</tt> <tt class="py-name">ondelete</tt><tt class="py-op">=</tt><tt class="py-string">"CASCADE"</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt> </tt>
+<a name="L77"></a><tt class="py-lineno"> 77</tt>  <tt class="py-line"><tt class="py-op">)</tt> </tt>
+<a name="RolUsuario"></a><div id="RolUsuario-def"><a name="L78"></a><tt class="py-lineno"> 78</tt>  <tt class="py-line"> </tt>
+<a name="L79"></a><tt class="py-lineno"> 79</tt> <a class="py-toggle" href="#" id="RolUsuario-toggle" onclick="return toggle('RolUsuario');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="sap.model.auth.RolUsuario-class.html">RolUsuario</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="RolUsuario-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="RolUsuario-expanded"><a name="L80"></a><tt class="py-lineno"> 80</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L81"></a><tt class="py-lineno"> 81</tt>  <tt class="py-line"> </tt>
+<a name="RolPermiso"></a><div id="RolPermiso-def"><a name="L82"></a><tt class="py-lineno"> 82</tt> <a class="py-toggle" href="#" id="RolPermiso-toggle" onclick="return toggle('RolPermiso');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="sap.model.auth.RolPermiso-class.html">RolPermiso</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="RolPermiso-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="RolPermiso-expanded"><a name="L83"></a><tt class="py-lineno"> 83</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L84"></a><tt class="py-lineno"> 84</tt>  <tt class="py-line"> </tt>
+<a name="RolPermisoProyecto"></a><div id="RolPermisoProyecto-def"><a name="L85"></a><tt class="py-lineno"> 85</tt> <a class="py-toggle" href="#" id="RolPermisoProyecto-toggle" onclick="return toggle('RolPermisoProyecto');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="sap.model.auth.RolPermisoProyecto-class.html">RolPermisoProyecto</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="RolPermisoProyecto-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="RolPermisoProyecto-expanded"><a name="L86"></a><tt class="py-lineno"> 86</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L87"></a><tt class="py-lineno"> 87</tt>  <tt class="py-line"> </tt>
+<a name="UsuarioPermisoFase"></a><div id="UsuarioPermisoFase-def"><a name="L88"></a><tt class="py-lineno"> 88</tt> <a class="py-toggle" href="#" id="UsuarioPermisoFase-toggle" onclick="return toggle('UsuarioPermisoFase');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="sap.model.auth.UsuarioPermisoFase-class.html">UsuarioPermisoFase</a><tt class="py-op">(</tt><tt class="py-base-class">object</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="UsuarioPermisoFase-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="UsuarioPermisoFase-expanded"><a name="L89"></a><tt class="py-lineno"> 89</tt>  <tt class="py-line">        <tt class="py-keyword">pass</tt> </tt>
+</div><a name="L90"></a><tt class="py-lineno"> 90</tt>  <tt class="py-line"> </tt>
+<a name="L91"></a><tt class="py-lineno"> 91</tt>  <tt class="py-line"><tt class="py-name">mapper</tt><tt class="py-op">(</tt><tt id="link-12" class="py-name" targets="Class sap.model.auth.RolPermisoProyecto=sap.model.auth.RolPermisoProyecto-class.html"><a title="sap.model.auth.RolPermisoProyecto" class="py-name" href="#" onclick="return doclink('link-12', 'RolPermisoProyecto', 'link-12');">RolPermisoProyecto</a></tt><tt class="py-op">,</tt> <tt id="link-13" class="py-name"><a title="sap.model.auth.rol_permiso_proyecto_table" class="py-name" href="#" onclick="return doclink('link-13', 'rol_permiso_proyecto_table', 'link-8');">rol_permiso_proyecto_table</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L92"></a><tt class="py-lineno"> 92</tt>  <tt class="py-line"> </tt>
+<a name="L93"></a><tt class="py-lineno"> 93</tt>  <tt class="py-line"><tt class="py-name">mapper</tt><tt class="py-op">(</tt><tt id="link-14" class="py-name" targets="Class sap.model.auth.RolUsuario=sap.model.auth.RolUsuario-class.html"><a title="sap.model.auth.RolUsuario" class="py-name" href="#" onclick="return doclink('link-14', 'RolUsuario', 'link-14');">RolUsuario</a></tt><tt class="py-op">,</tt> <tt id="link-15" class="py-name"><a title="sap.model.auth.usuario_rol_table" class="py-name" href="#" onclick="return doclink('link-15', 'usuario_rol_table', 'link-6');">usuario_rol_table</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L94"></a><tt class="py-lineno"> 94</tt>  <tt class="py-line"> </tt>
+<a name="L95"></a><tt class="py-lineno"> 95</tt>  <tt class="py-line"><tt class="py-name">mapper</tt><tt class="py-op">(</tt><tt id="link-16" class="py-name" targets="Class sap.model.auth.RolPermiso=sap.model.auth.RolPermiso-class.html"><a title="sap.model.auth.RolPermiso" class="py-name" href="#" onclick="return doclink('link-16', 'RolPermiso', 'link-16');">RolPermiso</a></tt> <tt class="py-op">,</tt> <tt id="link-17" class="py-name"><a title="sap.model.auth.rol_permiso_table" class="py-name" href="#" onclick="return doclink('link-17', 'rol_permiso_table', 'link-4');">rol_permiso_table</a></tt><tt class="py-op">)</tt> </tt>
+<a name="L96"></a><tt class="py-lineno"> 96</tt>  <tt class="py-line"> </tt>
+<a name="L97"></a><tt class="py-lineno"> 97</tt>  <tt class="py-line"><tt class="py-name">mapper</tt><tt class="py-op">(</tt><tt id="link-18" class="py-name" targets="Class sap.model.auth.UsuarioPermisoFase=sap.model.auth.UsuarioPermisoFase-class.html"><a title="sap.model.auth.UsuarioPermisoFase" class="py-name" href="#" onclick="return doclink('link-18', 'UsuarioPermisoFase', 'link-18');">UsuarioPermisoFase</a></tt><tt class="py-op">,</tt> <tt id="link-19" class="py-name"><a title="sap.model.auth.usuario_permiso_fase_table" class="py-name" href="#" onclick="return doclink('link-19', 'usuario_permiso_fase_table', 'link-10');">usuario_permiso_fase_table</a></tt><tt class="py-op">)</tt> </tt>
+<a name="Rol"></a><div id="Rol-def"><a name="L98"></a><tt class="py-lineno"> 98</tt>  <tt class="py-line"><tt class="py-comment">#} Association tables</tt> </tt>
+<a name="L99"></a><tt class="py-lineno"> 99</tt>  <tt class="py-line"> </tt>
+<a name="L100"></a><tt class="py-lineno">100</tt>  <tt class="py-line"><tt class="py-comment">#{ The auth* model itself</tt> </tt>
+<a name="L101"></a><tt class="py-lineno">101</tt>  <tt class="py-line"> </tt>
+<a name="L102"></a><tt class="py-lineno">102</tt>  <tt class="py-line"> </tt>
+<a name="L103"></a><tt class="py-lineno">103</tt> <a class="py-toggle" href="#" id="Rol-toggle" onclick="return toggle('Rol');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="sap.model.auth.Rol-class.html">Rol</a><tt class="py-op">(</tt><tt class="py-base-class">DeclarativeBase</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Rol-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="Rol-expanded"><a name="L104"></a><tt class="py-lineno">104</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L105"></a><tt class="py-lineno">105</tt>  <tt class="py-line"><tt class="py-docstring">        Rol definition for :mod:`repoze.what`.</tt> </tt>
+<a name="L106"></a><tt class="py-lineno">106</tt>  <tt class="py-line"><tt class="py-docstring">        Only the ``group_name`` column is required by :mod:`repoze.what`.</tt> </tt>
+<a name="L107"></a><tt class="py-lineno">107</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L108"></a><tt class="py-lineno">108</tt>  <tt class="py-line"> </tt>
+<a name="L109"></a><tt class="py-lineno">109</tt>  <tt class="py-line">        <tt id="link-20" class="py-name" targets="Variable sap.model.auth.Permiso.__tablename__=sap.model.auth.Permiso-class.html#__tablename__,Variable sap.model.auth.Rol.__tablename__=sap.model.auth.Rol-class.html#__tablename__,Variable sap.model.auth.Usuario.__tablename__=sap.model.auth.Usuario-class.html#__tablename__,Variable sap.model.model.AtributoTipoItem.__tablename__=sap.model.model.AtributoTipoItem-class.html#__tablename__,Variable sap.model.model.DetalleItem.__tablename__=sap.model.model.DetalleItem-class.html#__tablename__,Variable sap.model.model.EstadoItem.__tablename__=sap.model.model.EstadoItem-class.html#__tablename__,Variable sap.model.model.EstadoLineaBase.__tablename__=sap.model.model.EstadoLineaBase-class.html#__tablename__,Variable sap.model.model.EstadoProyecto.__tablename__=sap.model.model.EstadoProyecto-class.html#__tablename__,Variable sap.model.model.Fase.__tablename__=sap.model.model.Fase-class.html#__tablename__,Variable sap.model.model.HistorialDetalleItem.__tablename__=sap.model.model.HistorialDetalleItem-class.html#__tablename__,Variable sap.model.model.HistorialItem.__tablename__=sap.model.model.HistorialItem-class.html#__tablename__,Variable sap.model.model.HistorialRelacion.__tablename__=sap.model.model.HistorialRelacion-class.html#__tablename__,Variable sap.model.model.Item.__tablename__=sap.model.model.Item-class.html#__tablename__,Variable sap.model.model.LineaBase.__tablename__=sap.model.model.LineaBase-class.html#__tablename__,Variable sap.model.model.Proyecto.__tablename__=sap.model.model.Proyecto-class.html#__tablename__,Variable sap.model.model.RelacionItem.__tablename__=sap.model.model.RelacionItem-class.html#__tablename__,Variable sap.model.model.RelacionParentesco.__tablename__=sap.model.model.RelacionParentesco-class.html#__tablename__,Variable sap.model.model.TipoAtributo.__tablename__=sap.model.model.TipoAtributo-class.html#__tablename__,Variable sap.model.model.TipoItem.__tablename__=sap.model.model.TipoItem-class.html#__tablename__"><a title="sap.model.auth.Permiso.__tablename__
+sap.model.auth.Rol.__tablename__
+sap.model.auth.Usuario.__tablename__
+sap.model.model.AtributoTipoItem.__tablename__
+sap.model.model.DetalleItem.__tablename__
+sap.model.model.EstadoItem.__tablename__
+sap.model.model.EstadoLineaBase.__tablename__
+sap.model.model.EstadoProyecto.__tablename__
+sap.model.model.Fase.__tablename__
+sap.model.model.HistorialDetalleItem.__tablename__
+sap.model.model.HistorialItem.__tablename__
+sap.model.model.HistorialRelacion.__tablename__
+sap.model.model.Item.__tablename__
+sap.model.model.LineaBase.__tablename__
+sap.model.model.Proyecto.__tablename__
+sap.model.model.RelacionItem.__tablename__
+sap.model.model.RelacionParentesco.__tablename__
+sap.model.model.TipoAtributo.__tablename__
+sap.model.model.TipoItem.__tablename__" class="py-name" href="#" onclick="return doclink('link-20', '__tablename__', 'link-20');">__tablename__</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'rol'</tt> </tt>
+<a name="L110"></a><tt class="py-lineno">110</tt>  <tt class="py-line"> </tt>
+<a name="L111"></a><tt class="py-lineno">111</tt>  <tt class="py-line">        <tt class="py-comment">#{ Columns</tt> </tt>
+<a name="L112"></a><tt class="py-lineno">112</tt>  <tt class="py-line"> </tt>
+<a name="L113"></a><tt class="py-lineno">113</tt>  <tt class="py-line">        <tt id="link-21" class="py-name" targets="Variable sap.model.auth.Rol.rol_id=sap.model.auth.Rol-class.html#rol_id,Variable sap.model.auth.RolPermiso.rol_id=sap.model.auth.RolPermiso-class.html#rol_id,Variable sap.model.auth.RolPermisoProyecto.rol_id=sap.model.auth.RolPermisoProyecto-class.html#rol_id,Variable sap.model.auth.RolUsuario.rol_id=sap.model.auth.RolUsuario-class.html#rol_id"><a title="sap.model.auth.Rol.rol_id
+sap.model.auth.RolPermiso.rol_id
+sap.model.auth.RolPermisoProyecto.rol_id
+sap.model.auth.RolUsuario.rol_id" class="py-name" href="#" onclick="return doclink('link-21', 'rol_id', 'link-21');">rol_id</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">Integer</tt><tt class="py-op">,</tt> <tt class="py-name">autoincrement</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">,</tt> <tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt> </tt>
+<a name="L114"></a><tt class="py-lineno">114</tt>  <tt class="py-line"> </tt>
+<a name="L115"></a><tt class="py-lineno">115</tt>  <tt class="py-line">        <tt id="link-22" class="py-name" targets="Variable sap.model.auth.Rol.codigo=sap.model.auth.Rol-class.html#codigo,Variable sap.model.model.HistorialItem.codigo=sap.model.model.HistorialItem-class.html#codigo,Variable sap.model.model.Item.codigo=sap.model.model.Item-class.html#codigo,Variable sap.model.model.LineaBase.codigo=sap.model.model.LineaBase-class.html#codigo,Variable sap.model.model.TipoItem.codigo=sap.model.model.TipoItem-class.html#codigo"><a title="sap.model.auth.Rol.codigo
+sap.model.model.HistorialItem.codigo
+sap.model.model.Item.codigo
+sap.model.model.LineaBase.codigo
+sap.model.model.TipoItem.codigo" class="py-name" href="#" onclick="return doclink('link-22', 'codigo', 'link-22');">codigo</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">Unicode</tt><tt class="py-op">(</tt><tt class="py-number">16</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">unique</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">,</tt> <tt id="link-23" class="py-name" targets="Variable sprox.widgets.widgets.PropertySingleSelectField.nullable=sprox.widgets.widgets.PropertySingleSelectField-class.html#nullable"><a title="sprox.widgets.widgets.PropertySingleSelectField.nullable" class="py-name" href="#" onclick="return doclink('link-23', 'nullable', 'link-23');">nullable</a></tt><tt class="py-op">=</tt><tt class="py-name">False</tt><tt class="py-op">)</tt> </tt>
+<a name="L116"></a><tt class="py-lineno">116</tt>  <tt class="py-line"> </tt>
+<a name="L117"></a><tt class="py-lineno">117</tt>  <tt class="py-line">        <tt id="link-24" class="py-name" targets="Variable sap.model.auth.Permiso.nombre=sap.model.auth.Permiso-class.html#nombre,Variable sap.model.auth.Rol.nombre=sap.model.auth.Rol-class.html#nombre,Variable sap.model.auth.Usuario.nombre=sap.model.auth.Usuario-class.html#nombre,Variable sap.model.model.AtributoTipoItem.nombre=sap.model.model.AtributoTipoItem-class.html#nombre,Variable sap.model.model.EstadoItem.nombre=sap.model.model.EstadoItem-class.html#nombre,Variable sap.model.model.EstadoLineaBase.nombre=sap.model.model.EstadoLineaBase-class.html#nombre,Variable sap.model.model.EstadoProyecto.nombre=sap.model.model.EstadoProyecto-class.html#nombre,Variable sap.model.model.Fase.nombre=sap.model.model.Fase-class.html#nombre,Variable sap.model.model.HistorialItem.nombre=sap.model.model.HistorialItem-class.html#nombre,Variable sap.model.model.Item.nombre=sap.model.model.Item-class.html#nombre,Variable sap.model.model.Proyecto.nombre=sap.model.model.Proyecto-class.html#nombre,Variable sap.model.model.RelacionParentesco.nombre=sap.model.model.RelacionParentesco-class.html#nombre,Variable sap.model.model.TipoAtributo.nombre=sap.model.model.TipoAtributo-class.html#nombre,Variable sap.model.model.TipoItem.nombre=sap.model.model.TipoItem-class.html#nombre"><a title="sap.model.auth.Permiso.nombre
+sap.model.auth.Rol.nombre
+sap.model.auth.Usuario.nombre
+sap.model.model.AtributoTipoItem.nombre
+sap.model.model.EstadoItem.nombre
+sap.model.model.EstadoLineaBase.nombre
+sap.model.model.EstadoProyecto.nombre
+sap.model.model.Fase.nombre
+sap.model.model.HistorialItem.nombre
+sap.model.model.Item.nombre
+sap.model.model.Proyecto.nombre
+sap.model.model.RelacionParentesco.nombre
+sap.model.model.TipoAtributo.nombre
+sap.model.model.TipoItem.nombre" class="py-name" href="#" onclick="return doclink('link-24', 'nombre', 'link-24');">nombre</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">Unicode</tt><tt class="py-op">(</tt><tt class="py-number">50</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt id="link-25" class="py-name"><a title="sprox.widgets.widgets.PropertySingleSelectField.nullable" class="py-name" href="#" onclick="return doclink('link-25', 'nullable', 'link-23');">nullable</a></tt><tt class="py-op">=</tt><tt class="py-name">False</tt><tt class="py-op">)</tt> </tt>
+<a name="L118"></a><tt class="py-lineno">118</tt>  <tt class="py-line"> </tt>
+<a name="L119"></a><tt class="py-lineno">119</tt>  <tt class="py-line">        <tt id="link-26" class="py-name" targets="Variable sap.model.auth.Permiso.descripcion=sap.model.auth.Permiso-class.html#descripcion,Variable sap.model.auth.Rol.descripcion=sap.model.auth.Rol-class.html#descripcion,Variable sap.model.model.EstadoProyecto.descripcion=sap.model.model.EstadoProyecto-class.html#descripcion,Variable sap.model.model.Fase.descripcion=sap.model.model.Fase-class.html#descripcion,Variable sap.model.model.HistorialItem.descripcion=sap.model.model.HistorialItem-class.html#descripcion,Variable sap.model.model.Item.descripcion=sap.model.model.Item-class.html#descripcion,Variable sap.model.model.Proyecto.descripcion=sap.model.model.Proyecto-class.html#descripcion,Variable sap.model.model.RelacionParentesco.descripcion=sap.model.model.RelacionParentesco-class.html#descripcion,Variable sap.model.model.TipoAtributo.descripcion=sap.model.model.TipoAtributo-class.html#descripcion,Variable sap.model.model.TipoItem.descripcion=sap.model.model.TipoItem-class.html#descripcion"><a title="sap.model.auth.Permiso.descripcion
+sap.model.auth.Rol.descripcion
+sap.model.model.EstadoProyecto.descripcion
+sap.model.model.Fase.descripcion
+sap.model.model.HistorialItem.descripcion
+sap.model.model.Item.descripcion
+sap.model.model.Proyecto.descripcion
+sap.model.model.RelacionParentesco.descripcion
+sap.model.model.TipoAtributo.descripcion
+sap.model.model.TipoItem.descripcion" class="py-name" href="#" onclick="return doclink('link-26', 'descripcion', 'link-26');">descripcion</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">Unicode</tt><tt class="py-op">(</tt><tt class="py-number">255</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L120"></a><tt class="py-lineno">120</tt>  <tt class="py-line"> </tt>
+<a name="L121"></a><tt class="py-lineno">121</tt>  <tt class="py-line">        <tt id="link-27" class="py-name" targets="Variable sap.model.auth.Rol.created=sap.model.auth.Rol-class.html#created,Variable sap.model.auth.Usuario.created=sap.model.auth.Usuario-class.html#created"><a title="sap.model.auth.Rol.created
+sap.model.auth.Usuario.created" class="py-name" href="#" onclick="return doclink('link-27', 'created', 'link-27');">created</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">DateTime</tt><tt class="py-op">,</tt> <tt class="py-name">default</tt><tt class="py-op">=</tt><tt class="py-name">datetime</tt><tt class="py-op">.</tt><tt class="py-name">now</tt><tt class="py-op">)</tt> </tt>
+<a name="L122"></a><tt class="py-lineno">122</tt>  <tt class="py-line"> </tt>
+<a name="L123"></a><tt class="py-lineno">123</tt>  <tt class="py-line">        <tt id="link-28" class="py-name" targets="Variable sap.model.auth.Rol.is_template=sap.model.auth.Rol-class.html#is_template"><a title="sap.model.auth.Rol.is_template" class="py-name" href="#" onclick="return doclink('link-28', 'is_template', 'link-28');">is_template</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt> <tt class="py-op">(</tt><tt class="py-name">Boolean</tt><tt class="py-op">,</tt> <tt class="py-name">default</tt> <tt class="py-op">=</tt> <tt class="py-name">False</tt><tt class="py-op">)</tt> </tt>
+<a name="L124"></a><tt class="py-lineno">124</tt>  <tt class="py-line"> </tt>
+<a name="L125"></a><tt class="py-lineno">125</tt>  <tt class="py-line">        <tt class="py-comment">#{ Relations</tt> </tt>
+<a name="L126"></a><tt class="py-lineno">126</tt>  <tt class="py-line"> </tt>
+<a name="L127"></a><tt class="py-lineno">127</tt>  <tt class="py-line">        <tt id="link-29" class="py-name" targets="Variable sap.model.auth.Rol.usuarios=sap.model.auth.Rol-class.html#usuarios"><a title="sap.model.auth.Rol.usuarios" class="py-name" href="#" onclick="return doclink('link-29', 'usuarios', 'link-29');">usuarios</a></tt> <tt class="py-op">=</tt> <tt class="py-name">relation</tt><tt class="py-op">(</tt><tt class="py-string">'Usuario'</tt><tt class="py-op">,</tt> <tt class="py-name">secondary</tt><tt class="py-op">=</tt><tt id="link-30" class="py-name"><a title="sap.model.auth.usuario_rol_table" class="py-name" href="#" onclick="return doclink('link-30', 'usuario_rol_table', 'link-6');">usuario_rol_table</a></tt><tt class="py-op">,</tt> <tt class="py-name">backref</tt><tt class="py-op">=</tt><tt class="py-string">'roles'</tt><tt class="py-op">)</tt> </tt>
+<a name="L128"></a><tt class="py-lineno">128</tt>  <tt class="py-line"> </tt>
+<a name="L129"></a><tt class="py-lineno">129</tt>  <tt class="py-line">        <tt class="py-comment">#{ Special methods</tt> </tt>
+<a name="L130"></a><tt class="py-lineno">130</tt>  <tt class="py-line"> </tt>
+<a name="Rol.__repr__"></a><div id="Rol.__repr__-def"><a name="L131"></a><tt class="py-lineno">131</tt> <a class="py-toggle" href="#" id="Rol.__repr__-toggle" onclick="return toggle('Rol.__repr__');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.model.auth.Rol-class.html#__repr__">__repr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Rol.__repr__-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="Rol.__repr__-expanded"><a name="L132"></a><tt class="py-lineno">132</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-string">'&lt;Rol: name=%s&gt;'</tt> <tt class="py-op">%</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-31" class="py-name"><a title="sap.model.auth.Permiso.nombre
+sap.model.auth.Rol.nombre
+sap.model.auth.Usuario.nombre
+sap.model.model.AtributoTipoItem.nombre
+sap.model.model.EstadoItem.nombre
+sap.model.model.EstadoLineaBase.nombre
+sap.model.model.EstadoProyecto.nombre
+sap.model.model.Fase.nombre
+sap.model.model.HistorialItem.nombre
+sap.model.model.Item.nombre
+sap.model.model.Proyecto.nombre
+sap.model.model.RelacionParentesco.nombre
+sap.model.model.TipoAtributo.nombre
+sap.model.model.TipoItem.nombre" class="py-name" href="#" onclick="return doclink('link-31', 'nombre', 'link-24');">nombre</a></tt> </tt>
+</div><a name="L133"></a><tt class="py-lineno">133</tt>  <tt class="py-line"> </tt>
+<a name="Rol.__unicode__"></a><div id="Rol.__unicode__-def"><a name="L134"></a><tt class="py-lineno">134</tt> <a class="py-toggle" href="#" id="Rol.__unicode__-toggle" onclick="return toggle('Rol.__unicode__');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.model.auth.Rol-class.html#__unicode__">__unicode__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Rol.__unicode__-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="Rol.__unicode__-expanded"><a name="L135"></a><tt class="py-lineno">135</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-32" class="py-name"><a title="sap.model.auth.Permiso.nombre
+sap.model.auth.Rol.nombre
+sap.model.auth.Usuario.nombre
+sap.model.model.AtributoTipoItem.nombre
+sap.model.model.EstadoItem.nombre
+sap.model.model.EstadoLineaBase.nombre
+sap.model.model.EstadoProyecto.nombre
+sap.model.model.Fase.nombre
+sap.model.model.HistorialItem.nombre
+sap.model.model.Item.nombre
+sap.model.model.Proyecto.nombre
+sap.model.model.RelacionParentesco.nombre
+sap.model.model.TipoAtributo.nombre
+sap.model.model.TipoItem.nombre" class="py-name" href="#" onclick="return doclink('link-32', 'nombre', 'link-24');">nombre</a></tt> </tt>
+</div></div><a name="L136"></a><tt class="py-lineno">136</tt>  <tt class="py-line"> </tt>
+<a name="Usuario"></a><div id="Usuario-def"><a name="L137"></a><tt class="py-lineno">137</tt>  <tt class="py-line">        <tt class="py-comment">#}</tt> </tt>
+<a name="L138"></a><tt class="py-lineno">138</tt>  <tt class="py-line"> </tt>
+<a name="L139"></a><tt class="py-lineno">139</tt>  <tt class="py-line"> </tt>
+<a name="L140"></a><tt class="py-lineno">140</tt>  <tt class="py-line"><tt class="py-comment"># The 'info' argument we're passing to the email_address and password columns</tt> </tt>
+<a name="L141"></a><tt class="py-lineno">141</tt>  <tt class="py-line"><tt class="py-comment"># contain metadata that Rum (http://python-rum.org/) can use generate an</tt> </tt>
+<a name="L142"></a><tt class="py-lineno">142</tt>  <tt class="py-line"><tt class="py-comment"># admin interface for your models.</tt> </tt>
+<a name="L143"></a><tt class="py-lineno">143</tt> <a class="py-toggle" href="#" id="Usuario-toggle" onclick="return toggle('Usuario');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="sap.model.auth.Usuario-class.html">Usuario</a><tt class="py-op">(</tt><tt class="py-base-class">DeclarativeBase</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Usuario-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="Usuario-expanded"><a name="L144"></a><tt class="py-lineno">144</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L145"></a><tt class="py-lineno">145</tt>  <tt class="py-line"><tt class="py-docstring">        Usuario definition.</tt> </tt>
+<a name="L146"></a><tt class="py-lineno">146</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L147"></a><tt class="py-lineno">147</tt>  <tt class="py-line"><tt class="py-docstring">        This is the user definition used by :mod:`repoze.who`, which requires at</tt> </tt>
+<a name="L148"></a><tt class="py-lineno">148</tt>  <tt class="py-line"><tt class="py-docstring">        least the ``user_name`` column.</tt> </tt>
+<a name="L149"></a><tt class="py-lineno">149</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L150"></a><tt class="py-lineno">150</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L151"></a><tt class="py-lineno">151</tt>  <tt class="py-line">        <tt id="link-33" class="py-name"><a title="sap.model.auth.Permiso.__tablename__
+sap.model.auth.Rol.__tablename__
+sap.model.auth.Usuario.__tablename__
+sap.model.model.AtributoTipoItem.__tablename__
+sap.model.model.DetalleItem.__tablename__
+sap.model.model.EstadoItem.__tablename__
+sap.model.model.EstadoLineaBase.__tablename__
+sap.model.model.EstadoProyecto.__tablename__
+sap.model.model.Fase.__tablename__
+sap.model.model.HistorialDetalleItem.__tablename__
+sap.model.model.HistorialItem.__tablename__
+sap.model.model.HistorialRelacion.__tablename__
+sap.model.model.Item.__tablename__
+sap.model.model.LineaBase.__tablename__
+sap.model.model.Proyecto.__tablename__
+sap.model.model.RelacionItem.__tablename__
+sap.model.model.RelacionParentesco.__tablename__
+sap.model.model.TipoAtributo.__tablename__
+sap.model.model.TipoItem.__tablename__" class="py-name" href="#" onclick="return doclink('link-33', '__tablename__', 'link-20');">__tablename__</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'usuario'</tt> </tt>
+<a name="L152"></a><tt class="py-lineno">152</tt>  <tt class="py-line"> </tt>
+<a name="L153"></a><tt class="py-lineno">153</tt>  <tt class="py-line">        <tt class="py-comment">#{ Columns</tt> </tt>
+<a name="L154"></a><tt class="py-lineno">154</tt>  <tt class="py-line"> </tt>
+<a name="L155"></a><tt class="py-lineno">155</tt>  <tt class="py-line">        <tt id="link-34" class="py-name" targets="Variable sap.model.auth.RolUsuario.usuario_id=sap.model.auth.RolUsuario-class.html#usuario_id,Variable sap.model.auth.Usuario.usuario_id=sap.model.auth.Usuario-class.html#usuario_id,Variable sap.model.auth.UsuarioPermisoFase.usuario_id=sap.model.auth.UsuarioPermisoFase-class.html#usuario_id"><a title="sap.model.auth.RolUsuario.usuario_id
+sap.model.auth.Usuario.usuario_id
+sap.model.auth.UsuarioPermisoFase.usuario_id" class="py-name" href="#" onclick="return doclink('link-34', 'usuario_id', 'link-34');">usuario_id</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">Integer</tt><tt class="py-op">,</tt> <tt class="py-name">autoincrement</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">,</tt> <tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt> </tt>
+<a name="L156"></a><tt class="py-lineno">156</tt>  <tt class="py-line"> </tt>
+<a name="L157"></a><tt class="py-lineno">157</tt>  <tt class="py-line">        <tt id="link-35" class="py-name" targets="Variable sap.model.auth.Usuario.user_name=sap.model.auth.Usuario-class.html#user_name"><a title="sap.model.auth.Usuario.user_name" class="py-name" href="#" onclick="return doclink('link-35', 'user_name', 'link-35');">user_name</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">Unicode</tt><tt class="py-op">(</tt><tt class="py-number">16</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">unique</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">,</tt> <tt id="link-36" class="py-name"><a title="sprox.widgets.widgets.PropertySingleSelectField.nullable" class="py-name" href="#" onclick="return doclink('link-36', 'nullable', 'link-23');">nullable</a></tt><tt class="py-op">=</tt><tt class="py-name">False</tt><tt class="py-op">)</tt> </tt>
+<a name="L158"></a><tt class="py-lineno">158</tt>  <tt class="py-line"> </tt>
+<a name="L159"></a><tt class="py-lineno">159</tt>  <tt class="py-line">        <tt id="link-37" class="py-name" targets="Variable sap.model.auth.Usuario.email_address=sap.model.auth.Usuario-class.html#email_address"><a title="sap.model.auth.Usuario.email_address" class="py-name" href="#" onclick="return doclink('link-37', 'email_address', 'link-37');">email_address</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">Unicode</tt><tt class="py-op">(</tt><tt class="py-number">255</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">unique</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">,</tt> <tt id="link-38" class="py-name"><a title="sprox.widgets.widgets.PropertySingleSelectField.nullable" class="py-name" href="#" onclick="return doclink('link-38', 'nullable', 'link-23');">nullable</a></tt><tt class="py-op">=</tt><tt class="py-name">False</tt><tt class="py-op">,</tt> </tt>
+<a name="L160"></a><tt class="py-lineno">160</tt>  <tt class="py-line">                                                   <tt class="py-name">info</tt><tt class="py-op">=</tt><tt class="py-op">{</tt><tt class="py-string">'rum'</tt><tt class="py-op">:</tt> <tt class="py-op">{</tt><tt class="py-string">'field'</tt><tt class="py-op">:</tt><tt class="py-string">'Email'</tt><tt class="py-op">}</tt><tt class="py-op">}</tt><tt class="py-op">)</tt> </tt>
+<a name="L161"></a><tt class="py-lineno">161</tt>  <tt class="py-line"> </tt>
+<a name="L162"></a><tt class="py-lineno">162</tt>  <tt class="py-line">        <tt id="link-39" class="py-name"><a title="sap.model.auth.Permiso.nombre
+sap.model.auth.Rol.nombre
+sap.model.auth.Usuario.nombre
+sap.model.model.AtributoTipoItem.nombre
+sap.model.model.EstadoItem.nombre
+sap.model.model.EstadoLineaBase.nombre
+sap.model.model.EstadoProyecto.nombre
+sap.model.model.Fase.nombre
+sap.model.model.HistorialItem.nombre
+sap.model.model.Item.nombre
+sap.model.model.Proyecto.nombre
+sap.model.model.RelacionParentesco.nombre
+sap.model.model.TipoAtributo.nombre
+sap.model.model.TipoItem.nombre" class="py-name" href="#" onclick="return doclink('link-39', 'nombre', 'link-24');">nombre</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">Unicode</tt><tt class="py-op">(</tt><tt class="py-number">255</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L163"></a><tt class="py-lineno">163</tt>  <tt class="py-line"> </tt>
+<a name="L164"></a><tt class="py-lineno">164</tt>  <tt class="py-line">        <tt id="link-40" class="py-name" targets="Variable sap.model.auth.Usuario._password=sap.model.auth.Usuario-class.html#_password"><a title="sap.model.auth.Usuario._password" class="py-name" href="#" onclick="return doclink('link-40', '_password', 'link-40');">_password</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-string">'password'</tt><tt class="py-op">,</tt> <tt class="py-name">Unicode</tt><tt class="py-op">(</tt><tt class="py-number">80</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> </tt>
+<a name="L165"></a><tt class="py-lineno">165</tt>  <tt class="py-line">                                           <tt class="py-name">info</tt><tt class="py-op">=</tt><tt class="py-op">{</tt><tt class="py-string">'rum'</tt><tt class="py-op">:</tt> <tt class="py-op">{</tt><tt class="py-string">'field'</tt><tt class="py-op">:</tt><tt class="py-string">'Password'</tt><tt class="py-op">}</tt><tt class="py-op">}</tt><tt class="py-op">)</tt> </tt>
+<a name="L166"></a><tt class="py-lineno">166</tt>  <tt class="py-line"> </tt>
+<a name="L167"></a><tt class="py-lineno">167</tt>  <tt class="py-line">        <tt id="link-41" class="py-name"><a title="sap.model.auth.Rol.created
+sap.model.auth.Usuario.created" class="py-name" href="#" onclick="return doclink('link-41', 'created', 'link-27');">created</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">DateTime</tt><tt class="py-op">,</tt> <tt class="py-name">default</tt><tt class="py-op">=</tt><tt class="py-name">datetime</tt><tt class="py-op">.</tt><tt class="py-name">now</tt><tt class="py-op">)</tt> </tt>
+<a name="L168"></a><tt class="py-lineno">168</tt>  <tt class="py-line"> </tt>
+<a name="L169"></a><tt class="py-lineno">169</tt>  <tt class="py-line">        <tt class="py-comment">#{ Special methods</tt> </tt>
+<a name="L170"></a><tt class="py-lineno">170</tt>  <tt class="py-line"> </tt>
+<a name="Usuario.__repr__"></a><div id="Usuario.__repr__-def"><a name="L171"></a><tt class="py-lineno">171</tt> <a class="py-toggle" href="#" id="Usuario.__repr__-toggle" onclick="return toggle('Usuario.__repr__');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.model.auth.Usuario-class.html#__repr__">__repr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Usuario.__repr__-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="Usuario.__repr__-expanded"><a name="L172"></a><tt class="py-lineno">172</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-string">'&lt;Usuario: email="%s", nombre="%s"&gt;'</tt> <tt class="py-op">%</tt> <tt class="py-op">(</tt> </tt>
+<a name="L173"></a><tt class="py-lineno">173</tt>  <tt class="py-line">                                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-42" class="py-name"><a title="sap.model.auth.Usuario.email_address" class="py-name" href="#" onclick="return doclink('link-42', 'email_address', 'link-37');">email_address</a></tt><tt class="py-op">,</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-43" class="py-name"><a title="sap.model.auth.Permiso.nombre
+sap.model.auth.Rol.nombre
+sap.model.auth.Usuario.nombre
+sap.model.model.AtributoTipoItem.nombre
+sap.model.model.EstadoItem.nombre
+sap.model.model.EstadoLineaBase.nombre
+sap.model.model.EstadoProyecto.nombre
+sap.model.model.Fase.nombre
+sap.model.model.HistorialItem.nombre
+sap.model.model.Item.nombre
+sap.model.model.Proyecto.nombre
+sap.model.model.RelacionParentesco.nombre
+sap.model.model.TipoAtributo.nombre
+sap.model.model.TipoItem.nombre" class="py-name" href="#" onclick="return doclink('link-43', 'nombre', 'link-24');">nombre</a></tt><tt class="py-op">)</tt> </tt>
+</div><a name="L174"></a><tt class="py-lineno">174</tt>  <tt class="py-line"> </tt>
+<a name="Usuario.__unicode__"></a><div id="Usuario.__unicode__-def"><a name="L175"></a><tt class="py-lineno">175</tt> <a class="py-toggle" href="#" id="Usuario.__unicode__-toggle" onclick="return toggle('Usuario.__unicode__');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.model.auth.Usuario-class.html#__unicode__">__unicode__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Usuario.__unicode__-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="Usuario.__unicode__-expanded"><a name="L176"></a><tt class="py-lineno">176</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-44" class="py-name"><a title="sap.model.auth.Permiso.nombre
+sap.model.auth.Rol.nombre
+sap.model.auth.Usuario.nombre
+sap.model.model.AtributoTipoItem.nombre
+sap.model.model.EstadoItem.nombre
+sap.model.model.EstadoLineaBase.nombre
+sap.model.model.EstadoProyecto.nombre
+sap.model.model.Fase.nombre
+sap.model.model.HistorialItem.nombre
+sap.model.model.Item.nombre
+sap.model.model.Proyecto.nombre
+sap.model.model.RelacionParentesco.nombre
+sap.model.model.TipoAtributo.nombre
+sap.model.model.TipoItem.nombre" class="py-name" href="#" onclick="return doclink('link-44', 'nombre', 'link-24');">nombre</a></tt> <tt class="py-keyword">or</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-45" class="py-name"><a title="sap.model.auth.Usuario.user_name" class="py-name" href="#" onclick="return doclink('link-45', 'user_name', 'link-35');">user_name</a></tt> </tt>
+</div><a name="L177"></a><tt class="py-lineno">177</tt>  <tt class="py-line"> </tt>
+<a name="L178"></a><tt class="py-lineno">178</tt>  <tt class="py-line">        <tt class="py-comment">#{ Getters and setters</tt> </tt>
+<a name="L179"></a><tt class="py-lineno">179</tt>  <tt class="py-line"> </tt>
+<a name="L180"></a><tt class="py-lineno">180</tt>  <tt class="py-line">        <tt class="py-decorator">@</tt><tt class="py-decorator">property</tt> </tt>
+<a name="Usuario.permissions"></a><div id="Usuario.permissions-def"><a name="L181"></a><tt class="py-lineno">181</tt> <a class="py-toggle" href="#" id="Usuario.permissions-toggle" onclick="return toggle('Usuario.permissions');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.model.auth.Usuario-class.html#permissions">permissions</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Usuario.permissions-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="Usuario.permissions-expanded"><a name="L182"></a><tt class="py-lineno">182</tt>  <tt class="py-line">                <tt class="py-docstring">"""Return a set of strings for the permissions granted."""</tt> </tt>
+<a name="L183"></a><tt class="py-lineno">183</tt>  <tt class="py-line">                <tt class="py-name">perms</tt> <tt class="py-op">=</tt> <tt class="py-name">set</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L184"></a><tt class="py-lineno">184</tt>  <tt class="py-line">                <tt class="py-keyword">for</tt> <tt class="py-name">g</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-46" class="py-name" targets="Variable sap.model.auth.Permiso.roles=sap.model.auth.Permiso-class.html#roles"><a title="sap.model.auth.Permiso.roles" class="py-name" href="#" onclick="return doclink('link-46', 'roles', 'link-46');">roles</a></tt><tt class="py-op">:</tt> </tt>
+<a name="L185"></a><tt class="py-lineno">185</tt>  <tt class="py-line">                        <tt class="py-name">perms</tt> <tt class="py-op">=</tt> <tt class="py-name">perms</tt> <tt class="py-op">|</tt> <tt class="py-name">set</tt><tt class="py-op">(</tt><tt class="py-name">g</tt><tt class="py-op">.</tt><tt class="py-name">permisos</tt><tt class="py-op">)</tt> </tt>
+<a name="L186"></a><tt class="py-lineno">186</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">perms</tt> </tt>
+</div><a name="L187"></a><tt class="py-lineno">187</tt>  <tt class="py-line"> </tt>
+<a name="L188"></a><tt class="py-lineno">188</tt>  <tt class="py-line">        <tt class="py-decorator">@</tt><tt class="py-decorator">classmethod</tt> </tt>
+<a name="Usuario.by_email_address"></a><div id="Usuario.by_email_address-def"><a name="L189"></a><tt class="py-lineno">189</tt> <a class="py-toggle" href="#" id="Usuario.by_email_address-toggle" onclick="return toggle('Usuario.by_email_address');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.model.auth.Usuario-class.html#by_email_address">by_email_address</a><tt class="py-op">(</tt><tt class="py-param">cls</tt><tt class="py-op">,</tt> <tt class="py-param">email</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Usuario.by_email_address-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="Usuario.by_email_address-expanded"><a name="L190"></a><tt class="py-lineno">190</tt>  <tt class="py-line">                <tt class="py-docstring">"""Return the user object whose email address is ``email``."""</tt> </tt>
+<a name="L191"></a><tt class="py-lineno">191</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt id="link-47" class="py-name"><a title="sap.controllers.participante.DBSession
+sap.model.DBSession
+sap.widgets.createform.DBSession
+sap.widgets.decorator.DBSession
+sap.widgets.editform.DBSession
+sap.widgets.extended.DBSession" class="py-name" href="#" onclick="return doclink('link-47', 'DBSession', 'link-2');">DBSession</a></tt><tt class="py-op">.</tt><tt class="py-name">query</tt><tt class="py-op">(</tt><tt class="py-name">cls</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">filter</tt><tt class="py-op">(</tt><tt class="py-name">cls</tt><tt class="py-op">.</tt><tt id="link-48" class="py-name"><a title="sap.model.auth.Usuario.email_address" class="py-name" href="#" onclick="return doclink('link-48', 'email_address', 'link-37');">email_address</a></tt><tt class="py-op">==</tt><tt class="py-name">email</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">first</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L192"></a><tt class="py-lineno">192</tt>  <tt class="py-line"> </tt>
+<a name="L193"></a><tt class="py-lineno">193</tt>  <tt class="py-line">        <tt class="py-decorator">@</tt><tt class="py-decorator">classmethod</tt> </tt>
+<a name="Usuario.by_user_name"></a><div id="Usuario.by_user_name-def"><a name="L194"></a><tt class="py-lineno">194</tt> <a class="py-toggle" href="#" id="Usuario.by_user_name-toggle" onclick="return toggle('Usuario.by_user_name');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.model.auth.Usuario-class.html#by_user_name">by_user_name</a><tt class="py-op">(</tt><tt class="py-param">cls</tt><tt class="py-op">,</tt> <tt class="py-param">username</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Usuario.by_user_name-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="Usuario.by_user_name-expanded"><a name="L195"></a><tt class="py-lineno">195</tt>  <tt class="py-line">                <tt class="py-docstring">"""Return the user object whose user name is ``username``."""</tt> </tt>
+<a name="L196"></a><tt class="py-lineno">196</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt id="link-49" class="py-name"><a title="sap.controllers.participante.DBSession
+sap.model.DBSession
+sap.widgets.createform.DBSession
+sap.widgets.decorator.DBSession
+sap.widgets.editform.DBSession
+sap.widgets.extended.DBSession" class="py-name" href="#" onclick="return doclink('link-49', 'DBSession', 'link-2');">DBSession</a></tt><tt class="py-op">.</tt><tt class="py-name">query</tt><tt class="py-op">(</tt><tt class="py-name">cls</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">filter</tt><tt class="py-op">(</tt><tt class="py-name">cls</tt><tt class="py-op">.</tt><tt id="link-50" class="py-name"><a title="sap.model.auth.Usuario.user_name" class="py-name" href="#" onclick="return doclink('link-50', 'user_name', 'link-35');">user_name</a></tt><tt class="py-op">==</tt><tt class="py-name">username</tt><tt class="py-op">)</tt><tt class="py-op">.</tt><tt class="py-name">first</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div><a name="L197"></a><tt class="py-lineno">197</tt>  <tt class="py-line"> </tt>
+<a name="Usuario._set_password"></a><div id="Usuario._set_password-def"><a name="L198"></a><tt class="py-lineno">198</tt> <a class="py-toggle" href="#" id="Usuario._set_password-toggle" onclick="return toggle('Usuario._set_password');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.model.auth.Usuario-class.html#_set_password">_set_password</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">password</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Usuario._set_password-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="Usuario._set_password-expanded"><a name="L199"></a><tt class="py-lineno">199</tt>  <tt class="py-line">                <tt class="py-docstring">"""Hash ``password`` on the fly and store its hashed version."""</tt> </tt>
+<a name="L200"></a><tt class="py-lineno">200</tt>  <tt class="py-line">                <tt class="py-name">hashed_password</tt> <tt class="py-op">=</tt> <tt id="link-51" class="py-name" targets="Variable sap.model.auth.Usuario.password=sap.model.auth.Usuario-class.html#password"><a title="sap.model.auth.Usuario.password" class="py-name" href="#" onclick="return doclink('link-51', 'password', 'link-51');">password</a></tt> </tt>
+<a name="L201"></a><tt class="py-lineno">201</tt>  <tt class="py-line"> </tt>
+<a name="L202"></a><tt class="py-lineno">202</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-name">isinstance</tt><tt class="py-op">(</tt><tt id="link-52" class="py-name"><a title="sap.model.auth.Usuario.password" class="py-name" href="#" onclick="return doclink('link-52', 'password', 'link-51');">password</a></tt><tt class="py-op">,</tt> <tt class="py-name">unicode</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L203"></a><tt class="py-lineno">203</tt>  <tt class="py-line">                        <tt class="py-name">password_8bit</tt> <tt class="py-op">=</tt> <tt id="link-53" class="py-name"><a title="sap.model.auth.Usuario.password" class="py-name" href="#" onclick="return doclink('link-53', 'password', 'link-51');">password</a></tt><tt class="py-op">.</tt><tt class="py-name">encode</tt><tt class="py-op">(</tt><tt class="py-string">'UTF-8'</tt><tt class="py-op">)</tt> </tt>
+<a name="L204"></a><tt class="py-lineno">204</tt>  <tt class="py-line">                <tt class="py-keyword">else</tt><tt class="py-op">:</tt> </tt>
+<a name="L205"></a><tt class="py-lineno">205</tt>  <tt class="py-line">                        <tt class="py-name">password_8bit</tt> <tt class="py-op">=</tt> <tt id="link-54" class="py-name"><a title="sap.model.auth.Usuario.password" class="py-name" href="#" onclick="return doclink('link-54', 'password', 'link-51');">password</a></tt> </tt>
+<a name="L206"></a><tt class="py-lineno">206</tt>  <tt class="py-line"> </tt>
+<a name="L207"></a><tt class="py-lineno">207</tt>  <tt class="py-line">                <tt class="py-name">salt</tt> <tt class="py-op">=</tt> <tt class="py-name">sha1</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L208"></a><tt class="py-lineno">208</tt>  <tt class="py-line">                <tt class="py-name">salt</tt><tt class="py-op">.</tt><tt class="py-name">update</tt><tt class="py-op">(</tt><tt class="py-name">os</tt><tt class="py-op">.</tt><tt class="py-name">urandom</tt><tt class="py-op">(</tt><tt class="py-number">60</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L209"></a><tt class="py-lineno">209</tt>  <tt class="py-line">                <tt class="py-name">hash</tt> <tt class="py-op">=</tt> <tt class="py-name">sha1</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L210"></a><tt class="py-lineno">210</tt>  <tt class="py-line">                <tt class="py-name">hash</tt><tt class="py-op">.</tt><tt class="py-name">update</tt><tt class="py-op">(</tt><tt class="py-name">password_8bit</tt> <tt class="py-op">+</tt> <tt class="py-name">salt</tt><tt class="py-op">.</tt><tt class="py-name">hexdigest</tt><tt class="py-op">(</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L211"></a><tt class="py-lineno">211</tt>  <tt class="py-line">                <tt class="py-name">hashed_password</tt> <tt class="py-op">=</tt> <tt class="py-name">salt</tt><tt class="py-op">.</tt><tt class="py-name">hexdigest</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> <tt class="py-op">+</tt> <tt class="py-name">hash</tt><tt class="py-op">.</tt><tt class="py-name">hexdigest</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L212"></a><tt class="py-lineno">212</tt>  <tt class="py-line"> </tt>
+<a name="L213"></a><tt class="py-lineno">213</tt>  <tt class="py-line">                <tt class="py-comment"># Make sure the hashed password is an UTF-8 object at the end of the</tt> </tt>
+<a name="L214"></a><tt class="py-lineno">214</tt>  <tt class="py-line">                <tt class="py-comment"># process because SQLAlchemy _wants_ a unicode object for Unicode</tt> </tt>
+<a name="L215"></a><tt class="py-lineno">215</tt>  <tt class="py-line">                <tt class="py-comment"># columns</tt> </tt>
+<a name="L216"></a><tt class="py-lineno">216</tt>  <tt class="py-line">                <tt class="py-keyword">if</tt> <tt class="py-keyword">not</tt> <tt class="py-name">isinstance</tt><tt class="py-op">(</tt><tt class="py-name">hashed_password</tt><tt class="py-op">,</tt> <tt class="py-name">unicode</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+<a name="L217"></a><tt class="py-lineno">217</tt>  <tt class="py-line">                        <tt class="py-name">hashed_password</tt> <tt class="py-op">=</tt> <tt class="py-name">hashed_password</tt><tt class="py-op">.</tt><tt class="py-name">decode</tt><tt class="py-op">(</tt><tt class="py-string">'UTF-8'</tt><tt class="py-op">)</tt> </tt>
+<a name="L218"></a><tt class="py-lineno">218</tt>  <tt class="py-line"> </tt>
+<a name="L219"></a><tt class="py-lineno">219</tt>  <tt class="py-line">                <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-55" class="py-name"><a title="sap.model.auth.Usuario._password" class="py-name" href="#" onclick="return doclink('link-55', '_password', 'link-40');">_password</a></tt> <tt class="py-op">=</tt> <tt class="py-name">hashed_password</tt> </tt>
+</div><a name="L220"></a><tt class="py-lineno">220</tt>  <tt class="py-line"> </tt>
+<a name="Usuario._get_password"></a><div id="Usuario._get_password-def"><a name="L221"></a><tt class="py-lineno">221</tt> <a class="py-toggle" href="#" id="Usuario._get_password-toggle" onclick="return toggle('Usuario._get_password');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.model.auth.Usuario-class.html#_get_password">_get_password</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Usuario._get_password-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="Usuario._get_password-expanded"><a name="L222"></a><tt class="py-lineno">222</tt>  <tt class="py-line">                <tt class="py-docstring">"""Return the hashed version of the password."""</tt> </tt>
+<a name="L223"></a><tt class="py-lineno">223</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-56" class="py-name"><a title="sap.model.auth.Usuario._password" class="py-name" href="#" onclick="return doclink('link-56', '_password', 'link-40');">_password</a></tt> </tt>
+</div><a name="L224"></a><tt class="py-lineno">224</tt>  <tt class="py-line"> </tt>
+<a name="L225"></a><tt class="py-lineno">225</tt>  <tt class="py-line">        <tt id="link-57" class="py-name"><a title="sap.model.auth.Usuario.password" class="py-name" href="#" onclick="return doclink('link-57', 'password', 'link-51');">password</a></tt> <tt class="py-op">=</tt> <tt class="py-name">synonym</tt><tt class="py-op">(</tt><tt class="py-string">'_password'</tt><tt class="py-op">,</tt> <tt class="py-name">descriptor</tt><tt class="py-op">=</tt><tt class="py-name">property</tt><tt class="py-op">(</tt><tt id="link-58" class="py-name" targets="Method sap.model.auth.Usuario._get_password()=sap.model.auth.Usuario-class.html#_get_password"><a title="sap.model.auth.Usuario._get_password" class="py-name" href="#" onclick="return doclink('link-58', '_get_password', 'link-58');">_get_password</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L226"></a><tt class="py-lineno">226</tt>  <tt class="py-line">                                                                                                                <tt id="link-59" class="py-name" targets="Method sap.model.auth.Usuario._set_password()=sap.model.auth.Usuario-class.html#_set_password"><a title="sap.model.auth.Usuario._set_password" class="py-name" href="#" onclick="return doclink('link-59', '_set_password', 'link-59');">_set_password</a></tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line"> </tt>
+<a name="L228"></a><tt class="py-lineno">228</tt>  <tt class="py-line">        <tt class="py-comment">#}</tt> </tt>
+<a name="L229"></a><tt class="py-lineno">229</tt>  <tt class="py-line"> </tt>
+<a name="Usuario.validate_password"></a><div id="Usuario.validate_password-def"><a name="L230"></a><tt class="py-lineno">230</tt> <a class="py-toggle" href="#" id="Usuario.validate_password-toggle" onclick="return toggle('Usuario.validate_password');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.model.auth.Usuario-class.html#validate_password">validate_password</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">,</tt> <tt class="py-param">password</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Usuario.validate_password-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="Usuario.validate_password-expanded"><a name="L231"></a><tt class="py-lineno">231</tt>  <tt class="py-line">                <tt class="py-docstring">"""</tt> </tt>
+<a name="L232"></a><tt class="py-lineno">232</tt>  <tt class="py-line"><tt class="py-docstring">                Check the password against existing credentials.</tt> </tt>
+<a name="L233"></a><tt class="py-lineno">233</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L234"></a><tt class="py-lineno">234</tt>  <tt class="py-line"><tt class="py-docstring">                :param password: the password that was provided by the user to</tt> </tt>
+<a name="L235"></a><tt class="py-lineno">235</tt>  <tt class="py-line"><tt class="py-docstring">                        try and authenticate. This is the clear text version that we will</tt> </tt>
+<a name="L236"></a><tt class="py-lineno">236</tt>  <tt class="py-line"><tt class="py-docstring">                        need to match against the hashed one in the database.</tt> </tt>
+<a name="L237"></a><tt class="py-lineno">237</tt>  <tt class="py-line"><tt class="py-docstring">                :type password: unicode object.</tt> </tt>
+<a name="L238"></a><tt class="py-lineno">238</tt>  <tt class="py-line"><tt class="py-docstring">                :return: Whether the password is valid.</tt> </tt>
+<a name="L239"></a><tt class="py-lineno">239</tt>  <tt class="py-line"><tt class="py-docstring">                :rtype: bool</tt> </tt>
+<a name="L240"></a><tt class="py-lineno">240</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L241"></a><tt class="py-lineno">241</tt>  <tt class="py-line"><tt class="py-docstring">                """</tt> </tt>
+<a name="L242"></a><tt class="py-lineno">242</tt>  <tt class="py-line">                <tt class="py-name">hashed_pass</tt> <tt class="py-op">=</tt> <tt class="py-name">sha1</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+<a name="L243"></a><tt class="py-lineno">243</tt>  <tt class="py-line">                <tt class="py-name">hashed_pass</tt><tt class="py-op">.</tt><tt class="py-name">update</tt><tt class="py-op">(</tt><tt id="link-60" class="py-name"><a title="sap.model.auth.Usuario.password" class="py-name" href="#" onclick="return doclink('link-60', 'password', 'link-51');">password</a></tt> <tt class="py-op">+</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-61" class="py-name"><a title="sap.model.auth.Usuario.password" class="py-name" href="#" onclick="return doclink('link-61', 'password', 'link-51');">password</a></tt><tt class="py-op">[</tt><tt class="py-op">:</tt><tt class="py-number">40</tt><tt class="py-op">]</tt><tt class="py-op">)</tt> </tt>
+<a name="L244"></a><tt class="py-lineno">244</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-62" class="py-name"><a title="sap.model.auth.Usuario.password" class="py-name" href="#" onclick="return doclink('link-62', 'password', 'link-51');">password</a></tt><tt class="py-op">[</tt><tt class="py-number">40</tt><tt class="py-op">:</tt><tt class="py-op">]</tt> <tt class="py-op">==</tt> <tt class="py-name">hashed_pass</tt><tt class="py-op">.</tt><tt class="py-name">hexdigest</tt><tt class="py-op">(</tt><tt class="py-op">)</tt> </tt>
+</div></div><a name="L245"></a><tt class="py-lineno">245</tt>  <tt class="py-line"> </tt>
+<a name="Permiso"></a><div id="Permiso-def"><a name="L246"></a><tt class="py-lineno">246</tt>  <tt class="py-line"> </tt>
+<a name="L247"></a><tt class="py-lineno">247</tt> <a class="py-toggle" href="#" id="Permiso-toggle" onclick="return toggle('Permiso');">-</a><tt class="py-line"><tt class="py-keyword">class</tt> <a class="py-def-name" href="sap.model.auth.Permiso-class.html">Permiso</a><tt class="py-op">(</tt><tt class="py-base-class">DeclarativeBase</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Permiso-collapsed" style="display:none;" pad="+++" indent="++++"></div><div id="Permiso-expanded"><a name="L248"></a><tt class="py-lineno">248</tt>  <tt class="py-line">        <tt class="py-docstring">"""</tt> </tt>
+<a name="L249"></a><tt class="py-lineno">249</tt>  <tt class="py-line"><tt class="py-docstring">        Permiso definition for :mod:`repoze.what`.</tt> </tt>
+<a name="L250"></a><tt class="py-lineno">250</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L251"></a><tt class="py-lineno">251</tt>  <tt class="py-line"><tt class="py-docstring">        Only the ``permission_name`` column is required by :mod:`repoze.what`.</tt> </tt>
+<a name="L252"></a><tt class="py-lineno">252</tt>  <tt class="py-line"><tt class="py-docstring"></tt> </tt>
+<a name="L253"></a><tt class="py-lineno">253</tt>  <tt class="py-line"><tt class="py-docstring">        """</tt> </tt>
+<a name="L254"></a><tt class="py-lineno">254</tt>  <tt class="py-line"> </tt>
+<a name="L255"></a><tt class="py-lineno">255</tt>  <tt class="py-line">        <tt id="link-63" class="py-name"><a title="sap.model.auth.Permiso.__tablename__
+sap.model.auth.Rol.__tablename__
+sap.model.auth.Usuario.__tablename__
+sap.model.model.AtributoTipoItem.__tablename__
+sap.model.model.DetalleItem.__tablename__
+sap.model.model.EstadoItem.__tablename__
+sap.model.model.EstadoLineaBase.__tablename__
+sap.model.model.EstadoProyecto.__tablename__
+sap.model.model.Fase.__tablename__
+sap.model.model.HistorialDetalleItem.__tablename__
+sap.model.model.HistorialItem.__tablename__
+sap.model.model.HistorialRelacion.__tablename__
+sap.model.model.Item.__tablename__
+sap.model.model.LineaBase.__tablename__
+sap.model.model.Proyecto.__tablename__
+sap.model.model.RelacionItem.__tablename__
+sap.model.model.RelacionParentesco.__tablename__
+sap.model.model.TipoAtributo.__tablename__
+sap.model.model.TipoItem.__tablename__" class="py-name" href="#" onclick="return doclink('link-63', '__tablename__', 'link-20');">__tablename__</a></tt> <tt class="py-op">=</tt> <tt class="py-string">'permiso'</tt> </tt>
+<a name="L256"></a><tt class="py-lineno">256</tt>  <tt class="py-line"> </tt>
+<a name="L257"></a><tt class="py-lineno">257</tt>  <tt class="py-line">        <tt class="py-comment">#{ Columns</tt> </tt>
+<a name="L258"></a><tt class="py-lineno">258</tt>  <tt class="py-line"> </tt>
+<a name="L259"></a><tt class="py-lineno">259</tt>  <tt class="py-line">        <tt id="link-64" class="py-name" targets="Variable sap.model.auth.Permiso.permiso_id=sap.model.auth.Permiso-class.html#permiso_id,Variable sap.model.auth.RolPermiso.permiso_id=sap.model.auth.RolPermiso-class.html#permiso_id,Variable sap.model.auth.RolPermisoProyecto.permiso_id=sap.model.auth.RolPermisoProyecto-class.html#permiso_id,Variable sap.model.auth.UsuarioPermisoFase.permiso_id=sap.model.auth.UsuarioPermisoFase-class.html#permiso_id"><a title="sap.model.auth.Permiso.permiso_id
+sap.model.auth.RolPermiso.permiso_id
+sap.model.auth.RolPermisoProyecto.permiso_id
+sap.model.auth.UsuarioPermisoFase.permiso_id" class="py-name" href="#" onclick="return doclink('link-64', 'permiso_id', 'link-64');">permiso_id</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">Integer</tt><tt class="py-op">,</tt> <tt class="py-name">autoincrement</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">,</tt> <tt class="py-name">primary_key</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">)</tt> </tt>
+<a name="L260"></a><tt class="py-lineno">260</tt>  <tt class="py-line"> </tt>
+<a name="L261"></a><tt class="py-lineno">261</tt>  <tt class="py-line">        <tt id="link-65" class="py-name"><a title="sap.model.auth.Permiso.nombre
+sap.model.auth.Rol.nombre
+sap.model.auth.Usuario.nombre
+sap.model.model.AtributoTipoItem.nombre
+sap.model.model.EstadoItem.nombre
+sap.model.model.EstadoLineaBase.nombre
+sap.model.model.EstadoProyecto.nombre
+sap.model.model.Fase.nombre
+sap.model.model.HistorialItem.nombre
+sap.model.model.Item.nombre
+sap.model.model.Proyecto.nombre
+sap.model.model.RelacionParentesco.nombre
+sap.model.model.TipoAtributo.nombre
+sap.model.model.TipoItem.nombre" class="py-name" href="#" onclick="return doclink('link-65', 'nombre', 'link-24');">nombre</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">Unicode</tt><tt class="py-op">(</tt><tt class="py-number">50</tt><tt class="py-op">)</tt><tt class="py-op">,</tt> <tt class="py-name">unique</tt><tt class="py-op">=</tt><tt class="py-name">True</tt><tt class="py-op">,</tt> <tt id="link-66" class="py-name"><a title="sprox.widgets.widgets.PropertySingleSelectField.nullable" class="py-name" href="#" onclick="return doclink('link-66', 'nullable', 'link-23');">nullable</a></tt><tt class="py-op">=</tt><tt class="py-name">False</tt><tt class="py-op">)</tt> </tt>
+<a name="L262"></a><tt class="py-lineno">262</tt>  <tt class="py-line"> </tt>
+<a name="L263"></a><tt class="py-lineno">263</tt>  <tt class="py-line">        <tt id="link-67" class="py-name"><a title="sap.model.auth.Permiso.descripcion
+sap.model.auth.Rol.descripcion
+sap.model.model.EstadoProyecto.descripcion
+sap.model.model.Fase.descripcion
+sap.model.model.HistorialItem.descripcion
+sap.model.model.Item.descripcion
+sap.model.model.Proyecto.descripcion
+sap.model.model.RelacionParentesco.descripcion
+sap.model.model.TipoAtributo.descripcion
+sap.model.model.TipoItem.descripcion" class="py-name" href="#" onclick="return doclink('link-67', 'descripcion', 'link-26');">descripcion</a></tt> <tt class="py-op">=</tt> <tt class="py-name">Column</tt><tt class="py-op">(</tt><tt class="py-name">Unicode</tt><tt class="py-op">(</tt><tt class="py-number">255</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
+<a name="L264"></a><tt class="py-lineno">264</tt>  <tt class="py-line"> </tt>
+<a name="L265"></a><tt class="py-lineno">265</tt>  <tt class="py-line">        <tt class="py-comment">#{ Relations</tt> </tt>
+<a name="L266"></a><tt class="py-lineno">266</tt>  <tt class="py-line"> </tt>
+<a name="L267"></a><tt class="py-lineno">267</tt>  <tt class="py-line">        <tt id="link-68" class="py-name"><a title="sap.model.auth.Permiso.roles" class="py-name" href="#" onclick="return doclink('link-68', 'roles', 'link-46');">roles</a></tt> <tt class="py-op">=</tt> <tt class="py-name">relation</tt><tt class="py-op">(</tt><tt id="link-69" class="py-name" targets="Class sap.model.auth.Rol=sap.model.auth.Rol-class.html"><a title="sap.model.auth.Rol" class="py-name" href="#" onclick="return doclink('link-69', 'Rol', 'link-69');">Rol</a></tt><tt class="py-op">,</tt> <tt class="py-name">secondary</tt><tt class="py-op">=</tt><tt id="link-70" class="py-name"><a title="sap.model.auth.rol_permiso_table" class="py-name" href="#" onclick="return doclink('link-70', 'rol_permiso_table', 'link-4');">rol_permiso_table</a></tt><tt class="py-op">,</tt> </tt>
+<a name="L268"></a><tt class="py-lineno">268</tt>  <tt class="py-line">                                          <tt class="py-name">backref</tt><tt class="py-op">=</tt><tt class="py-string">'permisos'</tt><tt class="py-op">)</tt> </tt>
+<a name="L269"></a><tt class="py-lineno">269</tt>  <tt class="py-line"> </tt>
+<a name="L270"></a><tt class="py-lineno">270</tt>  <tt class="py-line">        <tt class="py-comment">#{ Special methods</tt> </tt>
+<a name="L271"></a><tt class="py-lineno">271</tt>  <tt class="py-line"> </tt>
+<a name="Permiso.__repr__"></a><div id="Permiso.__repr__-def"><a name="L272"></a><tt class="py-lineno">272</tt> <a class="py-toggle" href="#" id="Permiso.__repr__-toggle" onclick="return toggle('Permiso.__repr__');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.model.auth.Permiso-class.html#__repr__">__repr__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Permiso.__repr__-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="Permiso.__repr__-expanded"><a name="L273"></a><tt class="py-lineno">273</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-string">'&lt;Permiso: name=%s&gt;'</tt> <tt class="py-op">%</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-71" class="py-name"><a title="sap.model.auth.Permiso.nombre
+sap.model.auth.Rol.nombre
+sap.model.auth.Usuario.nombre
+sap.model.model.AtributoTipoItem.nombre
+sap.model.model.EstadoItem.nombre
+sap.model.model.EstadoLineaBase.nombre
+sap.model.model.EstadoProyecto.nombre
+sap.model.model.Fase.nombre
+sap.model.model.HistorialItem.nombre
+sap.model.model.Item.nombre
+sap.model.model.Proyecto.nombre
+sap.model.model.RelacionParentesco.nombre
+sap.model.model.TipoAtributo.nombre
+sap.model.model.TipoItem.nombre" class="py-name" href="#" onclick="return doclink('link-71', 'nombre', 'link-24');">nombre</a></tt> </tt>
+</div><a name="L274"></a><tt class="py-lineno">274</tt>  <tt class="py-line"> </tt>
+<a name="Permiso.__unicode__"></a><div id="Permiso.__unicode__-def"><a name="L275"></a><tt class="py-lineno">275</tt> <a class="py-toggle" href="#" id="Permiso.__unicode__-toggle" onclick="return toggle('Permiso.__unicode__');">-</a><tt class="py-line">        <tt class="py-keyword">def</tt> <a class="py-def-name" href="sap.model.auth.Permiso-class.html#__unicode__">__unicode__</a><tt class="py-op">(</tt><tt class="py-param">self</tt><tt class="py-op">)</tt><tt class="py-op">:</tt> </tt>
+</div><div id="Permiso.__unicode__-collapsed" style="display:none;" pad="+++" indent="++++++++++++"></div><div id="Permiso.__unicode__-expanded"><a name="L276"></a><tt class="py-lineno">276</tt>  <tt class="py-line">                <tt class="py-keyword">return</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt id="link-72" class="py-name"><a title="sap.model.auth.Permiso.nombre
+sap.model.auth.Rol.nombre
+sap.model.auth.Usuario.nombre
+sap.model.model.AtributoTipoItem.nombre
+sap.model.model.EstadoItem.nombre
+sap.model.model.EstadoLineaBase.nombre
+sap.model.model.EstadoProyecto.nombre
+sap.model.model.Fase.nombre
+sap.model.model.HistorialItem.nombre
+sap.model.model.Item.nombre
+sap.model.model.Proyecto.nombre
+sap.model.model.RelacionParentesco.nombre
+sap.model.model.TipoAtributo.nombre
+sap.model.model.TipoItem.nombre" class="py-name" href="#" onclick="return doclink('link-72', 'nombre', 'link-24');">nombre</a></tt> </tt>
+</div></div><a name="L277"></a><tt class="py-lineno">277</tt>  <tt class="py-line">        <tt class="py-comment">#}</tt> </tt>
+<a name="L278"></a><tt class="py-lineno">278</tt>  <tt class="py-line"> </tt>
+<a name="L279"></a><tt class="py-lineno">279</tt>  <tt class="py-line"> </tt>
+<a name="L280"></a><tt class="py-lineno">280</tt>  <tt class="py-line"><tt class="py-comment">#}</tt> </tt>
+<a name="L281"></a><tt class="py-lineno">281</tt>  <tt class="py-line"> </tt><script type="text/javascript">
+<!--
+expandto(location.href);
+// -->
+</script>
+</pre>
+<br />
+<!-- ==================== NAVIGATION BAR ==================== -->
+<table class="navbar" border="0" width="100%" cellpadding="0"
+       bgcolor="#a0c0ff" cellspacing="0">
+  <tr valign="middle">
+
+  <!-- Tree link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="module-tree.html">Trees</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Index link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="identifier-index.html">Indices</a>&nbsp;&nbsp;&nbsp;</th>
+
+  <!-- Help link -->
+      <th>&nbsp;&nbsp;&nbsp;<a
+        href="help.html">Help</a>&nbsp;&nbsp;&nbsp;</th>
+
+      <th class="navbar" width="100%"></th>
+  </tr>
+</table>
+<table border="0" cellpadding="0" cellspacing="0" width="100%%">
+  <tr>
+    <td align="left" class="footer">
+    Generated by Epydoc 3.0.1 on Sat Jun 25 02:27:40 2011
+    </td>
+    <td align="right" class="footer">
+      <a target="mainFrame" href="http://epydoc.sourceforge.net"
+        >http://epydoc.sourceforge.net</a>
+    </td>
+  </tr>
+</table>
+
+<script type="text/javascript">
+  <!--
+  // Private objects are initially displayed (because if
+  // javascript is turned off then we want them to be
+  // visible); but by default, we want to hide them.  So hide
+  // them unless we have a cookie that says to show them.
+  checkCookie();
+  // -->
+</script>
+</body>
+</html>
