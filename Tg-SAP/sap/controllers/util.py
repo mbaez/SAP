@@ -562,13 +562,26 @@ class ItemUtil(Util):
 
 		DBSession.merge(item)
 
+		#borrar las relaciones actuales
+		relaciones = DBSession.query(RelacionItem).\
+							filter(RelacionItem.id_item_actual == item.id_item or
+							RelacionItem.id_item_relacionado == item.id_item).\
+							all()
+		print relaciones
+
+		for relacion in relaciones:
+			#se verifica que no deje huerfanos
+			if not self.deja_huerfanos(item):
+				DBSession.delete(relacion)
 
 		print "Recuperar las relaciones"
 		#recuperar los relaciones
 		historial_relaciones = DBSession.query(HistorialRelacion).\
-			filter((HistorialRelacion.id_item_1 or
-			HistorialRelacion.id_item_2) == item.id_item).\
+			filter(HistorialRelacion.id_item_1 == item.id_item or
+			HistorialRelacion.id_item_2 == item.id_item).\
 			all()
+
+		print historial_relaciones
 
 		for hist_relacion in historial_relaciones:
 			relacion = RelacionItem()
@@ -578,6 +591,7 @@ class ItemUtil(Util):
 				relacion.id_item_relacionado = hist_relacion.id_item_2
 				relacion.relacion_parentesco = hist_relacion.id_tipo_relacion
 				DBSession.merge(relacion)
+
 		print "Merge"
 		DBSession.merge(item)
 		print "Flush"

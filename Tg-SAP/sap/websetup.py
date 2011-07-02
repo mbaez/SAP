@@ -302,29 +302,36 @@ def cargar_tipo_item(fase1, fase2, fase3, fase4):
 def cargar_estados_item():
     estadoItem1 = model.EstadoItem()
     estadoItem1.nombre = 'Aprobado'
+    estadoItem1.id_estado_item = 1
     model.DBSession.add(estadoItem1)
     model.DBSession.flush()
 
     estadoItem2 = model.EstadoItem()
     estadoItem2.nombre = 'En Desarrollo'
+    estadoItem2.id_estado_item = 2
     model.DBSession.add(estadoItem2)
 
     estadoItem3 = model.EstadoItem()
     estadoItem3.nombre = 'Revision'
+    estadoItem3.id_estado_item = 3
     model.DBSession.add(estadoItem3)
 
     estadoItem4 = model.EstadoItem()
     estadoItem4.nombre = 'muerto'
+    estadoItem4.id_estado_item = 4
     model.DBSession.add(estadoItem4)
 
     return estadoItem1,estadoItem2,estadoItem3, estadoItem4
 
 def cargar_relaciones():
+    i = 1
     for name in __relaciones__ :
         relacion = model.RelacionParentesco()
+        relacion.relacion_parentesco = i
         relacion.nombre = name
         relacion.descripcion = u'Este tipo representa la relacion '+name
         model.DBSession.add(relacion)
+        i += 1
 
     model.DBSession.flush()
 

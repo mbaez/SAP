@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-"""Main Controller"""
-
 
 from tg import expose, flash, require, url, request, redirect
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
@@ -19,9 +17,7 @@ from tg.controllers import RestController
 from sap.controllers.item import *
 
 class RelacionController(RestController):
-	"""
-	Controlador de las relaciones del item
-	"""
+	"""	Controlador de las relaciones del item"""
 
 	params = {'title':'','header_file':'','modelname':'', 'new_url':'',
 			  'idfase':'','permiso':'', 'label': '', 'cancelar_url': ''
@@ -89,44 +85,39 @@ class RelacionController(RestController):
 		"""
 		del kw['sprox_id']
 		"""
-		el item controller es para usar los metodos de esa clase
-		"""
-		item = ItemController()
-		"""
 		se crea la nueva relacion y se le asignan los valores de los combos
 		"""
-		relacion = RelacionItem()
-		relacion.id_item_actual = kw['item_1']
-		relacion.id_item_relacionado = kw['item_2']
+		if kw['item_1'] != None and kw['item_2'] != None:
+			relacion = RelacionItem()
+			relacion.id_item_actual = kw['item_1']
+			relacion.id_item_relacionado = kw['item_2']
+			relacion.relacion_parentesco = 2
 
-		#VALIDACION: relacion consigo mismo
-		if(relacion.id_item_actual==relacion.id_item_relacionado):
-			flash("No se puede establecer una relacion consigo mismo", 'error')
-			redirect('/miproyecto/fase/relacion/'+idfase+'/new/')
-		#VALIDACION: si los items son o no de la misma fase
-		item1=DBSession.query(Item).get(relacion.id_item_actual)
-		item2=DBSession.query(Item).get(relacion.id_item_relacionado)
+			DBSession.merge(relacion)
 
-		#Validar que el item antecesor (item1) pertenezca a una linea base
-		if(item1.id_linea_base == None):
-			flash('El item antecesor no pertenece a ninguna linea base', 'error')
+			#auditar items y aumentar su version
+			item1 = DBSession.query(Item).get(kw['item_1'])
+			item2 = DBSession.query(Item).get(kw['item_2'])
+
+			item_util.audit_item(item1)
+			item_util.audit_item(item2)
+
+			item1.version += 1
+			item2.version += 1
+
+			DBSession.add(item1)
+			DBSession.add(item2)
+
+			#marcar en revision los relacionados
+			fase = DBSession.query(Fase).get(item1.fase)
+			grafo = item_util.proyectGraphConstructor(fase.proyecto)
+			item_util.marcar_en_revision(grafo, item1.id_item)
+
+			flash("La relacion se ha creado correctamente")
 			redirect("/miproyecto/fase/relacion/list/"+idfase)
-			return
 
-		if(item1.fase==item2.fase):
-			relacion.relacion_parentesco=1
-			#VALIDACION: que no formen un ciclo en el caso de ser relacion dentro
-			#de la misma fase
-			ciclo=item.ciclo(item1.id_item, item2.id_item, idfase)
-			if(ciclo!=[]):
-				flash("La nueva relacion provoca un ciclo: " + str(ciclo))
-				redirect('/miproyecto/fase/relacion/'+idfase+'/new/')
-		else:
-			relacion.relacion_parentesco=2
-
-		DBSession.merge(relacion)
-		flash("La relacion se ha creado correctamente")
-		redirect("/miproyecto/fase/relacion/list/"+idfase)
+		flash("No se puede crear la relacion", 'warning')
+		redirect("/miproyecto/fase/relacion/"+idfase+"/new/")
 
 	@expose()
 	@require(predicates.has_permission('editar_item'))
@@ -136,10 +127,33 @@ class RelacionController(RestController):
 			flash ("No se peude borrar la relacion! deja huerfanos", 'warning')
 			redirect("/miproyecto/fase/relacion/list/"+idfase)
 
+		#auditar items y aumentar su version
+		item_1 = DBSession.query(Item).get(item1)
+		item_2 = DBSession.query(Item).get(item2)
+
+		item_util.audit_item(item_1)
+		item_util.audit_item(item_2)
+
+		item_1.version += 1
+		item_2.version += 1
+
+		item_1.estado = 3
+		item_2.estado = 3
+
+		DBSession.add(item_1)
+		DBSession.add(item_2)
+
 		DBSession.delete(DBSession.query(RelacionItem).\
 					filter(RelacionItem.id_item_actual==item1).\
 					filter(RelacionItem.id_item_relacionado==item2).\
 					one())
+
+		#marcar en revision los relacionados
+		fase = DBSession.query(Fase).get(item_1.fase)
+		grafo = item_util.proyectGraphConstructor(fase.proyecto)
+		item_util.marcar_en_revision(grafo, item_1.id_item)
+		item_util.marcar_en_revision(grafo, item_2.id_item)
+
 		flash("Se ha eliminado la relacion: "+item1+" <--> "+item2)
 		redirect("/miproyecto/fase/relacion/list/"+idfase)
 

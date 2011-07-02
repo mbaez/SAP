@@ -225,6 +225,8 @@ class ItemController(RestController):
 			redirect('/miproyecto/fase/item/error')
 
 		item_edit_form.relaciones.idfase = item.fase
+		#se establece el valor para que no muestre el item consigo mismo
+		item_edit_form.relaciones.yo_mismo = id
 
 		tmpl_context.widget = item_edit_form
 		kw['id_item'] = item.id_item
@@ -269,39 +271,27 @@ class ItemController(RestController):
 					filter(RelacionItem.relacion_parentesco==1).\
 					all()
 
+		#se borra las relacion padre hijo si existia
+		if relacion != []:
+			DBSession.delete(relacion[0])
 
-		# Se guarda la relacion elegida en el formulario
+		# Si se elijio NONE en las relaciones no se hace nada
 		if(kw['relaciones'] != None):
-			#no se puede relacionar consigo mismo
-			if int(kw['relaciones']) == int(item.id_item):
-				flash('El item no puede relacionarse consigo mismo')
-				redirect('/miproyecto/fase/item/'+str(item.id_item)+'/edit')
 
 			item_padre_antecesor = DBSession.query(Item).get(kw['relaciones'])
 
-			if relacion != []:
-				if item_padre_antecesor.fase == int(item.fase):
-					#relacion padre-hijo
-					relacion[0].id_item_actual = kw['relaciones']
-					DBSession.merge(relacion)
-				else:
-					relacion = RelacionItem()
-					relacion.relacion_parentesco = 2
-					relacion.id_item_actual = kw['relaciones']
-					relacion.id_item_relacionado = item.id_item
-					DBSession.add(relacion)
-			else:
-				relacion = RelacionItem()
-				relacion.relacion_parentesco = 1
-				relacion.id_item_actual = kw['relaciones']
-				relacion.id_item_relacionado = item.id_item
-				DBSession.add(relacion)
+			#tipo de relacion 1 padre-hijo, 2 antecesor sucesor
+			tipo_relacion = 2
+			if item_padre_antecesor.fase == int(item.fase):
+				tipo_relacion = 1
+
+			rel = RelacionItem()
+			rel.relacion_parentesco = tipo_relacion
+			rel.id_item_actual = kw['relaciones']
+			rel.id_item_relacionado = item.id_item
+			DBSession.add(rel)
 
 			DBSession.flush()
-
-		else:
-			if relacion != []:
-				DBSession.delete(relacion[0])
 
 		fase = DBSession.query(Fase).get(item.fase)
 		grafo = item_util.proyectGraphConstructor(fase.proyecto)

@@ -8,6 +8,7 @@ from sprox.formbase import AddRecordForm
 from sprox.formbase import EditableForm
 from sprox.fillerbase import *
 from sap.model import *
+from sap.controllers.util import *
 
 class ExtendedSelectShuttleField(DojoSelectShuttleField):
 	template = "sap.templates.extended.selectshuttle"
@@ -101,14 +102,22 @@ class ExtendedItemDeFaseField(PropertySingleSelectField):
 	idfase=0
 
 	def _my_update_params(self, d, nullable=False):
-		items = DBSession.query(Item).filter(Item.fase==self.idfase).all()
+		items_de_fase = DBSession.query(Item).filter(Item.fase==self.idfase).all()
+
+		items = []
+		for item in items_de_fase:
+			if (item.linea_base != None):
+				#se pregunta si esta cerrada la linea
+				if(item.linea_base.id_estado_linea_base == 2):
+					items = items + [item]
+
 		options = [(item.id_item, '%s' %(item.id_item))
 							for item in items]
 		d['options'] = options
 
 		#si no existen items no se puede crear relaciones
 		if len(options) == 0:
-			d['options'] = ['No exiten items']
+			d['options'] = [(None, 'No exiten items')]
 
 		return d
 
@@ -132,17 +141,20 @@ class ExtendedItemDeFaseSiguienteField(PropertySingleSelectField):
 								for item in items]
 			d['options']= options
 		except:
-			d['options'] = ['No exiten items']
+			d['options'] = [(None, 'No exiten items')]
 
 		return d
 
 
 class ExtendedItemDeFaseAnteriorField(PropertySingleSelectField):
 
-	idfase=0
+	idfase = 0
+	yo_mismo = 0
 
 	def _my_update_params(self, d, nullable=False):
-		items = DBSession.query(Item).filter(Item.fase==self.idfase).all()
+		items = DBSession.query(Item).filter(Item.fase == self.idfase).\
+									  filter(Item.id_item != self.yo_mismo).\
+									  all()
 		fase_actual = DBSession.query(Fase).get(self.idfase)
 		proyectoid = fase_actual.proyecto
 		fases_anteriores = DBSession.query(Fase).filter(Fase.id_fase<self.idfase).\
@@ -151,6 +163,7 @@ class ExtendedItemDeFaseAnteriorField(PropertySingleSelectField):
 												all()
 		new_option = []
 		item_list = []
+		options = []
 		#se verifica si existen fases anteriores
 		if(len(fases_anteriores) > 0 ):
 			fase_anterior = fases_anteriores[len(fases_anteriores)-1]
@@ -169,11 +182,21 @@ class ExtendedItemDeFaseAnteriorField(PropertySingleSelectField):
 		else:
 			new_option = [(None, 'sin relacion')]
 
-		options = [(item.id_item, '%s' %(item.codigo))
-							for item in items]
+		options_list = []
+		for item in items:
+			if item_util.ciclo(int(item.id_item), int(self.yo_mismo), self.idfase) == []:
+				options_list = options_list + [item]
+
+		#se le agrega una cadena "padre" o "antecesor" segun corresponda
+		for item in options_list:
+			relacion = 'Antecesor'
+			if(int(item.fase) == int(self.idfase)):
+				relacion = "Padre"
+
+			options += [(item.id_item, '%s' %(relacion+' - '+item.codigo ))]
 
 		options = options + new_option
-		d['options']= options
+		d['options'] = options
 		return d
 
 class ExtendedTipoItemField(PropertySingleSelectField):
