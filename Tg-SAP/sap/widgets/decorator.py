@@ -297,7 +297,12 @@ class LineaBaseModelDecorator(ExtendedTableList, Decorator):
 		return accion
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
-		has_permiso = True
+		linea_base = DBSession.query(LineaBase).get(id)
+		estado_linea_base = linea_base.estado
+		if(estado_linea_base.nombre == 'Abierta'):
+			has_permiso = False
+		else:
+			has_permiso = True
 		return super(LineaBaseModelDecorator,self).check_permiso(id, permiso_name, has_permiso)
 
 	def replace(self,action, url, id):

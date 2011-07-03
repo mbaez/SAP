@@ -21,7 +21,7 @@ from sap.controllers.atributo import AtributoController
 from tg.controllers import RestController
 
 from sap.controllers.util import *
-
+import re
 class TipoItemController(RestController):
 	"""Controlador del tipo de item"""
 
@@ -87,6 +87,20 @@ class TipoItemController(RestController):
 		"""
 		del kw['sprox_id']
 		tipo_item = TipoItem(**kw)
+		
+		codigo = str(tipo_item.codigo)
+
+		flag = True
+		# Se verifica que el codigo del tipo de item sea una secuencia
+		# de letras mayusculas
+		for caracter in codigo:
+			if(not re.match("[A-Z]",caracter)):
+				flag = False
+		
+		if(not flag):
+			flash("El codigo del tipo de item no debe estar conformado solo por letras mayusculas")
+			redirect('/miproyecto/fase/tipo_item/' + str(idfase) + '/new')
+			
 		tipo_item.fase = idfase
 		DBSession.add(tipo_item)
 		flash("El tipo de Item ha sido creado correctamente")

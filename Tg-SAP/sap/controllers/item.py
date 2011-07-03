@@ -47,7 +47,8 @@ class ItemController(RestController):
 	params = {'title':'', 'header_file':'', 'modelname':'', 'new_url':'',
 			  'idfase':'', 'permiso':'', 'progreso':0, 'cantidad':'',
 			  'item':'', 'impacto':'', 'atributos':'', 'permiso_editar':'',
-			  'permiso_eliminar':'', 'linea_base':''
+			  'permiso_eliminar':'', 'linea_base':'', 'tipo_item':'',
+			  'estado_item':''
 			 }
 	"""
 	parametro que contiene los valores de varios parametros y es enviado a
@@ -60,6 +61,8 @@ class ItemController(RestController):
 
 		tmpl_context.widget = detalle_item_table
 		self.params['item'] = DBSession.query(Item).get(id_item)
+		tipo_item =  DBSession.query(TipoItem).get(self.params['item'].tipo_item)
+		self.params['tipo_item'] = str(tipo_item.nombre)
 
 		has_permiso = fase_util.check_fase_permiso(self.params['item'].fase,'ver_item',True)
 
