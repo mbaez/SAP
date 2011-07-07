@@ -99,7 +99,7 @@ class ItemEditForm(ExtendedEditableForm):
 	__omit_fields__ = [ 'tipo_item_relacion','tipo_item', '__actions__',
 						'id_item', 'fase', 'version','estado', 'linea_base',
 						'estado_actual', 'id_linea_base' , 'detalles',
-						'relaciones_id', 'fase_actual']
+						'relaciones_id', 'fase_actual', 'codigo']
 
 	relaciones = ExtendedItemDeFaseAnteriorField
 

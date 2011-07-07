@@ -218,7 +218,7 @@ class TipoItemController(RestController):
 	@require( predicates.has_permission('editar_tipo_item'))
 	def importar(self, idfase, arg={}, **kw):
 		"""
-		Recuperar de la BD todas a las fases del proyecto actual
+		Recuperar de la BD todas las fases que no son del proyecto actual
 		"""
 		fase = DBSession.query(Fase).get(idfase)
 		fases = DBSession.query(Fase).filter(Fase.proyecto!=fase.proyecto).\
@@ -232,7 +232,7 @@ class TipoItemController(RestController):
 			fases_id.append(_fase.id_fase)
 
 		"""
-		Se obtinene de la BD todos aquellos items que no sean de ninguna
+		Se obtinene de la BD todos aquellos tipos de items que no sean de ninguna
 		de las fases de este proyecto
 		"""
 		tmpl_context.widget = tipo_item_table
@@ -280,15 +280,15 @@ class TipoItemController(RestController):
 		copia_tipo.descripcion = tipo.descripcion
 		copia_tipo.fase = idfase
 		copia_tipo.codigo = tipo.codigo
-		"""
+		'''
 		Se settean los valores para cada copia_atributo
-
+		'''
 		for atributo in atributos:
 			copia_atributo = AtributoTipoItem()
 			copia_atributo.nombre = atributo.nombre
 			copia_atributo.tipo_id = atributo.tipo_id
 			copia_tipo.atributos.append(copia_atributo)
-		"""
+		
 		DBSession.add(copia_tipo)
 		flash("El tipo de item "+str(tipo.nombre)+
 										" pertenece ahora a esta fase")

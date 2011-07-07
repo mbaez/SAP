@@ -10,7 +10,7 @@ from sap.config.environment import load_environment
 from sap import model
 
 #para generar el codigo de las entidades
-from sap.controllers import checker
+from sap.controllers import util
 
 __all__ = ['setup_app']
 
@@ -269,32 +269,37 @@ def cargar_tipo_atributo():
 
     model.DBSession.flush()
     return tipo1, tipo2, tipo3
+
 def cargar_tipo_item(fase1, fase2, fase3, fase4):
     tipodeitem1 = model.TipoItem()
     tipodeitem1.fase = fase1.id_fase
     tipodeitem1.nombre = u'Caso de Uso'
-    tipodeitem1.codigo = checker.util.gen_codigo('tipo_item')
+    #tipodeitem1.codigo = checker.util.gen_codigo('tipo_item')
+    tipodeitem1.codigo = u'CU'
 
     model.DBSession.add(tipodeitem1)
 
     tipodeitem2 = model.TipoItem()
     tipodeitem2.fase = fase2.id_fase
     tipodeitem2.nombre = u'Diagrama Secuencia'
-    tipodeitem2.codigo = checker.util.gen_codigo('tipo_item')
-
+    #tipodeitem2.codigo = checker.util.gen_codigo('tipo_item')
+    tipodeitem2.codigo = u'DS'
+    
     model.DBSession.add(tipodeitem2)
 
     tipodeitem3 = model.TipoItem()
     tipodeitem3.fase = fase3.id_fase
     tipodeitem3.nombre = u'Documento'
-    tipodeitem3.codigo = checker.util.gen_codigo('tipo_item')
+    #tipodeitem3.codigo = checker.util.gen_codigo('tipo_item')
+    tipodeitem3.codigo = u'DOC'
 
     model.DBSession.add(tipodeitem3)
 
     tipodeitem4 = model.TipoItem()
     tipodeitem4.fase = fase4.id_fase
     tipodeitem4.nombre = u'Diagrama BD'
-    tipodeitem4.codigo = checker.util.gen_codigo('tipo_item')
+    #tipodeitem4.codigo = checker.util.gen_codigo('tipo_item')
+    tipodeitem4.codigo = u'DBD'
 
     model.DBSession.add(tipodeitem4)
     return tipodeitem1,tipodeitem2,tipodeitem3,tipodeitem4
@@ -322,7 +327,7 @@ def cargar_estados_item():
     model.DBSession.add(estadoItem4)
 
     return estadoItem1,estadoItem2,estadoItem3, estadoItem4
-
+'''
 def cargar_relaciones():
     i = 1
     for name in __relaciones__ :
@@ -365,34 +370,24 @@ def cargar_relaciones():
     model.DBSession.add(relacion4)
 
     model.DBSession.flush()
-
+'''
 
 def cargar_items():
-	for i in range(10):
-		item = model.Item()
-		item.nombre = u'item '+str(i)
-		item.estado = 2
-		item.tipo_item = 1
-		item.fase = 1
-		item.version = 1
-		item.prioridad = 1
-		item.complejidad =  int(random.random()*10)+1
-		item.codigo = checker.util.gen_codigo('item')
-		model.DBSession.add(item)
-
-	for i in range(5):
-		item = model.Item()
-		item.nombre = u'item '+str(i)
-		item.estado = 2
-		item.tipo_item = 2
-		item.fase = 2
-		item.version = 1
-		item.prioridad = 1
-		item.complejidad = int(random.random()*10)+1
-		item.codigo = checker.util.gen_codigo('item')
-		model.DBSession.add(item)
-
-	model.DBSession.flush()
+    #solo se cargan items en la primera fase.
+    for i in range(10):
+        item = model.Item()
+        item.nombre = u'item '+str(i+1)
+        item.estado = 2
+        item.tipo_item = 1
+        item.fase = 1
+        item.version = 1
+        item.prioridad = 1
+        item.complejidad =  int(random.random()*10)+1
+        #se le pasa el id de la fase y el id del tipo de item al cual 
+        #corresponde
+        item.codigo = util.item_util.gen_cod(1, 1)
+        model.DBSession.add(item)
+    model.DBSession.flush()
 
 def cargar_permisos_proyecto(group21, group22, group23, group31):
 
@@ -428,16 +423,30 @@ def cargar_estado_lineabase():
     model.DBSession.flush()
 
     estadoLineaBase = model.EstadoLineaBase()
+    estadoLineaBase.id_estado_linea_base = 1
     estadoLineaBase.nombre = 'Comprometida'
     model.DBSession.add(estadoLineaBase)
 
     estadoLineaBase = model.EstadoLineaBase()
+    estadoLineaBase.id_estado_linea_base = 2
     estadoLineaBase.nombre = 'Cerrada'
     model.DBSession.add(estadoLineaBase)
 
     estadoLineaBase = model.EstadoLineaBase()
+    estadoLineaBase.id_estado_linea_base = 3
     estadoLineaBase.nombre = 'Abierta'
     model.DBSession.add(estadoLineaBase)
+
+def cargar_tipos_relaciones ():
+    id_rel = 1
+    for name in __relaciones__ :
+        relacion = model.RelacionParentesco()
+        relacion.relacion_parentesco = id_rel
+        relacion.nombre = name
+        relacion.descripcion = u'Este tipo representa la relacion '+name
+        model.DBSession.add(relacion)
+        id_rel += 1
+    model.DBSession.flush()
 
 def setup_app(command, conf, vars):
     """Place any commands to setup sap here"""
@@ -488,8 +497,8 @@ def setup_app(command, conf, vars):
     #items
     cargar_items()
     model.DBSession.flush()
-    #relaciones
-    cargar_relaciones()
+    #tipo de relaciones
+    cargar_tipos_relaciones()
     model.DBSession.flush()
     #Permisos del rol de proyecto
     cargar_permisos_proyecto(group21,group22,group23,group31)

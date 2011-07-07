@@ -183,10 +183,13 @@ class ExtendedItemDeFaseAnteriorField(PropertySingleSelectField):
 			new_option = [(None, 'sin relacion')]
 
 		options_list = []
-		for item in items:
-			if item_util.ciclo(int(item.id_item), int(self.yo_mismo), self.idfase) == []:
-				options_list = options_list + [item]
-
+		if self.yo_mismo != 0:
+			for item in items:
+				if item_util.ciclo(int(item.id_item), int(self.yo_mismo), self.idfase) == []:
+					options_list = options_list + [item]
+		else:
+			options_list = items
+		
 		#se le agrega una cadena "padre" o "antecesor" segun corresponda
 		for item in options_list:
 			relacion = 'Antecesor'

@@ -224,10 +224,11 @@ class DetalleItemTable(TableBase):
 					   'item', 'id_atributo_tipo_item', 'content_type'
 					  ]
 
-	__field_order__ = ['atributo_tipo_item','valor', 'file_name', 'observacion',
-					   'accion']
+	__field_order__ = ['atributo_tipo_item', 'valor', 'file_name', 'observacion',
+									'accion']
 
-	__headers__ = {'atributo_tipo_item':'Nombre','valor':'Valor',
+	__headers__ = {'atributo_tipo_item':'Nombre',
+					'valor':'Valor',
 				   'file_name':'Archivo Adjunto'
 				  }
 

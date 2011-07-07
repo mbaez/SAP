@@ -1069,7 +1069,35 @@ class ItemUtil(Util):
 		gr.layout()
 		gr.draw('sap/public/img/calculo_impacto.svg')
 
-
+	"""
+	Metodo para la auto-generacion de codigos de item
+	"""
+	def gen_cod (self, id_fase, id_tipo):
+		#traer la fase 
+		fase_actual = DBSession.query(Fase).get(id_fase)
+		
+		#se consulta por el numero de la fase actual dentro del proyecto
+		nro_fase = 1 + len(DBSession.query(Fase).\
+						filter(Fase.proyecto==fase_actual.proyecto).\
+						filter(Fase.id_fase<fase_actual.id_fase).\
+						all())
+		
+		#cantidad de items + 1 es el nro de item del nuevo item 
+		#dentro del proyecto actual
+		nro_item = 1 + len(DBSession.query(Item).\
+								filter(Item.fase==fase_actual.id_fase).\
+								all())
+		
+		#obtener el tipo de item al cual corresponde el item, el codigo 
+		#de este es utilizado como prefijo del codigo del item
+		tipo = DBSession.query(TipoItem).get(id_tipo)
+		prefijo = tipo.codigo 
+		
+		#se concatenan los resultados
+		item_codigo = prefijo + str(nro_fase) + str(nro_item)
+		
+		return item_codigo
+		 
 class TipoItemUtil(Util):
 
 	def __init__(self):
@@ -1286,7 +1314,7 @@ class SessionUtil():
 		except:
 			return None
 
-
+	
 
 #Se instancian las clases
 proyecto_util = ProyectoUtil()

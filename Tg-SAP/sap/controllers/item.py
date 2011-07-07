@@ -174,7 +174,7 @@ class ItemController(RestController):
 		#anhadir detalles al item segun el tipo de item al cual corresponda
 		item.detalles = item_util.anadir_detalles(tipo_item)
 
-		item.codigo = util.gen_codigo(tipo_item.codigo + "-")
+		item.codigo = item_util.gen_cod(idfase, item.tipo_item)
 		DBSession.add(item)
 		DBSession.flush()
 
