@@ -82,9 +82,11 @@ rol_filler = create_widget(RolModelDecorator, EditActionDecorator, check_permiso
 class ItemTable(TableBase):
 	__model__ = Item
 	__omit_fields__ = ['tipo_item','fase','id_item','__actions__',
-						'id_linea_base','descripcion','detalles',
-						'tipo_item_relacion', 'linea_base',
-						'estado', 'relaciones','fase_actual', 'relaciones_id']
+					   'id_linea_base','descripcion','detalles',
+					   'tipo_item_relacion', 'linea_base',
+					   'estado', 'relaciones','fase_actual', 'relaciones_id',
+					   'archivos'
+					  ]
 
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
@@ -220,16 +222,14 @@ class DetalleItemTable(TableBase):
 	__model__ = DetalleItem
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
-	__omit_fields__ = ['__actions__','id_item_detalle','id_item', 'adjunto',
-					   'item', 'id_atributo_tipo_item', 'content_type'
+	__omit_fields__ = ['__actions__','id_item_detalle','id_item', 'item',
+					   'id_atributo_tipo_item'
 					  ]
 
-	__field_order__ = ['atributo_tipo_item', 'valor', 'file_name', 'observacion',
-									'accion']
+	__field_order__ = ['atributo_tipo_item', 'valor', 'observacion', 'accion']
 
 	__headers__ = {'atributo_tipo_item':'Nombre',
 					'valor':'Valor',
-				   'file_name':'Archivo Adjunto'
 				  }
 
 detalle_item_table = DetalleItemTable(DBSession)

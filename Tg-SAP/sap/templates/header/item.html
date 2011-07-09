@@ -33,6 +33,21 @@
 			</div>
 			<p></p>
 		</div>
+		<br/>
+		<div class="project-info">
+			<h4>Archivos
+			<span>
+				<a href="/miproyecto/fase/item/archivo/${params['item'].id_item}/edit" class="add-member">Añadir</a>
+			</span>
+			</h4>
+			<table>
+			<tr py:for="archivo in params['item'].archivos">
+				<td><a style="margin:20px;" href= '/miproyecto/fase/item/archivo/descargar/${archivo.id_archivo}'>${archivo.file_name}</a></td>
+				<td ><a href= '/miproyecto/fase/item/archivo/eliminar/${archivo.id_archivo}'><img src= "/img/icons/trash.png"/></a></td>
+			</tr>
+			</table>
+		</div>
+
 	</aside>
 </py:def>
 

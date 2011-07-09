@@ -478,15 +478,24 @@ class ItemUtil(Util):
 		#~ detalles = DBSession.query(DetalleItem).\
 					#~ filter(DetalleItem.id_item==item.id_item).\
 					#~ all()
+		for archivo in item.archivos :
+			historial_archivo = HistorialArchivo()
+			historial_archivo.archivo = archivo.archivo
+			historial_archivo.file_name = archivo.file_name
+			historial_archivo.content_type = archivo.content_type
+			historial_archivo.id_historial =  historial.id_historial_item
+			historial_archivo.id_item = archivo.id_item
+
+			historial.archivos.append(historial_archivo)
 
 		for detalle in item.detalles:
 			historial_detalle = HistorialDetalleItem()
 			historial_detalle.id_detalle = detalle.id_item_detalle
 			historial_detalle.id_atributo_tipo_item = detalle.id_atributo_tipo_item
 			historial_detalle.id_item = detalle.id_item
-			historial_detalle.adjunto = detalle.adjunto
 			historial_detalle.observacion = detalle.observacion
 			historial_detalle.valor = detalle.valor
+
 			historial.detalles.append(historial_detalle)
 
 		#Obtener las relaciones
@@ -527,12 +536,31 @@ class ItemUtil(Util):
 		item.descripcion = historial_item.descripcion
 		item.observacion = historial_item.observacion
 		item.linea_base = None
+
+		#Se borran todos los archivos
+		print "Borrando todos los archivos acutales"
+		for archivo in item.archivos :
+			DBSession.delete(archivo)
+		#Se reestauran todos los arachivos
+		item.archivos = []
+		DBSession.merge(item)
+		print "Anhadiendo nuevos archivos."
+		for archivo in historial_item.archivos :
+			print "archivo: "+ str(archivo)
+			new_archivo = Archivo()
+			new_archivo.archivo = archivo.archivo
+			new_archivo.file_name = archivo.file_name
+			new_archivo.content_type = archivo.content_type
+			new_archivo.id_item = item.id_item
+
+			DBSession.add(new_archivo)
+
+
 		print "Recuperar los detalles"
 		#recuperar los detalles
 		historial_detalles = DBSession.query(HistorialDetalleItem).\
 			filter(HistorialDetalleItem.id_historial == historial_item.id_historial_item).\
 			all()
-
 
 		#variable para indexar las posiciones que corresponden a los valores
 		#de esa version
@@ -547,7 +575,6 @@ class ItemUtil(Util):
 		"""
 		for detalle in item.detalles:
 			detalle.valor = None
-			detalle.adjunto = None
 			detalle.observacion = None
 			atributo_mapper[detalle.id_atributo_tipo_item] = index
 			index += 1
@@ -556,7 +583,6 @@ class ItemUtil(Util):
 
 			index = atributo_mapper[hist_detalle.id_atributo_tipo_item]
 
-			item.detalles[index].adjunto = hist_detalle.adjunto
 			item.detalles[index].observacion = hist_detalle.observacion
 			item.detalles[index].valor = hist_detalle.valor
 
@@ -571,7 +597,8 @@ class ItemUtil(Util):
 
 		for relacion in relaciones:
 			#se verifica que no deje huerfanos
-			if not self.deja_huerfanos(item):
+			if not self.deja_huerfanos(relacion):
+				print 'borrando relacion'
 				DBSession.delete(relacion)
 
 		print "Recuperar las relaciones"
@@ -722,13 +749,17 @@ class ItemUtil(Util):
 			return True
 
 
-	def deja_huerfanos (self, item):
-		relaciones = DBSession.query(RelacionItem).\
-					filter(RelacionItem.id_item_actual==item.id_item).\
-					all()
+	def deja_huerfanos (self, relacion):
+		#relaciones = DBSession.query(RelacionItem).\
+		#			filter(RelacionItem.id_item_actual==item.id_item).\
+		#			filter(RelacionItem.relacion_parentesco==2).\
+		#			all()
 		#por cada sucesor se obtienen
-		for relacion in relaciones:
-			antecesores = self.get_incidentes(relacion.id_item_relacionado)
+		if relacion.relacion_parentesco == 2:
+			antecesores = DBSession.query(RelacionItem).\
+							filter(RelacionItem.id_item_relacionado==relacion.id_item_relacionado).\
+							filter(RelacionItem.relacion_parentesco==2).\
+							all()
 			if(len(antecesores) == 1):
 				return True
 
@@ -1073,31 +1104,31 @@ class ItemUtil(Util):
 	Metodo para la auto-generacion de codigos de item
 	"""
 	def gen_cod (self, id_fase, id_tipo):
-		#traer la fase 
+		#traer la fase
 		fase_actual = DBSession.query(Fase).get(id_fase)
-		
+
 		#se consulta por el numero de la fase actual dentro del proyecto
 		nro_fase = 1 + len(DBSession.query(Fase).\
 						filter(Fase.proyecto==fase_actual.proyecto).\
 						filter(Fase.id_fase<fase_actual.id_fase).\
 						all())
-		
-		#cantidad de items + 1 es el nro de item del nuevo item 
+
+		#cantidad de items + 1 es el nro de item del nuevo item
 		#dentro del proyecto actual
 		nro_item = 1 + len(DBSession.query(Item).\
 								filter(Item.fase==fase_actual.id_fase).\
 								all())
-		
-		#obtener el tipo de item al cual corresponde el item, el codigo 
+
+		#obtener el tipo de item al cual corresponde el item, el codigo
 		#de este es utilizado como prefijo del codigo del item
 		tipo = DBSession.query(TipoItem).get(id_tipo)
-		prefijo = tipo.codigo 
-		
+		prefijo = tipo.codigo
+
 		#se concatenan los resultados
 		item_codigo = prefijo + str(nro_fase) + str(nro_item)
-		
+
 		return item_codigo
-		 
+
 class TipoItemUtil(Util):
 
 	def __init__(self):
@@ -1314,7 +1345,7 @@ class SessionUtil():
 		except:
 			return None
 
-	
+
 
 #Se instancian las clases
 proyecto_util = ProyectoUtil()

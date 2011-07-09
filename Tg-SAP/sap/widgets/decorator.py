@@ -18,7 +18,7 @@ class ExtendedTableList(TableFiller):
 		retornar los registros al metodo get_value, se retorne los atributos
 		de una lista previamente seteada en le metodo de get_value.
 
-		@type   **kw :
+		@type   **kw : Keyword
 		@param  **kw :
 
 		@rtype  : Integer, __model__[]
@@ -75,11 +75,11 @@ class Decorator(ExtendedComponent):
 	Clase que actua como proxy entre los componentes.
 	"""
 
-	"""Debe ser un objeto que herede de la clase ExtendedComponet"""
 	component = None
+	"""Debe ser un objeto que herede de la clase ExtendedComponet"""
 
-	"""Cadena de texto que representa el codigo html que sera anhadido"""
 	__widget__= ""
+	"""Cadena de texto que representa el codigo html que sera anhadido"""
 
 	def __init__(self, component=None):
 		self.set_component(component)
@@ -148,7 +148,6 @@ class EditActionDecorator(Decorator):
 						replace('##editstate##', check(id,'editar_'+permiso_sufijo)).\
 						replace('##deletestate##', check(id,'eliminar_'+permiso_sufijo))
 		return accion
-
 
 class VerActionDecorator(Decorator):
 
@@ -310,6 +309,7 @@ class LineaBaseModelDecorator(ExtendedTableList, Decorator):
 														'linea_base',
 														self.check_permiso
 													  )
+
 class TipoItemModelDecorator(ExtendedTableList, Decorator):
 
 	__model__ = TipoItem
@@ -365,7 +365,6 @@ class FaseModelDecorator(ExtendedTableList, Decorator):
 														'fase',
 														self.check_permiso
 													  )
-
 
 class HistorialModelDecorator(ExtendedTableList, Decorator):
 
@@ -455,7 +454,6 @@ class RolModelDecorator(ExtendedTableList, Decorator):
 														self.check_permiso
 													  )
 
-
 class DetalleItemModelDecorator(ExtendedTableList, Decorator):
 	__model__ = DetalleItem
 	__add_fields__ = {'accion':None}
@@ -471,18 +469,13 @@ class DetalleItemModelDecorator(ExtendedTableList, Decorator):
 	def accion (self, obj):
 		accion = super(DetalleItemModelDecorator, self).accion(obj)
 		accion = self.replace(accion,self.__url__, obj.id_item_detalle)
-		if obj.adjunto != None :
-			accion = "<div> " + accion
-			accion +="<div><a class='link' href='/miproyecto/fase/item/item_detalle/descargar/"+\
-					str(obj.id_item_detalle) + "'>Descargar</a></div></div>"
+
 		return accion
 
 	def check_permiso(self, id, permiso_name, has_permiso=None):
 		detalle_item = DBSession.query(DetalleItem).get(id)
 		item = detalle_item.item
 		has_permiso = item_util.verificar_linea_base(item)
-
-		print "HASTA ACA " + str(has_permiso)
 
 		return super(DetalleItemModelDecorator,self).\
 			check_permiso(id, permiso_name, has_permiso)

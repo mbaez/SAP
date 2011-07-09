@@ -33,6 +33,8 @@ from sap.model import *
 from sap.model import DBSession, metadata
 
 from sap.controllers.item_detalle import *
+from sap.controllers.archivo import *
+
 from tg.controllers import RestController
 
 from sap.controllers.util import *
@@ -41,6 +43,7 @@ class ItemController(RestController):
 	"""Controlador del item"""
 
 	item_detalle = ItemDetalleController()
+	archivo = ArchivoController()
 
 	"""Instancia del controlador del Detalle del item"""
 
@@ -235,7 +238,7 @@ class ItemController(RestController):
 		kw['id_item'] = item.id_item
 		kw['descripcion'] = item.descripcion
 		kw['nombre'] = item.nombre
-		kw['codigo'] = item.codigo
+		#kw['codigo'] = item.codigo
 		kw['complejidad'] = item.complejidad
 		kw['prioridad'] = item.prioridad
 		kw['observacion'] = item.observacion
@@ -257,7 +260,7 @@ class ItemController(RestController):
 		item_util.audit_item(item)
 		# Se modifica el item
 		item.descripcion = kw['descripcion']
-		item.codigo = kw['codigo']
+		#item.codigo = kw['codigo']
 		item.nombre = kw['nombre']
 		item.complejidad = kw['complejidad']
 		item.prioridad = kw['prioridad']

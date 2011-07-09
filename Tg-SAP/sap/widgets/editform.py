@@ -161,11 +161,25 @@ linea_base_edit_form = LineaBaseEditForm(DBSession)
 ###################################################
 # Widgets de los Detalles de item
 ####################################################
+from formencode.validators import String, Int
+from tw.forms import TextArea
+
+class ClaseValidar (TextArea):
+
+	validar = 0
+
 
 class DetalleItemEditForm(EditableForm):
 	__model__ = DetalleItem
 	__omit_fields__ = ['id_item', 'id_atributo_tipo_item'
-					   ,'atributo_tipo_item','item', 'file_name','content_type']
+					   ,'atributo_tipo_item','item', 'file_name','content_type'
+					  ]
+	nuevo = TextArea
+
+	def validar (self, nro_validar):
+		if nro_validar == 1:
+			print 'mierda'
+			self.nuevo = TextArea('nuevo')
 
 detalle_item_edit_form = DetalleItemEditForm(DBSession)
 
@@ -173,3 +187,13 @@ class DetalleItemEditFiller(EditFormFiller):
 	__model__ = DetalleItem
 
 detalle_item_edit_filler = DetalleItemEditFiller(DBSession)
+
+class ArchivoEditForm(EditableForm):
+	__model__ = Archivo
+	__omit_fields__ = ['item', 'file_name','content_type']
+
+class ArchivoEditFiller(EditFormFiller):
+	__model__ = Archivo
+
+arhivo_edit_form = ArchivoEditForm(DBSession)
+arhivo_edit_filler = ArchivoEditFiller(DBSession)

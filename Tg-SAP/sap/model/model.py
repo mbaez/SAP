@@ -38,9 +38,6 @@ class Proyecto(DeclarativeBase):
 	id_proyecto = Column ('id_proyecto', Integer, autoincrement=True,
 							primary_key=True)
 
-	lider_id = Column ('id_usuario_lider', Integer,
-					ForeignKey('usuario.usuario_id'))
-
 	nombre = Column ('nombre', Unicode(50), nullable=False)
 
 	nro_fases = Column ('nro_fases', Integer, nullable=False)
@@ -53,6 +50,9 @@ class Proyecto(DeclarativeBase):
 
 	estado_id = Column ('id_estado_proyecto', Integer,
 					ForeignKey('estado_proyecto.id_estado_proyecto'), default=1)
+
+	lider_id = Column ('id_usuario_lider', Integer,
+					ForeignKey('usuario.usuario_id'))
 	"""
 	Se relaciona con una instnacia de una clase EstadoProyecto
 	"""
@@ -71,13 +71,13 @@ class Fase(DeclarativeBase):
 	id_fase = Column ('id_fase', Integer, autoincrement=True,
 						primary_key=True)
 
-	proyecto = Column ('id_proyecto', Integer,
-						ForeignKey('proyecto.id_proyecto'),
-						nullable=False)
-
 	nombre = Column ('nombre', Unicode(50), nullable=False)
 
 	descripcion = Column ('descripcion', Unicode(200))
+	#{ Metodos
+	proyecto = Column ('id_proyecto', Integer,
+						ForeignKey('proyecto.id_proyecto'),
+						nullable=False)
 	#}
 
 class EstadoLineaBase(DeclarativeBase):
@@ -85,8 +85,8 @@ class EstadoLineaBase(DeclarativeBase):
 	__tablename__ = 'estado_linea_base'
 
 	#{Columnas
-	id_estado_linea_base = Column ('id_estado_linea_base',Integer, autoincrement=True,
-					primary_key=True)
+	id_estado_linea_base = Column ('id_estado_linea_base',Integer,
+							autoincrement=True, primary_key=True)
 
 	nombre = Column ('nombre', Unicode(50), nullable=False)
 	#}
@@ -101,11 +101,11 @@ class TipoItem(DeclarativeBase) :
 
 	codigo = Column ('codigo', Unicode(50), nullable = False)
 
-	fase = Column ('id_fase', Integer, ForeignKey ('fase.id_fase'))
-
 	nombre = Column ('nombre', Unicode(50), nullable=False)
 
 	descripcion = Column ('descripcion', Unicode(200))
+	#{ Metodos
+	fase = Column ('id_fase', Integer, ForeignKey ('fase.id_fase'))
 	#}
 
 class AtributoTipoItem(DeclarativeBase):
@@ -187,9 +187,11 @@ class Item(DeclarativeBase):
 	#{Relaciones
 	tipo_item_relacion = relation('TipoItem', backref='items')
 
-	estado_actual = relation('EstadoItem', backref = 'items')
+	estado_actual = relation('EstadoItem', backref='items')
 
-	detalles = relation ('DetalleItem', backref = 'item')
+	detalles = relation ('DetalleItem', backref='item')
+
+	archivos = relation ('Archivo', backref='item')
 
 	relaciones = relation('Item')
 
@@ -249,6 +251,25 @@ class TipoAtributo(DeclarativeBase):
 		return self.nombre or self.descripcion
 	#}
 
+class Archivo(DeclarativeBase):
+
+	__tablename__ = 'archivo'
+
+	#{Columnas
+	id_archivo = Column ('id_archivo', Integer, autoincrement=True,
+								primary_key=True)
+
+	archivo = Column ('archivo', Binary)
+
+	file_name = Column (Unicode(100))
+
+	content_type = Column (Unicode(100))
+	#{ForeignKey
+
+	id_item = Column ('id_item', Integer, ForeignKey ('item.id_item'))
+
+	#}
+
 class DetalleItem(DeclarativeBase):
 
 	__tablename__ = 'detalle_item'
@@ -258,13 +279,6 @@ class DetalleItem(DeclarativeBase):
 								primary_key=True)
 
 	valor = Column('valor', Unicode(200))
-
-	adjunto = Column ('adjunto', Binary)
-
-	file_name = Column (Unicode(100))
-
-	content_type = Column (Unicode(100))
-
 
 	observacion = Column ('observacion', Unicode(100))
 
@@ -354,7 +368,6 @@ class HistorialDetalleItem(DeclarativeBase):
 
 	id_item = Column ('id_item', Integer, nullable=False)
 
-	adjunto = Column ('adjunto', Binary)
 
 	observacion = Column ('observacion', Unicode(100))
 
@@ -378,3 +391,28 @@ class HistorialRelacion(DeclarativeBase):
 	id_item_2 = Column ('id_item_2', Integer, nullable=False)
 
 	id_tipo_relacion = Column ('id_tipo_relacion', Integer, nullable=False)
+
+
+class HistorialArchivo(DeclarativeBase):
+
+	__tablename__ = 'historial_archivo'
+
+	#{Columnas
+	id_historial_archivo = Column ('id_historial_archivo', Integer,
+							autoincrement=True, primary_key=True)
+
+	archivo = Column ('archivo', Binary)
+
+	file_name = Column (Unicode(100))
+
+	content_type = Column (Unicode(100))
+
+	#{Relaciones
+	id_item = Column ('id_item', Integer)
+
+	id_historial = Column ('id_historial_item', Integer,
+				ForeignKey('historial_item.id_historial_item'))
+
+	historial_item = relation("HistorialItem", backref="archivos")
+
+	#}
