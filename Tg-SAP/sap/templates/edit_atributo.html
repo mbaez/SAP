@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:py="http://genshi.edgewall.org/"
+  xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<xi:include href="master.html" />
+<xi:include href="header/${params['header_file']}.html" />
+<head>
+  <meta content="text/html; charset=UTF-8" http-equiv="content-type" py:replace="''"/>
+  <title>Editar ${params['modelname']}</title>
+</head>
+
+<body>
+	${sub_header()}
+<h1>Editar Atributo de Item</h1>
+<div>
+	<div style="float:left width: 80%">
+	<form action="../put/${params['id_item_detalle']}" method="post" class="required tableform" enctype="multipart/form-data">
+
+		<div>
+				<input type="hidden" name="id_item_detalle" class="hiddenfield" id="id_item_detalle" value="5" />
+				<input type="hidden" name="sprox_id" class="hiddenfield" id="sprox_id" value="" />
+				<input type="hidden" name="_method" class="sproxmethodputhiddenfield" id="_method" value="PUT" />
+		</div>
+	<table border="0" cellspacing="0" cellpadding="2">
+		<tr id="id_item_detalle.container" class="even" title="">
+			<td class="labelcol">
+				<label id="id_item_detalle.label" for="id_item_detalle" class="fieldlabel required">Id Item Detalle</label>
+
+			</td>
+			<td class="fieldcol">
+				<input xmlns="http://www.w3.org/1999/xhtml" type="text" name="id_item_detalle" class="textfield required" id="id_item_detalle" value = "${params['id_item_detalle']}" disabled="disabled"/>
+			</td>
+		</tr>
+		
+		<tr py:if="params['tipo_atributo'] == 1"  id="valor.container" class="odd" title="">
+			<td class="labelcol">
+				<label id="valor.label" for="valor" class="fieldlabel required">Valor</label>
+			</td>
+			<td class="fieldcol">
+				<textarea xmlns="http://www.w3.org/1999/xhtml" id="valor" name="valor" class="required textarea" rows="7" cols="50" value="${params['valor']}">${params['valor']}</textarea>
+			</td>
+		</tr>
+		
+		<tr py:if="params['tipo_atributo'] == 3"  id="valor.container" class="odd" title="">
+			<td class="labelcol">
+				<label id="valor.label" for="valor" class="fieldlabel required">Valor</label>
+			</td>
+			<td class="fieldcol">
+				<input id="valor" name="valor" type="date" value="${params['valor']}"></input>
+			</td>
+		</tr>
+		
+		<tr py:if="params['tipo_atributo'] == 2" id="valor.container" class="odd" title="">
+			<td class="labelcol">
+				<label id="valor.label" for="valor" class="fieldlabel required">Valor</label>
+			</td>
+			<td class="fieldcol">
+				<input id="valor" name="valor" type="text" pattern="[-0-9]+" value="${params['valor']}">
+				</input>
+			</td>
+		</tr>
+		
+		<tr id="observacion.container" class="odd" title="">
+			<td class="labelcol">
+				<label id="observacion.label" for="observacion" class="fieldlabel">Observacion</label>
+			</td>
+			<td class="fieldcol">
+				<input xmlns="http://www.w3.org/1999/xhtml" type="text" name="observacion" class="textfield" id="observacion" value = "${params['observacion']}"></input>
+			</td>
+		</tr><tr id="submit.container" class="even" title="">
+			<td class="labelcol">
+			</td>
+			<td class="fieldcol">
+				<input xmlns="http://www.w3.org/1999/xhtml" type="submit" class="submitbutton" value="Submit"/>
+			</td>
+		</tr>
+	</table>
+
+	</form>
+	<!--input type="button" value="Enviar" onclick="Valida()"/-->
+	</div>
+</div>
+</body>
+</html>

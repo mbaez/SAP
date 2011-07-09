@@ -29,14 +29,14 @@ class ItemDetalleController(RestController):
 	"""Controlador del detalle del item"""
 
 	params = {'title':'', 'header_file':'', 'modelname':'', 'new_url':'',
-			  'idfase':'', 'permiso':'', 'cancelar_url':''
-			 }
+			  'idfase':'', 'permiso':'', 'cancelar_url':'' , 'valor': ' ',
+			  'observacion': '', 'id_item_detalle': ' '  }
 	"""
 	parametro que contiene los valores de varios parametros y es enviado a
 	los templates
 	"""
 
-	@expose('sap.templates.edit')
+	@expose('sap.templates.edit_atributo')
 	@require(predicates.has_permission('editar_item'))
 	def edit(self, id,**kw):
 		"""
@@ -54,11 +54,19 @@ class ItemDetalleController(RestController):
 
 		"""
 		kw['id_item_detalle'] = id
+		
+		detalle = DBSession.query(DetalleItem).get(id)
 
 		tmpl_context.widget = detalle_item_edit_form
 
 		value = detalle_item_edit_filler.get_value(kw)
-
+		
+		self.params['id_item_detalle'] = id
+		self.params['valor'] = detalle.valor
+		
+		self.params['tipo_atributo'] = int(detalle.atributo_tipo_item.tipo_id)
+		self.params['observacion'] = detalle.observacion
+		
 		self.params['modelname'] = 'Atributo de Item'
 		self.params['header_file'] = 'abstract'
 		return dict(value=value, params=self.params)
@@ -80,7 +88,6 @@ class ItemDetalleController(RestController):
 		"""
 		detalle =  DBSession.query(DetalleItem).get(id)
 		detalle.valor = kw['valor']
-
 		detalle.observacion = kw ['observacion']
 
 		DBSession.merge(detalle)

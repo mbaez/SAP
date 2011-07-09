@@ -72,8 +72,14 @@ class ArchivoController(RestController):
 		@param kw : Keywords
 
 		"""
+		kw['id_item'] = id
+		
+		item = DBSession.query(Item).get(int(kw['id_item']))
+		
+		item_util.audit_item(item)
+		
 		archivo =  Archivo()
-		archivo.id_item = int(kw['id_item'])
+		archivo.id_item = id
 
 		if kw ['archivo'] != None:
 			stream = True
@@ -90,9 +96,6 @@ class ArchivoController(RestController):
 
 		DBSession.add(archivo)
 
-		item = DBSession.query(Item).get(int(kw['id_item']))
-
-		item_util.audit_item(item)
 		item.version += 1
 		DBSession.merge(item)
 
