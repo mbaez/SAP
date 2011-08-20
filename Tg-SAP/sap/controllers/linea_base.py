@@ -76,14 +76,14 @@ class LineaBaseController(RestController):
 		lista_codigos = []
 		dic = kw
 		for d in dic:
-			print 'dddddd = '+ d
+			#print 'dddddd = '+ d
 			lista_codigos.append(d.replace('_', '-'))
 
 		lista_items = DBSession.query(Item).filter( Item.codigo.in_(lista_codigos) ).\
 											all()
 
 		linea_base = LineaBase()
-		linea_base.codigo = util.gen_codigo('linea_base')
+		linea_base.codigo = linea_base_util.gen_codigo('LB',idfase)
 		linea_base.estado = estado_linea_base_util.get_by_codigo('Cerrada')
 		linea_base.fase = idfase
 
@@ -272,6 +272,24 @@ class LineaBaseController(RestController):
 		report.generate_by(PDFGenerator, filename=response)
 
 		return response
+
+	@expose('sap.templates.fase')
+	def reporte(self, idfase,**kw) :
+
+		tmpl_context.widget = linea_base_reporte
+		lineas = DBSession.query(Item).filter(Item.fase == idfase).all()
+		value = linea_base_reporte_filler.get_value(lineas)
+
+		self.init_params(idfase)
+
+		self.params['title'] = 'Rerporte de items de la fase'
+		self.params['modelname'] = 'Reporte de items'
+		self.params['header_file'] = 'abstract'
+		self.params['permiso'] = 'NINGUNO'
+		self.params['new_url'] = ""
+		self.params['label'] = ''
+
+		return dict(value=value, params = self.params)
 
 
 

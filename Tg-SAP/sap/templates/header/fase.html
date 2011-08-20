@@ -26,6 +26,10 @@
 			<li id="nav-agenda" py:if="tg.predicates.has_permission('generar_lineabase')" >
 				<a href="/miproyecto/fase/linea_base/list/${params['idfase']}">Lineas Base</a>
 			</li>
+			<li id="nav-agenda" py:if="tg.predicates.has_permission('generar_lineabase')" >
+				<a href="/miproyecto/fase/linea_base/reporte/${params['idfase']}">Reporte</a>
+			</li>
+
 		</ul>
 	</nav>
 </header>

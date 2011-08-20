@@ -174,7 +174,7 @@ class LineaBaseTable(TableBase):
 	__model__ = LineaBase
 	__xml_fields__ = ['accion']
 	__add_fields__ = {'accion':None}
-	__omit_fields__ = ['__actions__','fase', 'id_linea_base']
+	__omit_fields__ = ['__actions__','fase', 'id_linea_base', 'id_estado_linea_base']
 
 linea_base_table = LineaBaseTable(DBSession);
 #
@@ -239,3 +239,17 @@ detalle_item_filler = create_widget(DetalleItemModelDecorator,
 							'/miproyecto/fase/item/item_detalle/',
 							params={'__label__':'Editar',
 								'__extra_url__':'/edit'})
+
+class ReporteLineaBaseTable(TableBase):
+	__model__ = Item
+	__omit_fields__ = ['tipo_item','fase','id_item','__actions__',
+					   'id_linea_base','descripcion','detalles',
+					   'tipo_item_relacion',
+					   'estado', 'relaciones','fase_actual', 'relaciones_id',
+					   'archivos'
+					  ]
+class ReporteLineaBaseFiller(TableFiller) :
+	__model__ = Item
+
+linea_base_reporte = ReporteLineaBaseTable(DBSession)
+linea_base_reporte_filler = create_widget(ItemModelDecorator, VerActionDecorator,'/miproyecto/fase/item/ver/')

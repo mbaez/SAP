@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Main Controller"""
 
+from sqlalchemy import or_
 
 from tg import expose, flash, require, url, request, redirect, response
 from pylons.i18n import ugettext as _, lazy_ugettext as l_
@@ -183,12 +184,20 @@ class ItemController(RestController):
 
 		# Se guarda la relacion elegida en el formulario
 		if(kw['relaciones'] != None):
+
 			relacion = RelacionItem()
 			#el padre es el item que se selecciono en el combo
 			relacion.id_item_actual = kw['relaciones']
 			#el item nuevo es el hijo
 			relacion.id_item_relacionado = item.id_item
 			item_relacionado = DBSession.query(Item).get(kw['relaciones'])
+
+			#auditar el item
+			item_util.audit_item(item_relacionado)
+			item_relacionado.version += 1
+
+			DBSession.merge(item_relacionado)
+			DBSession.flush()
 
 			if(item_relacionado.fase == int(idfase)):
 				#relacion padre-hijo
@@ -286,6 +295,12 @@ class ItemController(RestController):
 
 			item_padre_antecesor = DBSession.query(Item).get(kw['relaciones'])
 
+			item_util.audit_item(item_padre_antecesor)
+			item_padre_antecesor.version += 1
+
+			DBSession.merge(item_padre_antecesor)
+			DBSession.flush()
+
 			#tipo de relacion 1 padre-hijo, 2 antecesor sucesor
 			tipo_relacion = 2
 			if item_padre_antecesor.fase == int(item.fase):
@@ -337,26 +352,30 @@ class ItemController(RestController):
 		has_permiso = fase_util.check_fase_permiso(item.fase,'ver_item',True)
 		if ( has_permiso == None) :
 			flash("No posee permisos sobre la fase #"+ \
-				str(self.params['item'].fase),'error')
+				str(self.params['item'].fase),'warning')
 
 			redirect('/miproyecto/fase/item/error')
 
 		#validar que no pertenezca a una linea base
 		if (not item_util.verificar_linea_base(item)):
-			flash('El item pertence a un linea base Cerrada y no puede ser eliminado')
+			flash('El item pertence a un linea base Cerrada y no puede ser eliminado','warning')
 			redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
 
-		if item_util.deja_huerfanos(item):
-			flash('El item no puede ser eliminado ya que algun item de la fase siguiente depende de este')
-			redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
+		relaciones = DBSession.query(RelacionItem).\
+								filter(or_(RelacionItem.id_item_actual == item.id_item,
+								RelacionItem.id_item_relacionado == item.id_item)).all()
+
+		print 'len = '+ str(len(relaciones))
+
+		for relacion in relaciones:
+			if item_util.deja_huerfanos(relacion):
+				flash('El item no puede ser eliminado ya que algun item de la fase siguiente depende de este', 'warning')
+				redirect("/miproyecto/fase/item/ver/"+str(item.id_item))
 
 		#estado muerto
 		item.estado = 4
 		item_util.audit_item(item)
-		relaciones = DBSession.query(RelacionItem).\
-								filter((RelacionItem.id_item_actual or\
-								RelacionItem.id_item_actual) == id_item).\
-								all()
+
 		#se eliminan las relaciones que contienen al item
 		for relacion in relaciones:
 			DBSession.delete(relacion)

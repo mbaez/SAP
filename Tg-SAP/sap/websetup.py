@@ -72,7 +72,7 @@ def cargar_usuarios ():
     model.DBSession.add(usr3)
     return usr, usr2, usr3
 
-def cargar_roles(manager,usr, usr2, usr3):
+def cargar_roles(manager,usr=None, usr2=None, usr3=None):
 
     group = model.Rol()
     group.codigo = u'admin'
@@ -89,7 +89,7 @@ def cargar_roles(manager,usr, usr2, usr3):
     group2.nombre = u'Lider'
     group2.descripcion = u'Lider del Proyecto'
     group2.is_template = True
-
+    '''
     group21 = model.Rol()
     group21.codigo = u'lider_1'
     group21.nombre = u'Lider'
@@ -118,13 +118,14 @@ def cargar_roles(manager,usr, usr2, usr3):
     model.DBSession.add(group21)
     model.DBSession.add(group22)
     model.DBSession.add(group23)
-
+    '''
+    model.DBSession.add(group2)
     group3 = model.Rol()
     group3.codigo = u'visitante'
     group3.nombre = u'Visitante'
     group3.descripcion = u'Visitante de Proyectos'
     group3.is_template = True
-
+    '''
     group31 = model.Rol()
     group31.codigo = u'visitante_3'
     group31.nombre = u'Visitante'
@@ -135,8 +136,10 @@ def cargar_roles(manager,usr, usr2, usr3):
 
     model.DBSession.add(group3)
     model.DBSession.add(group31)
+    '''
+    model.DBSession.add(group3)
 
-    return group, group2, group3, group21, group31, group22, group23
+    return group, group2, group3 #, group21, group31, group22, group23
 
 def cargar_estados():
     inicial = model.EstadoProyecto()
@@ -172,7 +175,7 @@ def cargar_estados():
     model.DBSession.flush()
     return inicial, desarrollo, cancelado, pausado, finalizado
 
-def cargar_permisos(group, group2, group3, group21, group31, group22,group23):
+def cargar_permisos(group, group2, group3, group21=None, group31=None, group22=None,group23=None):
 	permiso = model.Permiso()
 	permiso.nombre = u'manage'
 	permiso.descripcion = u'Permiso administracion'
@@ -183,13 +186,11 @@ def cargar_permisos(group, group2, group3, group21, group31, group22,group23):
 		permiso.nombre = name
 		permiso.descripcion = u'Este permiso permite '+name
 		permiso.roles.append(group)
-		permiso.roles.append(group2)
-		permiso.roles.append(group21)
-		permiso.roles.append(group22)
-		permiso.roles.append(group23)
+		if(name.find("admin_") < 0):
+			permiso.roles.append(group2)
 		if(name.find("ver")>=0):
 			permiso.roles.append(group3)
-			permiso.roles.append(group31)
+
 
 def cargar_proyectos(usr, usr2):
     proyecto = model.Proyecto()
@@ -284,7 +285,7 @@ def cargar_tipo_item(fase1, fase2, fase3, fase4):
     tipodeitem2.nombre = u'Diagrama Secuencia'
     #tipodeitem2.codigo = checker.util.gen_codigo('tipo_item')
     tipodeitem2.codigo = u'DS'
-    
+
     model.DBSession.add(tipodeitem2)
 
     tipodeitem3 = model.TipoItem()
@@ -383,7 +384,7 @@ def cargar_items():
         item.version = 1
         item.prioridad = 1
         item.complejidad =  int(random.random()*10)+1
-        #se le pasa el id de la fase y el id del tipo de item al cual 
+        #se le pasa el id de la fase y el id del tipo de item al cual
         #corresponde
         item.codigo = util.item_util.gen_cod(1, 1)
         model.DBSession.add(item)
@@ -466,42 +467,41 @@ def setup_app(command, conf, vars):
 
     model.DBSession.add(manager)
     ##usuarios
-    usr, usr2, usr3 = cargar_usuarios()
+    #usr, usr2, usr3 = cargar_usuarios()
     #Roles
     model.DBSession.flush()
-    group, group2, group3,group21, group31,group22,group23 = cargar_roles(manager,
-                                                       usr, usr2, usr3)
+    group, group2, group3 = cargar_roles(manager)
     model.DBSession.flush()
     #estados
     inicial, desarrollo, cancelado, pausado, finalizado = cargar_estados()
     #Permisos
     model.DBSession.flush()
-    cargar_permisos(group, group2, group3, group21, group31, group22, group23)
+    cargar_permisos(group, group2, group3)
     #Proyectos
     model.DBSession.flush()
-    proyecto,proyecto2,proyecto3 = cargar_proyectos(usr,usr2)
+    #proyecto,proyecto2,proyecto3 = cargar_proyectos(usr,usr2)
     #fases
-    model.DBSession.flush()
-    fase1, fase2,fase3,fase4 = cargar_fases()
+    #model.DBSession.flush()
+    #fase1, fase2,fase3,fase4 = cargar_fases()
     #tipo de atributo
-    model.DBSession.flush()
-    tipo1, tipo2, tipo3 = cargar_tipo_atributo()
+    #model.DBSession.flush()
+    #tipo1, tipo2, tipo3 = cargar_tipo_atributo()
     #tipo de item
-    model.DBSession.flush()
-    tipodeitem1,tipodeitem2,tipodeitem3,tipodeitem4 = cargar_tipo_item(
-                                                       fase1, fase2,fase3,
-                                                       fase4)
+    #model.DBSession.flush()
+    #tipodeitem1,tipodeitem2,tipodeitem3,tipodeitem4 = cargar_tipo_item(
+    #                                                   fase1, fase2,fase3,
+    #                                                   fase4)
     #estados de item
     model.DBSession.flush()
     estadoItem1,estadoItem2,estadoItem3, estadoItem4 = cargar_estados_item()
     #items
-    cargar_items()
+    #cargar_items()
     model.DBSession.flush()
     #tipo de relaciones
     cargar_tipos_relaciones()
     model.DBSession.flush()
     #Permisos del rol de proyecto
-    cargar_permisos_proyecto(group21,group22,group23,group31)
+    #cargar_permisos_proyecto(group21,group22,group23,group31)
     #estado linea base
     model.DBSession.flush()
     cargar_estado_lineabase()

@@ -99,7 +99,7 @@ class ItemEditForm(ExtendedEditableForm):
 	__omit_fields__ = [ 'tipo_item_relacion','tipo_item', '__actions__',
 						'id_item', 'fase', 'version','estado', 'linea_base',
 						'estado_actual', 'id_linea_base' , 'detalles',
-						'relaciones_id', 'fase_actual', 'codigo']
+						'relaciones_id', 'fase_actual', 'codigo', 'archivos']
 
 	relaciones = ExtendedItemDeFaseAnteriorField
 
@@ -190,7 +190,7 @@ detalle_item_edit_filler = DetalleItemEditFiller(DBSession)
 
 class ArchivoEditForm(EditableForm):
 	__model__ = Archivo
-	__omit_fields__ = ['item', 'file_name','content_type']
+	__omit_fields__ = ['item', 'file_name','content_type', 'id_item']
 
 class ArchivoEditFiller(EditFormFiller):
 	__model__ = Archivo

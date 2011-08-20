@@ -87,7 +87,7 @@ class TipoItemController(RestController):
 		"""
 		del kw['sprox_id']
 		tipo_item = TipoItem(**kw)
-		
+
 		codigo = str(tipo_item.codigo)
 
 		flag = True
@@ -96,11 +96,11 @@ class TipoItemController(RestController):
 		for caracter in codigo:
 			if(not re.match("[A-Z]",caracter)):
 				flag = False
-		
+
 		if(not flag):
 			flash("El codigo del tipo de item no debe estar conformado solo por letras mayusculas")
 			redirect('/miproyecto/fase/tipo_item/' + str(idfase) + '/new')
-			
+
 		tipo_item.fase = idfase
 		DBSession.add(tipo_item)
 		flash("El tipo de Item ha sido creado correctamente")
@@ -248,7 +248,7 @@ class TipoItemController(RestController):
 			aux=[{'codigo': tipo.codigo, 'nombre': tipo.nombre,
 			'descripcion': tipo.descripcion,
 			'accion': '<div><a class="link" href="/miproyecto/fase/tipo_item/importar_este_tipo/'
-			+str(tipo.id_tipo_item)+'/'+idfase+'">Importar este Item</a></div>'}]
+			+str(tipo.id_tipo_item)+'/'+idfase+'">Importar</a></div>'}]
 			value=value+aux
 
 		self.params['header_file'] = "tipo_item"
@@ -288,7 +288,7 @@ class TipoItemController(RestController):
 			copia_atributo.nombre = atributo.nombre
 			copia_atributo.tipo_id = atributo.tipo_id
 			copia_tipo.atributos.append(copia_atributo)
-		
+
 		DBSession.add(copia_tipo)
 		flash("El tipo de item "+str(tipo.nombre)+
 										" pertenece ahora a esta fase")

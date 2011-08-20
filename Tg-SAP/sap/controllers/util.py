@@ -24,6 +24,8 @@ import pygraphviz as pgv
 #import para el item util
 from tg import flash
 
+from sqlalchemy import or_
+
 """
 Modulo que contiene un conjunto de metodos de uso frecuente
 
@@ -500,9 +502,11 @@ class ItemUtil(Util):
 
 		#Obtener las relaciones
 		relaciones = DBSession.query(RelacionItem).\
-							filter((RelacionItem.id_item_actual or
-							RelacionItem.id_item_relacionado) == item.id_item).\
+							filter(or_(RelacionItem.id_item_actual == item.id_item,
+							RelacionItem.id_item_relacionado == item.id_item)).\
 							all()
+
+		print relaciones
 
 		for relacion in relaciones:
 			historial_relacion = HistorialRelacion()
@@ -590,8 +594,8 @@ class ItemUtil(Util):
 
 		#borrar las relaciones actuales
 		relaciones = DBSession.query(RelacionItem).\
-							filter(RelacionItem.id_item_actual == item.id_item or
-							RelacionItem.id_item_relacionado == item.id_item).\
+							filter(or_(RelacionItem.id_item_actual == item.id_item,
+							RelacionItem.id_item_relacionado == item.id_item)).\
 							all()
 		print relaciones
 
@@ -736,7 +740,12 @@ class ItemUtil(Util):
 		Verifica si un item no pertenece a una linea base o si no
 		pertenece a una linea base Comprometida o Cerrdada
 		"""
-		linea_base = item.linea_base
+		linea_base = None
+
+		if(item != None):
+			linea_base = item.linea_base
+
+
 		if(linea_base == None):
 			return True
 
@@ -905,7 +914,7 @@ class ItemUtil(Util):
 
 		#Se añaden las aristas entre los items relacionados
 		for relacion in relaciones:
-			grafo.add_edge((relacion.id_item_actual,relacion.id_item_relacionado))
+			grafo.add_edge((relacion.id_item_actual, relacion.id_item_relacionado))
 
 		return grafo
 
@@ -1302,6 +1311,13 @@ class EstadoLineaBaseUtil(Util):
 	def get_by_codigo(self, codigo):
 		return Util.get_by_codigo(self, codigo)
 
+class LineaBaseUtil(Util):
+	def gen_codigo(self, prefijo, idfase=0):
+		lineas = DBSession.query(LineaBase).\
+				filter(LineaBase.fase == idfase).all()
+
+		return prefijo+str(idfase)+str(len(lineas)+1)
+
 class SessionUtil():
 
 	__current = None
@@ -1358,3 +1374,4 @@ estado_linea_base_util = EstadoLineaBaseUtil()
 tipo_item_util = TipoItemUtil()
 usuario_util = UsuarioUtil()
 session_util = SessionUtil()
+linea_base_util = LineaBaseUtil()
